@@ -30,13 +30,26 @@ const getAllProperties = (req, res) => {
 };
 
 const getPropertyById = (req, res) => {
-  const { propertyId } = req.params;
+  const { id } = req.params;
   const query = "SELECT * FROM properties WHERE id = ?";
-  db.query(query, [propertyId], (err, result) => {
+  db.query(query, [id], (err, result) => {
     if (err) {
       console.error("Error getting property: ", err);
     }
-    return res.json({ message: "Got the property successfully" });
+    const transformedResults = result.map((property) => {
+      return {
+        id: property.id,
+        title: property.title,
+        price: property.price,
+        location: property.location,
+        description: property.description,
+        size: property.size,
+        distance: property.distance,
+        sellerId: property.seller_id,
+      };
+    });
+
+    res.status(200).json(transformedResults);
   });
 };
 
@@ -71,13 +84,7 @@ const getPropertyBySellerId = (req, res) => {
       return res.status(500).json({ error: "Database error" });
     }
 
-    if (result.length === 0) {
-      return res.status(404).json({
-        message: `There are no properties with that seller_id: ${sellerId}`,
-      });
-    }
-
-    res.json({ message: "Got all properties with the specific user id" });
+    res.json(result);
   });
 };
 

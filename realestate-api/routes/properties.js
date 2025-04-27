@@ -18,7 +18,7 @@ router.get("/", getAllProperties);
 router.get("/:id", getPropertyById);
 
 // Route to get properties by seller ID
-router.get("/seller-id/:seller-id/", getPropertyBySellerId);
+router.get("/seller-id/:sellerId/", getPropertyBySellerId);
 
 // Route to get properties by location
 router.get("/location/:location/", getPropertiesByLocation);

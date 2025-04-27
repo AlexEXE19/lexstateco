@@ -15,6 +15,24 @@ const getSavedPropertiesByUserId = (req, res) => {
   });
 };
 
+const checkIfPropertyIsSaved = (req, res) => {
+  const { userId, propertyId } = req.body;
+
+  const query = `SELECT COUNT(*) FROM saved_properties WHERE user_id = ? AND property_id = ?`;
+
+  db.query(query, [userId, propertyId], (err, result) => {
+    if (err) {
+      console.error("Error getting saved properties: ", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    const count = result[0].count;
+    console.log("##########################");
+    console.log("COUNT IS: ", count);
+    console.log("##########################");
+    res.json({ count });
+  });
+};
+
 const saveProperty = (req, res) => {
   const { userId, propertyId } = req.body;
 
@@ -47,6 +65,7 @@ const unsaveProperty = (req, res) => {
 
 module.exports = {
   getSavedPropertiesByUserId,
+  checkIfPropertyIsSaved,
   saveProperty,
   unsaveProperty,
 };

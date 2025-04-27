@@ -1,12 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
-import { User } from "../types/types";
+import { useSelector } from "react-redux";
+import { RootState } from "../state/store";
 
-interface ListPropertyPageProps {
-  currentUser: User;
-}
-
-const ListPropertyPage: React.FC<ListPropertyPageProps> = ({ currentUser }) => {
+const ListPropertyPage: React.FC = () => {
   const [title, setTitle] = useState<string>("");
   const [price, setPrice] = useState<number | "">("");
   const [location, setLocation] = useState<string>("");
@@ -14,13 +11,10 @@ const ListPropertyPage: React.FC<ListPropertyPageProps> = ({ currentUser }) => {
   const [size, setSize] = useState<number | "">("");
   const [distance, setDistance] = useState<string | "">("");
 
+  const userId = useSelector((state: RootState) => state.user.id);
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!currentUser || !currentUser.id) {
-      alert("User information is missing. Please log in again.");
-      return;
-    }
 
     const propertyData = {
       title,
@@ -29,7 +23,7 @@ const ListPropertyPage: React.FC<ListPropertyPageProps> = ({ currentUser }) => {
       description,
       size: Number(size),
       distance: Number(distance),
-      sellerId: currentUser.id,
+      sellerId: userId,
     };
 
     try {

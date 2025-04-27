@@ -1,33 +1,42 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Property } from "../types/types";
+import { RootState } from "../state/store";
+import { useSelector } from "react-redux";
 
-interface PropertyCardProps {
-  property: Property;
-}
-
-const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
+const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
   const [sellerName, setSellerName] = useState<string>("");
   const [sellerPhone, setSellerPhone] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [saved, setSaved] = useState<boolean>(false);
 
+  const navigate = useNavigate();
+
+  const currentUser = useSelector((state: RootState) => state.user);
+
+  // useEffect(() => {
+  //   const checkIfPropertyIsSaved = async () => {
+  //     const response = await axios.post(
+  //       `http://localhost:5000/saved-properties/`,
+  //       {
+  //         userId: currentUser.id,
+  //         propertyId: property.id,
+  //       }
+  //     );
+
+  //     setSaved(response.data.count > 0);
+  //   };
+
+  //   if (currentUser.id !== "-1") checkIfPropertyIsSaved();
+  // }, []);
+
   useEffect(() => {
-    console.log("Seller ID in PropertyCard:", property.sellerId);
-
-    if (!property.sellerId) {
-      console.error("Seller ID is undefined!");
-      setLoading(false);
-      return;
-    }
-
     const fetchSellerInfo = async () => {
       try {
         const response = await axios.get(
           `http://localhost:5000/users/${property.sellerId}`
         );
-        console.log("API Response:", response.data);
-
         if (response.data.firstName && response.data.phone) {
           setSellerName(response.data.firstName);
           setSellerPhone(response.data.phone);
@@ -45,31 +54,33 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   }, [property.sellerId]);
 
   const handleSaveClick = async () => {
+    if (currentUser.id === "-1") {
+      navigate("/register");
+      return;
+    }
     try {
       if (!saved) {
-        // Save the property
         const response = await axios.post(
           "http://localhost:5000/saved-properties",
           {
-            userId: property.sellerId,
+            userId: currentUser.id,
             propertyId: property.id,
           }
         );
         console.log("Property saved:", response.data);
       } else {
-        // Unsave the property
         const response = await axios.delete(
           "http://localhost:5000/saved-properties",
           {
             data: {
-              userId: property.sellerId,
+              userId: currentUser.id,
               propertyId: property.id,
             },
           }
         );
         console.log("Property unsaved:", response.data);
       }
-      setSaved(!saved); // Toggle the saved state after a successful API call
+      setSaved(!saved);
     } catch (error) {
       console.error("Error saving or unsaving property:", error);
     }
@@ -99,7 +110,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         onClick={handleSaveClick}
         className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
       >
-        {saved ? "Unsave" : "Save Property"}{" "}
+        {currentUser.id === "-1"
+          ? "Register to save this property!"
+          : saved
+          ? "Unsave"
+          : "Save Property"}
       </button>
     </div>
   );

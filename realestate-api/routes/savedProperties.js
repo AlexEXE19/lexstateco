@@ -3,12 +3,16 @@ const router = express.Router();
 
 const {
   getSavedPropertiesByUserId,
+  checkIfPropertyIsSaved,
   saveProperty,
   unsaveProperty,
 } = require("../controllers/savedPropertiesController");
 
 // Get all saved properties by user ID
-router.get("/:user-id", getSavedPropertiesByUserId);
+router.get("/:userId", getSavedPropertiesByUserId);
+
+// Check if a property is saved by the current user
+router.post("/", checkIfPropertyIsSaved);
 
 // Save a property for a user
 router.post("/", saveProperty);

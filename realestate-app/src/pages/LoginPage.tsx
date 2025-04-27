@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { User } from "../types/types";
+import { logInUser } from "../state/user/userSlice";
+import { useDispatch } from "react-redux";
 
-interface LoginPageProps {
-  setCurrentUser: (user: User) => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({ setCurrentUser }) => {
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -23,9 +22,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ setCurrentUser }) => {
       });
 
       if (response.data.user) {
-        console.log("User logged in:", response.data.user);
-        setCurrentUser(response.data.user);
-        navigate("/account", { state: { currentUser: response.data.user } });
+        navigate("/account");
+        dispatch(
+          logInUser({
+            id: response.data.user.id,
+            firstName: response.data.user.first_name,
+            lastName: response.data.user.last_name,
+            email: response.data.user.email,
+            password: response.data.user.password,
+            phone: response.data.user.phone,
+          })
+        );
       }
     } catch (error: any) {
       if (error.response && error.response.status === 404) {

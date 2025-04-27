@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
-import { User } from "../types/types";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../state/store";
+import { logOutUser } from "../state/user/userSlice";
 
-interface NavbarProps {
-  currentUser: User | null;
-}
+const Navbar: React.FC = () => {
+  const dispatch = useDispatch();
+  const userId = useSelector((state: RootState) => state.user.id);
 
-const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
+  const handleClick = () => {
+    dispatch(logOutUser());
+  };
+
   return (
     <nav className="bg-blue-600 p-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -14,14 +19,17 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
         </Link>
 
         <div className="space-x-4">
-          {currentUser ? (
-            <Link
-              to="/account"
-              className="text-white px-4 py-2"
-              state={{ currentUser }}
-            >
-              My Account
-            </Link>
+          {userId !== "-1" ? (
+            <>
+              <Link to="/account" className="text-white px-4 py-2">
+                My Account
+              </Link>
+              <Link to="/">
+                <button onClick={handleClick} className="text-white px-4 py-2">
+                  Logout
+                </button>
+              </Link>
+            </>
           ) : (
             <>
               <Link to="/login" className="text-white px-4 py-2">
