@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 const HomePage: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+  const [savedPropertiesIds, setSavedPropertiesIds] = useState<string[]>([]);
 
   const [location, setLocation] = useState<string>("");
   const [minPrice, setMinPrice] = useState<string>("");
@@ -32,8 +33,37 @@ const HomePage: React.FC = () => {
         console.log(error);
       }
     };
+
     fetchProperties();
   }, [currentUser]);
+
+  const fetchSavedPropertiesIds = async () => {
+    try {
+      const savedResponse = await axios.get(
+        `http://localhost:5000/saved-properties/${currentUser.id}`
+      );
+
+      const propertyIds = savedResponse.data.map(
+        (propertyIdObject: { property_id: string }) =>
+          propertyIdObject.property_id
+      );
+
+      const propertyPromises = propertyIds.map((id: string) =>
+        axios.get(`http://localhost:5000/properties/${id}`)
+      );
+
+      const propertyResponses = await Promise.all(propertyPromises);
+
+      const saved = propertyResponses.map((res) => res.data);
+
+      const ids = saved.map((property: Property) => property.id);
+      setSavedPropertiesIds(ids);
+    } catch (error) {
+      console.error("Error fetching saved properties:", error);
+    }
+  };
+
+  if (currentUser.id !== "-1") fetchSavedPropertiesIds;
 
   const handleSearch = () => {
     let filtered = properties;
@@ -115,7 +145,11 @@ const HomePage: React.FC = () => {
       {/* Property Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {filteredProperties.map((property) => (
-          <PropertyCard key={property.id} property={property} />
+          <PropertyCard
+            key={property.id}
+            property={property}
+            saved={savedPropertiesIds.includes(property.id)}
+          />
         ))}
       </div>
     </div>

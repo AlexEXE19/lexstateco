@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Property } from "../types/types";
 import { RootState } from "../state/store";
 import { useSelector } from "react-redux";
 
-const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
+const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
+  property,
+  saved,
+}) => {
   const [sellerName, setSellerName] = useState<string>("");
   const [sellerPhone, setSellerPhone] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [saved, setSaved] = useState<boolean>(false);
+  const [isSaved, setIsSaved] = useState<boolean>(saved);
 
   const navigate = useNavigate();
 
@@ -43,7 +46,7 @@ const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
       return;
     }
     try {
-      if (!saved) {
+      if (!isSaved) {
         const response = await axios.post(
           "http://localhost:5000/saved-properties",
           {
@@ -51,7 +54,6 @@ const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
             propertyId: property.id,
           }
         );
-        console.log("Property saved:", response.data);
       } else {
         const response = await axios.delete(
           "http://localhost:5000/saved-properties",
@@ -62,9 +64,8 @@ const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
             },
           }
         );
-        console.log("Property unsaved:", response.data);
       }
-      setSaved(!saved);
+      setIsSaved((isSaved) => !isSaved);
     } catch (error) {
       console.error("Error saving or unsaving property:", error);
     }
@@ -96,7 +97,7 @@ const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
       >
         {currentUser.id === "-1"
           ? "Register to save this property!"
-          : saved
+          : isSaved
           ? "Unsave"
           : "Save Property"}
       </button>

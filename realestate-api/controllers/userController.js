@@ -2,7 +2,6 @@ const db = require("../config/db");
 
 const getUserById = (req, res) => {
   const { id } = req.params;
-  console.log("User ID:", id);
 
   const query = `SELECT * FROM users WHERE id = ?`;
 
@@ -11,8 +10,6 @@ const getUserById = (req, res) => {
       console.error("Error getting the user: ", err);
       return res.status(500).json({ message: "Internal server error" });
     }
-
-    console.log("Query result:", result);
 
     if (result.length === 0) {
       return res.status(404).json({ message: "No user found with this ID" });

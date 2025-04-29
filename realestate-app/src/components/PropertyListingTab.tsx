@@ -1,16 +1,15 @@
 import { useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../state/store";
+import axios from "axios";
 
-const ListPropertyPage: React.FC = () => {
+const PropertyListingTab: React.FC = () => {
   const [title, setTitle] = useState<string>("");
   const [price, setPrice] = useState<number | "">("");
-  const [location, setLocation] = useState<string>("");
+  const [locationInput, setLocationInput] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [size, setSize] = useState<number | "">("");
-  const [distance, setDistance] = useState<string | "">("");
-
+  const [distance, setDistance] = useState<number | "">("");
   const userId = useSelector((state: RootState) => state.user.id);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -19,7 +18,7 @@ const ListPropertyPage: React.FC = () => {
     const propertyData = {
       title,
       price: Number(price),
-      location,
+      location: locationInput,
       description,
       size: Number(size),
       distance: Number(distance),
@@ -32,7 +31,13 @@ const ListPropertyPage: React.FC = () => {
         propertyData
       );
       if (response.status === 201) {
-        alert("Property listed successfully!");
+        alert("Property has been listed successfully!");
+        setTitle("");
+        setPrice("");
+        setLocationInput("");
+        setDescription("");
+        setSize("");
+        setDistance("");
       }
     } catch (error) {
       console.error("Error listing the property:", error);
@@ -41,9 +46,9 @@ const ListPropertyPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10">
-      <h2 className="text-2xl font-semibold mb-4">List a Property</h2>
-      <form onSubmit={handleFormSubmit}>
+    <div>
+      <h2 className="text-xl font-semibold mb-4">List a Property</h2>
+      <form onSubmit={handleFormSubmit} className="max-w-md mt-4">
         <input
           type="text"
           placeholder="Title"
@@ -64,8 +69,8 @@ const ListPropertyPage: React.FC = () => {
           type="text"
           placeholder="Location"
           className="block w-full p-2 mb-2 border rounded"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          value={locationInput}
+          onChange={(e) => setLocationInput(e.target.value)}
           required
         />
         <textarea
@@ -84,11 +89,11 @@ const ListPropertyPage: React.FC = () => {
           required
         />
         <input
-          type="text"
-          placeholder="Location in the city:"
+          type="number"
+          placeholder="Distance to center (km)"
           className="block w-full p-2 mb-4 border rounded"
           value={distance}
-          onChange={(e) => setDistance(e.target.value || "")}
+          onChange={(e) => setDistance(Number(e.target.value) || "")}
           required
         />
         <button
@@ -102,4 +107,4 @@ const ListPropertyPage: React.FC = () => {
   );
 };
 
-export default ListPropertyPage;
+export default PropertyListingTab;

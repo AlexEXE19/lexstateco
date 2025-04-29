@@ -26,9 +26,6 @@ const checkIfPropertyIsSaved = (req, res) => {
       return res.status(500).json({ message: "Internal server error" });
     }
     const count = result[0].count;
-    console.log("##########################");
-    console.log("COUNT IS: ", count);
-    console.log("##########################");
     res.json({ count });
   });
 };
