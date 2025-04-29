@@ -15,22 +15,6 @@ const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
 
   const currentUser = useSelector((state: RootState) => state.user);
 
-  // useEffect(() => {
-  //   const checkIfPropertyIsSaved = async () => {
-  //     const response = await axios.post(
-  //       `http://localhost:5000/saved-properties/`,
-  //       {
-  //         userId: currentUser.id,
-  //         propertyId: property.id,
-  //       }
-  //     );
-
-  //     setSaved(response.data.count > 0);
-  //   };
-
-  //   if (currentUser.id !== "-1") checkIfPropertyIsSaved();
-  // }, []);
-
   useEffect(() => {
     const fetchSellerInfo = async () => {
       try {

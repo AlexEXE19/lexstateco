@@ -1,28 +1,39 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import PropertyCard from "../components/PropertyCard";
-import { Property } from "../types/types";
+import { Property, User } from "../types/types";
+import { RootState } from "../state/store";
+import { useSelector } from "react-redux";
 
 const HomePage: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+
   const [location, setLocation] = useState<string>("");
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
   const [proximity, setProximity] = useState<string>("");
 
+  const currentUser = useSelector((state: RootState) => state.user);
+
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/properties");
+        const response = await axios.get<Property[]>(
+          "http://localhost:5000/properties"
+        );
         setProperties(response.data);
-        setFilteredProperties(response.data);
+        setFilteredProperties(
+          response.data.filter(
+            (property) => property.sellerId !== Number(currentUser.id)
+          )
+        );
       } catch (error) {
         console.log(error);
       }
     };
     fetchProperties();
-  }, []);
+  }, [currentUser]);
 
   const handleSearch = () => {
     let filtered = properties;

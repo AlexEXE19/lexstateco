@@ -84,7 +84,16 @@ const getPropertyBySellerId = (req, res) => {
       return res.status(500).json({ error: "Database error" });
     }
 
-    res.json(result);
+    const camelCasedResult = result.map((property) => ({
+      ...property,
+      sellerId: property.seller_id,
+    }));
+
+    const cleanedResult = camelCasedResult.map(
+      ({ seller_id, ...rest }) => rest
+    );
+
+    res.json(cleanedResult);
   });
 };
 
