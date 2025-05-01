@@ -13,10 +13,14 @@ const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
   const [sellerPhone, setSellerPhone] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [isSaved, setIsSaved] = useState<boolean>(saved);
+  const [deleted, setDeleted] = useState<boolean>(false);
+  const currentUser = useSelector((state: RootState) => state.user);
 
   const navigate = useNavigate();
 
-  const currentUser = useSelector((state: RootState) => state.user);
+  useEffect(() => {
+    setIsSaved(saved);
+  }, [saved]);
 
   useEffect(() => {
     const fetchSellerInfo = async () => {
@@ -47,23 +51,17 @@ const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
     }
     try {
       if (!isSaved) {
-        const response = await axios.post(
-          "http://localhost:5000/saved-properties",
-          {
+        await axios.post("http://localhost:5000/saved-properties", {
+          userId: currentUser.id,
+          propertyId: property.id,
+        });
+      } else {
+        await axios.delete("http://localhost:5000/saved-properties", {
+          data: {
             userId: currentUser.id,
             propertyId: property.id,
-          }
-        );
-      } else {
-        const response = await axios.delete(
-          "http://localhost:5000/saved-properties",
-          {
-            data: {
-              userId: currentUser.id,
-              propertyId: property.id,
-            },
-          }
-        );
+          },
+        });
       }
       setIsSaved((isSaved) => !isSaved);
     } catch (error) {
@@ -71,8 +69,22 @@ const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
     }
   };
 
+  const handleDeleteClick = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/properties/${property.id}`);
+    } catch (error) {
+      console.error("Error deleting property: ", error);
+      return;
+    }
+    setDeleted(true);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (deleted) {
+    return null;
   }
 
   return (
@@ -91,16 +103,25 @@ const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
       <p className="text-sm">
         Agent's name and phone: {sellerName} - {sellerPhone}
       </p>
-      <button
-        onClick={handleSaveClick}
-        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
-      >
-        {currentUser.id === "-1"
-          ? "Register to save this property!"
-          : isSaved
-          ? "Unsave"
-          : "Save Property"}
-      </button>
+      {String(property.sellerId) === String(currentUser.id) ? (
+        <button
+          onClick={handleDeleteClick}
+          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg"
+        >
+          Delete Property
+        </button>
+      ) : (
+        <button
+          onClick={handleSaveClick}
+          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+        >
+          {currentUser.id === "-1"
+            ? "Register to save this property!"
+            : isSaved
+            ? "Unsave"
+            : "Save Property"}
+        </button>
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../state/store";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PropertyListingTab: React.FC = () => {
   const [title, setTitle] = useState<string>("");
@@ -11,6 +12,7 @@ const PropertyListingTab: React.FC = () => {
   const [size, setSize] = useState<number | "">("");
   const [distance, setDistance] = useState<number | "">("");
   const userId = useSelector((state: RootState) => state.user.id);
+  const navigate = useNavigate();
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +40,7 @@ const PropertyListingTab: React.FC = () => {
         setDescription("");
         setSize("");
         setDistance("");
+        navigate("/account");
       }
     } catch (error) {
       console.error("Error listing the property:", error);

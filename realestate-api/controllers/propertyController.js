@@ -159,11 +159,11 @@ const editProperty = (req, res) => {
 };
 
 const deleteProperty = (req, res) => {
-  const { propertyId } = req.params;
-
+  const { id } = req.params;
+  console.log("PROPERTY ID IS: ", id);
   const query = "DELETE FROM properties WHERE id = ?";
 
-  db.query(query, [propertyId], (err, result) => {
+  db.query(query, [id], (err, result) => {
     if (err) {
       console.error("Error deleting property: ", err);
       return res

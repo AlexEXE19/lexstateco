@@ -12,7 +12,7 @@ const {
 router.get("/:userId", getSavedPropertiesByUserId);
 
 // Check if a property is saved by the current user
-router.post("/", checkIfPropertyIsSaved);
+router.post("/check", checkIfPropertyIsSaved);
 
 // Save a property for a user
 router.post("/", saveProperty);

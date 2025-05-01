@@ -30,6 +30,6 @@ router.post("/", createProperty);
 router.put("/:id/", editProperty);
 
 // Route to delete a property by ID
-router.delete("/:id/", deleteProperty);
+router.delete("/:id", deleteProperty);
 
 module.exports = router;

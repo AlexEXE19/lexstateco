@@ -34,36 +34,25 @@ const HomePage: React.FC = () => {
       }
     };
 
+    const fetchSavedPropertiesIds = async () => {
+      try {
+        const savedResponse = await axios.get(
+          `http://localhost:5000/saved-properties/${currentUser.id}`
+        );
+        const propertyIds: string[] = savedResponse.data.map(
+          (obj: { property_id: string }) => obj.property_id
+        );
+
+        setSavedPropertiesIds(propertyIds);
+      } catch (error) {
+        console.error("Error fetching saved properties:", error);
+      }
+    };
+
     fetchProperties();
+
+    if (currentUser.id != "-1") fetchSavedPropertiesIds();
   }, [currentUser]);
-
-  const fetchSavedPropertiesIds = async () => {
-    try {
-      const savedResponse = await axios.get(
-        `http://localhost:5000/saved-properties/${currentUser.id}`
-      );
-
-      const propertyIds = savedResponse.data.map(
-        (propertyIdObject: { property_id: string }) =>
-          propertyIdObject.property_id
-      );
-
-      const propertyPromises = propertyIds.map((id: string) =>
-        axios.get(`http://localhost:5000/properties/${id}`)
-      );
-
-      const propertyResponses = await Promise.all(propertyPromises);
-
-      const saved = propertyResponses.map((res) => res.data);
-
-      const ids = saved.map((property: Property) => property.id);
-      setSavedPropertiesIds(ids);
-    } catch (error) {
-      console.error("Error fetching saved properties:", error);
-    }
-  };
-
-  if (currentUser.id !== "-1") fetchSavedPropertiesIds;
 
   const handleSearch = () => {
     let filtered = properties;

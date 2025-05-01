@@ -33,15 +33,20 @@ const checkIfPropertyIsSaved = (req, res) => {
 const saveProperty = (req, res) => {
   const { userId, propertyId } = req.body;
 
+  if (!userId || !propertyId) {
+    console.error("Missing userId or propertyId");
+    return res.status(400).json({ message: "Missing userId or propertyId" });
+  }
+
   const query = `INSERT INTO saved_properties (user_id, property_id) VALUES (?, ?)`;
 
   db.query(query, [userId, propertyId], (err, result) => {
     if (err) {
-      console.error("Error saving the property: ", err);
+      console.error("Error saving the property:", err);
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    res.json({ message: "Property saved successfully" });
+    res.json({ message: "Property saved successfully", result });
   });
 };
 
