@@ -32,6 +32,7 @@ cd lexstateco
 
 Create the .env file inside the 'server' directory with following fields:
 
+```env
 PORT=5000
 DB_HOST=localhost
 DB_USER=<your-db-username>
