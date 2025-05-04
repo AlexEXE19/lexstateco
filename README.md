@@ -38,6 +38,7 @@ DB_HOST=localhost
 DB_USER=<your-db-username>
 DB_PASSWORD=<your-db-password>
 DB_NAME=<your-db-name>
+```
 
 Install the dependancies and run the dev script for the dev server:
 
