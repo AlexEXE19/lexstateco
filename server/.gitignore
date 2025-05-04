@@ -1,0 +1,12 @@
+node_modules/
+
+dist/
+dist-ssr/
+
+.vscode/
+.idea/
+
+*.log
+.env
+
+hashPasswords.js
