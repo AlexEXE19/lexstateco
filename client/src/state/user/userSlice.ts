@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../../types/types";
 
-// User with id "-1" is considered as no user is logged onto the page
+// User with id "-1" is considered as no user is logged on the page
 const initialState: User = {
   id: "-1",
   firstName: "",

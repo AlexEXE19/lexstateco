@@ -17,3 +17,9 @@ export interface User {
   password: string;
   phone: string;
 }
+
+export interface Modal {
+  isModalOpen: boolean;
+  propertyIdToBeChanged: number;
+  modalType: string;
+}

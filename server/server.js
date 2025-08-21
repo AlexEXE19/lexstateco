@@ -22,7 +22,7 @@ app.use("/saved-properties/", savedPropertiesRoutes);
 // Syncs Sequelize models with the database, altering tables to match models
 (async () => {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log("Database synced successfully.");
   } catch (error) {
     console.error("Unable to sync database:", error);

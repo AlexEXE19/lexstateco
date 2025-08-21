@@ -110,11 +110,11 @@ const createProperty = async (req, res) => {
 // Edit an existing property - not used yet, also subject for future update
 const editProperty = async (req, res) => {
   const { propertyId } = req.params;
-  const { title, price, imageUrl, description } = req.body;
+  const { title, price, location, description, size, distance } = req.body;
 
   try {
     const [updated] = await Property.update(
-      { title, price, imageUrl, description },
+      { title, price, location, description, size, distance },
       { where: { id: propertyId } }
     );
 
@@ -136,10 +136,10 @@ const editProperty = async (req, res) => {
 
 // Delete a property
 const deleteProperty = async (req, res) => {
-  const { id } = req.params;
+  const { propertyId } = req.params;
 
   try {
-    const deleted = await Property.destroy({ where: { id } });
+    const deleted = await Property.destroy({ where: { id: propertyId } });
 
     if (deleted === 0) {
       return res.status(404).json({ message: "Property not found" });

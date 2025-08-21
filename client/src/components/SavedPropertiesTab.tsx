@@ -44,7 +44,12 @@ const SavedPropertiesTab: React.FC = () => {
     <div>
       {savedProperties && savedProperties.length > 0 ? (
         <>
-          <h2 className="text-xl font-semibold mb-4">Your Saved Properties</h2>
+          <div className="flex justify-center">
+            <h2 className="text-xl font-semibold mb-4">
+              Your Saved Properties
+            </h2>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {savedProperties.map((property) => (
               <PropertyCard

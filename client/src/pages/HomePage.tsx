@@ -10,6 +10,8 @@ const HomePage: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [savedPropertiesIds, setSavedPropertiesIds] = useState<string[]>([]);
+  const [noOfPages, setNoOfPages] = useState<Number>(1);
+  const [propertiesOnPage, setPropertiesOnPage] = useState<number>(24);
 
   const [location, setLocation] = useState<string>("");
   const [minPrice, setMinPrice] = useState<string>("");
@@ -28,6 +30,7 @@ const HomePage: React.FC = () => {
             (property) => property.sellerId !== Number(currentUser.id)
           )
         );
+        setNoOfPages(Math.ceil(filteredProperties.length / propertiesOnPage));
       } catch (error) {
         console.log(error);
       }
@@ -84,62 +87,82 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">All Properties</h1>
+      <div className="flex flex-col gap-8 bg-[url('/homepage.jpg')] bg-cover bg-[center_top_13%] px-11 py-44">
+        <h1 className="text-4xl font-bold text-stone-100">
+          Let's find not just a house but a home!
+        </h1>
 
-      {/* Filters and Search Bar */}
-      <div className="flex flex-wrap items-center gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search by location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="border border-gray-300 p-2 rounded w-full sm:w-auto"
-        />
-
-        <input
-          type="number"
-          placeholder="Min Price"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-          className="border border-gray-300 p-2 rounded w-full sm:w-auto"
-        />
-
-        <input
-          type="number"
-          placeholder="Max Price"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-          className="border border-gray-300 p-2 rounded w-full sm:w-auto"
-        />
-
-        <select
-          value={proximity}
-          onChange={(e) => setProximity(e.target.value)}
-          className="border border-gray-300 p-2 rounded w-full sm:w-auto"
-        >
-          <option value="">Proximity to City Center</option>
-          <option value="City Center">City Center</option>
-          <option value="Around the Center">Around the Center</option>
-          <option value="Suburbs">Suburbs</option>
-        </select>
-
-        <button
-          onClick={handleSearch}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Search
-        </button>
+        <div className="relative max-w-[520px]">
+          <input
+            type="text"
+            placeholder="Enter the name of a city, town or even village!"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="border border-gray-300 text-xl w-full rounded-lg h-10 pr-20 pl-3 hover:border-black transition"
+          />
+          <button
+            onClick={handleSearch}
+            className="absolute right-1 top-1/2 -translate-y-1/2 bg-white px-4 py-1 rounded-r-lg hover:bg-stone-100 transition"
+          >
+            <div className="w-5 h-5 bg-[url('/search_icon.png')] bg-contain bg-no-repeat bg-center"></div>
+          </button>
+        </div>
       </div>
 
-      {/* Property Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {filteredProperties.map((property) => (
-          <PropertyCard
-            key={property.id}
-            property={property}
-            saved={savedPropertiesIds.includes(property.id)}
+      {/* <input
+            type="number"
+            placeholder="Min Price"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+            className="border border-gray-300 p-2 rounded w-full sm:w-auto"
           />
-        ))}
+
+          <input
+            type="number"
+            placeholder="Max Price"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            className="border border-gray-300 p-2 rounded w-full sm:w-auto"
+          />
+
+          <select
+            value={proximity}
+            onChange={(e) => setProximity(e.target.value)}
+            className="border border-gray-300 p-2 rounded w-full sm:w-auto"
+          >
+            <option value="">Proximity to City Center</option>
+            <option value="City Center">City Center</option>
+            <option value="Around the Center">Around the Center</option>
+            <option value="Suburbs">Suburbs</option>
+          </select> */}
+
+      {/* Seatch button */}
+
+      <div className="px-4 mt-4">
+        <div className="text-black text-3xl font-bold shadow-2 mt-10 mb-3">
+          You may be interested in...
+        </div>
+        <hr className="mb-10" />
+        {/* Property Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-5">
+          {filteredProperties.map((property) => (
+            <PropertyCard
+              key={property.id}
+              property={property}
+              saved={savedPropertiesIds.includes(property.id)}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="flex">
+        <div></div>
+        <label htmlFor="propsonpage">Properties on page: </label>
+        <select name="propsonpage">
+          <option value="24">24</option>
+          <option value="32">32</option>
+          <option value="48">48</option>
+          <option value="72">72</option>
+        </select>
       </div>
     </div>
   );

@@ -27,9 +27,9 @@ router.get("/location/:location/", getPropertiesByLocation);
 router.post("/", createProperty);
 
 // Route to edit a property by ID
-router.put("/:id/", editProperty);
+router.put("/:propertyId/", editProperty);
 
 // Route to delete a property by ID
-router.delete("/:id", deleteProperty);
+router.delete("/:propertyId", deleteProperty);
 
 module.exports = router;

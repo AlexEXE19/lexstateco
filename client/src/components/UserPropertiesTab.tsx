@@ -5,12 +5,19 @@ import axios from "axios";
 import PropertyCard from "./PropertyCard";
 import { Property } from "../types/types";
 import baseURL from "../config/baseUrl";
+import DeletePropertyModal from "../modals/DeletePropertyModal";
+import EditPropertyModal from "../modals/EditPropertyModal";
+import ViewPropertyModal from "../modals/ViewPropertyModal";
 
 // Tab that shows user's listed properties
 const UserPropertiesTab: React.FC = () => {
   const [userProperties, setUserProperties] = useState<Property[]>();
 
   const userId = useSelector((state: RootState) => state.user.id);
+  const isModalOpen = useSelector(
+    (state: RootState) => state.modal.isModalOpen
+  );
+  const modalType = useSelector((state: RootState) => state.modal.modalType);
 
   useEffect(() => {
     const fetchMyProperties = async () => {
@@ -52,6 +59,14 @@ const UserPropertiesTab: React.FC = () => {
       ) : (
         <h2 className="text-xl font-semibold mb-4">Let's list a property!</h2>
       )}
+      {isModalOpen &&
+        (modalType === "delete" ? (
+          <DeletePropertyModal />
+        ) : modalType === "edit" ? (
+          <EditPropertyModal />
+        ) : modalType === "view" ? (
+          <ViewPropertyModal />
+        ) : null)}
     </div>
   );
 };

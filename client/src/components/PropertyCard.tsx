@@ -3,7 +3,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Property } from "../types/types";
 import { RootState } from "../state/store";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setPropertyIdToBeChanged,
+  toggleModal,
+  setModalType,
+} from "../state/modal/modalSlice";
 import baseURL from "../config/baseUrl";
 
 // Property card holds the information about a property
@@ -11,18 +16,39 @@ const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
   property,
   saved,
 }) => {
+  const dispatch = useDispatch();
+
   const [sellerName, setSellerName] = useState<string>("");
   const [sellerPhone, setSellerPhone] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [isSaved, setIsSaved] = useState<boolean>(saved);
   const [deleted, setDeleted] = useState<boolean>(false);
   const currentUser = useSelector((state: RootState) => state.user);
+  const isModalOpen = useSelector(
+    (state: RootState) => state.modal.isModalOpen
+  );
 
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsSaved(saved);
   }, [saved]);
+
+  useEffect(() => {
+    const checkIfPropertyIsDeleted = async () => {
+      try {
+        await axios.get(`${baseURL}/properties/${property.id}`);
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          setDeleted(true);
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      }
+    };
+
+    checkIfPropertyIsDeleted();
+  }, [isModalOpen]);
 
   useEffect(() => {
     const fetchSellerInfo = async () => {
@@ -71,14 +97,26 @@ const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
     }
   };
 
-  const handleDeleteClick = async () => {
-    try {
-      await axios.delete(`${baseURL}/properties/${property.id}`);
-    } catch (error) {
-      console.error("Error deleting property: ", error);
-      return;
-    }
-    setDeleted(true);
+  const handleDeleteClick = () => {
+    dispatch(setPropertyIdToBeChanged(Number(property.id)));
+    dispatch(setModalType("delete"));
+    dispatch(toggleModal());
+  };
+
+  // const handleDeleteClick = async () => {
+  //   try {
+  //     await axios.delete(`${baseURL}/properties/${property.id}`);
+  //   } catch (error) {
+  //     console.error("Error deleting property: ", error);
+  //     return;
+  //   }
+  //   setDeleted(true);
+  // };
+
+  const handleEditClick = async () => {
+    dispatch(setPropertyIdToBeChanged(Number(property.id)));
+    dispatch(setModalType("edit"));
+    dispatch(toggleModal());
   };
 
   if (loading) {
@@ -90,7 +128,7 @@ const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
   }
 
   return (
-    <div className="border p-4 rounded-lg shadow-lg">
+    <div className="border p-4 rounded-lg shadow-lg hover:scale-105 hover:bg-stone-100 hover:border-black transition-all">
       <img
         src="/public/default_house.jpg"
         alt="Property"
@@ -106,16 +144,24 @@ const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
         Agent's name and phone: {sellerName} - {sellerPhone}
       </p>
       {String(property.sellerId) === String(currentUser.id) ? (
-        <button
-          onClick={handleDeleteClick}
-          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg"
-        >
-          Delete Property
-        </button>
+        <div className="flex justify-between">
+          <button
+            onClick={handleEditClick}
+            className="mt-2 px-4 py-2 bg-amber-600 text-white text-lg font-bold rounded shadow-2 shadow-md border border-amber-700 rounded hover:bg-amber-700 transition-all hover:border-amber-500 transition-all"
+          >
+            Edit Property
+          </button>
+          <button
+            onClick={handleDeleteClick}
+            className="mt-2 px-4 py-2 bg-red-600 text-white text-lg font-bold rounded shadow-2 shadow-md border border-red-700 rounded hover:bg-red-700 transition-all hover:border-red-500 transition-all"
+          >
+            Delete Property
+          </button>
+        </div>
       ) : (
         <button
           onClick={handleSaveClick}
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+          className="mt-2 px-4 py-2 bg-blue-600 text-white text-lg font-bold rounded shadow-2 shadow-md border border-blue-700 rounded hover:bg-blue-700 transition-all hover:border-blue-600 transition-all"
         >
           {currentUser.id === "-1"
             ? "Register to save this property!"
