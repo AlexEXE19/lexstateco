@@ -47,9 +47,9 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen ">
       <div className="w-1/2 flex justify-center items-center">
-        <div className="max-w-sm p-10 rounded-2xl border-blue-600 hover:border-2 hover:border-blue-600 hover:rounded-2xl hover:bg-white duration-75">
+        <div className="max-w-sm p-10 rounded-2xl border-2 border-white hover:border-2 hover:border-blue-600 hover:rounded-2xl hover:bg-white duration-75">
           <h2 className="text-3xl font-bold text-blue-600 mb-4">Login</h2>
           <form onSubmit={handleLogin}>
             <input

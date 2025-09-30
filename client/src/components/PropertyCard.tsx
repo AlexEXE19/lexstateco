@@ -128,7 +128,7 @@ const PropertyCard: React.FC<{ property: Property; saved: boolean }> = ({
   }
 
   return (
-    <div className="border p-4 rounded-lg shadow-lg hover:scale-105 hover:bg-stone-100 hover:border-black transition-all">
+    <div className="border p-4 rounded-lg shadow-lg hover:scale-105 hover:bg-stone-100 hover:border-black transition-all bg-white">
       <img
         src="/public/default_house.jpg"
         alt="Property"

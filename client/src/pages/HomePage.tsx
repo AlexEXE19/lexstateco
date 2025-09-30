@@ -86,26 +86,34 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div>
-      <div className="flex flex-col gap-8 bg-[url('/homepage.jpg')] bg-cover bg-[center_top_13%] px-11 py-44">
-        <h1 className="text-4xl font-bold text-stone-100">
-          Let's find not just a house but a home!
-        </h1>
+    <div className="bg-white">
+      <div className="bg-[url('/homepage.jpg')] bg-cover bg-[center_top_13%] px-11 pt-32 pb-72 relative">
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-col gap-8 mx-3">
+            <h1 className="text-4xl font-bold text-stone-100 pt-10">
+              Let's find not just a house but a home!
+            </h1>
 
-        <div className="relative max-w-[520px]">
-          <input
-            type="text"
-            placeholder="Enter the name of a city, town or even village!"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="border border-gray-300 text-xl w-full rounded-lg h-10 pr-20 pl-3 hover:border-black transition"
-          />
-          <button
-            onClick={handleSearch}
-            className="absolute right-1 top-1/2 -translate-y-1/2 bg-white px-4 py-1 rounded-r-lg hover:bg-stone-100 transition"
-          >
-            <div className="w-5 h-5 bg-[url('/search_icon.png')] bg-contain bg-no-repeat bg-center"></div>
-          </button>
+            <div className="relative max-w-[520px]">
+              <input
+                type="text"
+                placeholder="Enter the name of a city, town or even village!"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="border border-gray-300 text-xl w-full rounded-lg h-10 pr-20 pl-3 hover:border-black transition"
+              />
+              <button
+                onClick={handleSearch}
+                className="absolute right-1 top-1/2 -translate-y-1/2 bg-white px-4 py-1 rounded-r-lg hover:bg-stone-100 transition"
+              >
+                <div className="w-5 h-5 bg-[url('/search_icon.png')] bg-contain bg-no-repeat bg-center"></div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-white p-5 bg-blue-600 text-4xl font-bold shadow-2 bg-opacity-80 absolute bottom-0 left-0 right-0">
+          You may be interested in...
         </div>
       </div>
 
@@ -138,13 +146,10 @@ const HomePage: React.FC = () => {
 
       {/* Seatch button */}
 
-      <div className="px-4 mt-4">
-        <div className="text-black text-3xl font-bold shadow-2 mt-10 mb-3">
-          You may be interested in...
-        </div>
+      <div className="px-4">
         <hr className="mb-10" />
         {/* Property Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-5">
+        <div className="p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-5 bg-blue-100 border rounded-md">
           {filteredProperties.map((property) => (
             <PropertyCard
               key={property.id}

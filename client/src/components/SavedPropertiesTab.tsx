@@ -5,6 +5,8 @@ import axios from "axios";
 import PropertyCard from "./PropertyCard";
 import { Property } from "../types/types";
 import baseURL from "../config/baseUrl";
+import { HousePlus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Tab showing user's saved properties
 const SavedPropertiesTab: React.FC = () => {
@@ -50,7 +52,7 @@ const SavedPropertiesTab: React.FC = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-5 bg-blue-100 border-2 rounded-md">
             {savedProperties.map((property) => (
               <PropertyCard
                 key={property.id}
@@ -58,6 +60,16 @@ const SavedPropertiesTab: React.FC = () => {
                 saved={true}
               />
             ))}
+            {/* <Link to="/" className="text-white text-3xl font-bold">
+          LexEstateCo
+        </Link> */}
+            <Link
+              to="/"
+              className="border p-4 rounded-lg shadow-lg hover:scale-105 hover:bg-stone-100 hover:border-black transition-all
+             bg-white flex flex-col items-center justify-center cursor-pointer"
+            >
+              <HousePlus size={60} />
+            </Link>
           </div>
         </>
       ) : (

@@ -26,46 +26,38 @@ const MyAccountPage: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-semibold mb-4 pt-28">
+      {/* <h1 className="text-3xl font-semibold mb-4 pt-28">
         Welcome back, {firstName}!
-      </h1>
+      </h1> */}
       <hr />
-      <div className="flex gap-4 my-6">
+      <div className="p-5 pb-0 bg-blue-100">
         <button
-          className={`px-4 py-2 ${
-            activeTab === "saved"
-              ? "bg-blue-600 text-white text-lg font-bold rounded shadow-2 shadow-md border border-blue-700 rounded hover:bg-blue-700 transition-all hover:border-blue-600 transition-all"
-              : "bg-gray-300 text-gray-800 text-lg font-bold rounded shadow-2 shadow-md border border-black rounded hover:bg-gray-700 hover:text-white transition-all hover:border-black transition-all"
+          className={`px-4 py-2 bg-blue-100 text-blue-600 text-xl font-bold border-b-2 hover:border-b-2 hover:border-b-blue-600 transition-all${
+            activeTab === "saved" ? "border-b-blue-600" : "border-b-blue-100"
           }`}
           onClick={() => setActiveTab("saved")}
         >
           Saved Properties
         </button>
         <button
-          className={`px-4 py-2 ${
-            activeTab === "myProperties"
-              ? "bg-blue-600 text-white text-lg font-bold rounded shadow-2 shadow-md border border-blue-700 rounded hover:bg-blue-700 transition-all hover:border-blue-600 transition-all"
-              : "bg-gray-300 text-gray-800 text-lg font-bold rounded shadow-2 shadow-md border border-black rounded hover:bg-gray-700 hover:text-white transition-all hover:border-black transition-all"
+          className={`px-4 py-2 bg-blue-100 text-blue-600 text-xl font-bold border-b-2 hover:border-b-2 hover:border-b-blue-600 transition-all${
+            activeTab === "saved" ? "border-b-blue-600" : "border-b-blue-100"
           }`}
           onClick={() => setActiveTab("myProperties")}
         >
           My Properties
         </button>
         <button
-          className={`px-4 py-2 ${
-            activeTab === "list"
-              ? "bg-blue-600 text-white text-lg font-bold rounded shadow-2 shadow-md border border-blue-700 rounded hover:bg-blue-700 transition-all hover:border-blue-600 transition-all"
-              : "bg-gray-300 text-gray-800 text-lg font-bold rounded shadow-2 shadow-md border border-black rounded hover:bg-gray-700 hover:text-white transition-all hover:border-black transition-all"
+          className={`px-4 py-2 bg-blue-100 text-blue-600 text-xl font-bold border-b-2 hover:border-b-2 hover:border-b-blue-600 transition-all${
+            activeTab === "saved" ? "border-b-blue-600" : "border-b-blue-100"
           }`}
           onClick={() => setActiveTab("list")}
         >
           List a Property
         </button>
         <button
-          className={`px-4 py-2 ${
-            activeTab === "audience"
-              ? "bg-blue-600 text-white text-lg font-bold rounded shadow-2 shadow-md border border-blue-700 rounded hover:bg-blue-700 transition-all hover:border-blue-600 transition-all"
-              : "bg-gray-300 text-gray-800 text-lg font-bold rounded shadow-2 shadow-md border border-black rounded hover:bg-gray-700 hover:text-white transition-all hover:border-black transition-all"
+          className={`px-4 py-2 bg-blue-100 text-blue-600 text-xl font-bold border-b-2 hover:border-b-2 hover:border-b-blue-600 transition-all${
+            activeTab === "saved" ? "border-b-blue-600" : "border-b-blue-100"
           }`}
           onClick={() => setActiveTab("audience")}
         >
@@ -73,7 +65,7 @@ const MyAccountPage: React.FC = () => {
         </button>
       </div>
       <hr />
-      <div>
+      <div className="px-10 min-h-screen">
         {activeTab === "saved" && <SavedPropertiesTab />}
 
         {activeTab === "myProperties" && <UserPropertiesTab />}
