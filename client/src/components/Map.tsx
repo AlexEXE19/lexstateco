@@ -3,7 +3,6 @@ import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
 
-// This deletes the broken reference and points to the correct images in node_modules
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -18,13 +17,12 @@ const Map = () => (
     center={[51.505, -0.09]}
     zoom={13}
     scrollWheelZoom={false}
-    style={{ height: "100%", width: "100%" }} // Add this!
+    style={{ height: "100%", width: "100%" }}
   >
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     />
-    {/* ... rest of your code */}
   </MapContainer>
 );
 
