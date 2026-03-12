@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { User } from "../types/types";
 import baseURL from "../config/baseUrl";
-import axios from "axios";
 
 const MyAudienceTab: React.FC = () => {
   const [potentialClients, setPotentialClients] = useState<User[]>();
@@ -14,7 +14,11 @@ const MyAudienceTab: React.FC = () => {
     fetchPotentialClients();
   }, []);
 
-  return <div></div>;
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-200">
+      Audience insights coming soon.
+    </div>
+  );
 };
 
 export default MyAudienceTab;

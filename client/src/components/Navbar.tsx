@@ -13,25 +13,33 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-blue-600 p-3 py-4 w-full sticky z-10">
-      <div className="container mx-auto flex justify-between items-center pl-5 pr-5">
-        <Link to="/" className="text-white text-3xl font-bold">
-          LexEstateCo
+    <nav className="sticky top-0 z-20 w-full bg-gradient-to-r from-slate-950 via-slate-900 to-blue-900/90 text-white shadow-2xl shadow-black/20 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
+        <Link to="/" className="flex items-center gap-3 text-white">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-lg font-black tracking-tight ring-1 ring-white/15">
+            LE
+          </span>
+          <div className="flex flex-col leading-tight">
+            <span className="text-lg font-semibold">LexEstateCo</span>
+            <span className="text-xs text-slate-200">
+              Homes without the noise
+            </span>
+          </div>
         </Link>
 
-        <div className="space-x-4">
+        <div className="flex items-center gap-3">
           {userId !== "-1" ? (
             <>
               <Link
                 to="/account"
-                className="text-center text-lg border-2 border-blue-600 font-bold text-white w-32 px-4 py-2 flex-1 hover:border-white rounded-md transition"
+                className="rounded-xl px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/10"
               >
                 My Account
               </Link>
               <Link to="/">
                 <button
                   onClick={handleClick}
-                  className="text-center text-lg border-2 border-blue-600 font-bold text-white w-32 px-4 py-2 flex-1 hover:border-white rounded-md transition"
+                  className="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/20"
                 >
                   Logout
                 </button>
@@ -39,20 +47,18 @@ const Navbar: React.FC = () => {
             </>
           ) : (
             <>
-              <div className="flex w-full">
-                <Link
-                  to="/login"
-                  className="text-center text-lg border-2 border-blue-600 font-bold text-white w-32 px-4 py-2 flex-1 hover:border-white rounded-md transition"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="text-center text-lg border-2 border-blue-600 font-bold text-white w-32 px-4 py-2 flex-1 hover:border-white rounded-md transition"
-                >
-                  Register
-                </Link>
-              </div>
+              <Link
+                to="/login"
+                className="rounded-xl px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/10"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-[1px] hover:bg-blue-400"
+              >
+                Register
+              </Link>
             </>
           )}
         </div>

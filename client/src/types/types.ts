@@ -23,3 +23,10 @@ export interface Modal {
   propertyIdToBeChanged: number;
   modalType: string;
 }
+
+export interface Filter {
+  location: string;
+  minPrice: string;
+  maxPrice: string;
+  proximity: string;
+}

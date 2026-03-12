@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import MyAccountPage from "./pages/MyAccountPage";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import PropertiesPage from "./pages/PropertiesPage";
 
 const App: React.FC = () => {
   return (
@@ -13,11 +14,12 @@ const App: React.FC = () => {
 
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/properties" element={<PropertiesPage />}></Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/account" element={<MyAccountPage />} />
       </Routes>
-      <hr />
+      {/* <hr /> */}
       <Footer />
     </Router>
   );

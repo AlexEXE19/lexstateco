@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../state/store";
 import axios from "axios";
 import PropertyCard from "./PropertyCard";
 import { Property } from "../types/types";
+import { RootState } from "../state/store";
 import baseURL from "../config/baseUrl";
 import DeletePropertyModal from "../modals/DeletePropertyModal";
 import EditPropertyModal from "../modals/EditPropertyModal";
@@ -15,7 +15,7 @@ const UserPropertiesTab: React.FC = () => {
 
   const userId = useSelector((state: RootState) => state.user.id);
   const isModalOpen = useSelector(
-    (state: RootState) => state.modal.isModalOpen
+    (state: RootState) => state.modal.isModalOpen,
   );
   const modalType = useSelector((state: RootState) => state.modal.modalType);
 
@@ -23,7 +23,7 @@ const UserPropertiesTab: React.FC = () => {
     const fetchMyProperties = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}/properties/seller-id/${userId}`
+          `${baseURL}/properties/seller-id/${userId}`,
         );
         setUserProperties(response.data);
       } catch (error) {
@@ -39,14 +39,24 @@ const UserPropertiesTab: React.FC = () => {
       }
     };
     fetchMyProperties();
-  }, []);
+  }, [userId]);
 
   return (
-    <div>
+    <div className="space-y-6">
       {userProperties && userProperties.length > 0 ? (
         <>
-          <h2 className="text-xl font-semibold mb-4">Your Properties</h2>
-          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-blue-100 border-2 rounded-md ">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+                My listings
+              </p>
+              <h2 className="text-2xl font-semibold text-white">
+                Your Properties
+              </h2>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
             {userProperties.map((userProperty) => (
               <PropertyCard
                 key={userProperty.id}
@@ -57,7 +67,9 @@ const UserPropertiesTab: React.FC = () => {
           </div>
         </>
       ) : (
-        <h2 className="text-xl font-semibold mb-4">Let's list a property!</h2>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-slate-200">
+          Let's list a property!
+        </div>
       )}
       {isModalOpen &&
         (modalType === "delete" ? (
