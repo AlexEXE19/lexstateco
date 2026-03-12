@@ -1,20 +1,12 @@
-# Folosim Node ca imagine de bază
-FROM node:20
-
-# Setăm directorul de lucru
+FROM node:20-alpine
 WORKDIR /app
 
-# Copiem package.json și package-lock.json
 COPY package*.json ./
+RUN npm install --omit=dev --legacy-peer-deps
 
-# Instalăm dependențele
-RUN npm install
-
-# Copiem tot codul sursă
 COPY . .
 
-# Expunem portul pe care rulează backend-ul
+ENV NODE_ENV=production
 EXPOSE 5000
 
-# Comanda pentru a porni backend-ul
-CMD ["npm", "run", "dev", "--prefix", "."]
+CMD ["node", "server.js"]
