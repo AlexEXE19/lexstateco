@@ -30,5 +30,5 @@ export interface Filter {
   location: string;
   minPrice: string;
   maxPrice: string;
-  proximity: string;
+  neighborhood: string;
 }

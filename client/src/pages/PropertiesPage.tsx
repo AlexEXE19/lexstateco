@@ -17,7 +17,7 @@ const PropertiesPage: React.FC = () => {
   const [location, setLocation] = useState<string>("");
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
-  const [proximity, setProximity] = useState<string>("");
+  const [neighborhood, setNeighborhood] = useState<string>("");
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(
     null,
   );
@@ -29,8 +29,8 @@ const PropertiesPage: React.FC = () => {
     useProperties(currentUser);
 
   const filters: Filter = useMemo(
-    () => ({ location, minPrice, maxPrice, proximity }),
-    [location, minPrice, maxPrice, proximity],
+    () => ({ location, minPrice, maxPrice, neighborhood }),
+    [location, minPrice, maxPrice, neighborhood],
   );
 
   const onFilterSubmit = (e?: React.FormEvent) => {
@@ -56,8 +56,8 @@ const PropertiesPage: React.FC = () => {
               Explore properties with clean, focused filters.
             </h1>
             <p className="max-w-2xl text-slate-200">
-              Dial in by price, location, or proximity. No clutter—just listings
-              ready to tour.
+              Dial in by price, location, or neighborhood. No clutter—just
+              listings ready to tour.
             </p>
           </div>
 
@@ -91,7 +91,7 @@ const PropertiesPage: React.FC = () => {
               Location
               <input
                 type="text"
-                placeholder="City or neighborhood"
+                placeholder="City or town (even village)"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -99,25 +99,14 @@ const PropertiesPage: React.FC = () => {
             </label>
 
             <label className="flex flex-col gap-2 text-sm text-slate-200">
-              Proximity
-              <select
-                value={proximity}
-                onChange={(e) => setProximity(e.target.value)}
-                className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              >
-                <option className="text-slate-900" value="">
-                  Any
-                </option>
-                <option className="text-slate-900" value="City Center">
-                  City Center
-                </option>
-                <option className="text-slate-900" value="Around the Center">
-                  Around the Center
-                </option>
-                <option className="text-slate-900" value="Suburbs">
-                  Suburbs
-                </option>
-              </select>
+              Neighborhood
+              <input
+                type="text"
+                placeholder="e.g. Drumul Taberei"
+                value={neighborhood}
+                onChange={(e) => setNeighborhood(e.target.value)}
+                className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
             </label>
 
             <div className="flex items-end">

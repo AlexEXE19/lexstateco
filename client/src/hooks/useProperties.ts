@@ -49,6 +49,13 @@ export const useProperties = (currentUser: any) => {
     if (filters.minPrice) {
       filtered = filtered.filter((p) => p.price >= parseInt(filters.minPrice));
     }
+    if (filters.neighborhood) {
+      filtered = filtered.filter((p) =>
+        p.neighborhood
+          .toLowerCase()
+          .includes(filters.neighborhood.toLowerCase()),
+      );
+    }
 
     setFilteredProperties(filtered);
   };

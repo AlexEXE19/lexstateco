@@ -8,7 +8,6 @@ import baseURL from "../config/baseUrl";
 import DeletePropertyModal from "../modals/DeletePropertyModal";
 import EditPropertyModal from "../modals/EditPropertyModal";
 
-// Tab that shows user's listed properties
 const UserPropertiesTab: React.FC = () => {
   const [userProperties, setUserProperties] = useState<Property[]>();
 
@@ -75,9 +74,7 @@ const UserPropertiesTab: React.FC = () => {
           <DeletePropertyModal />
         ) : modalType === "edit" ? (
           <EditPropertyModal />
-        ) : (
-          modalType === "view" && null
-        ))}
+        ) : null)}
     </div>
   );
 };
