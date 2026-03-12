@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Home, MapPin, Ruler, Tag, Upload } from "lucide-react";
 import { RootState } from "../state/store";
 import baseURL from "../config/baseUrl";
-import { getSuggestions } from "../utils/getCity";
+import { useLocationSuggestions } from "../hooks/useLocationSuggestions";
 
 // Tab for listing a property
 const PropertyListingTab: React.FC = () => {
@@ -29,15 +29,7 @@ const PropertyListingTab: React.FC = () => {
   const [query, setQuery] = useState<string>();
   const [suggestions, setSuggestions] = useState<any[]>();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (query !== undefined) {
-        getSuggestions(query, setSuggestions);
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [query]);
+  useLocationSuggestions(query, setSuggestions);
 
   const closeStatusModal = () => {
     setStatusModal((prev) => ({ ...prev, open: false }));
@@ -177,8 +169,8 @@ const PropertyListingTab: React.FC = () => {
                 required
               />
               <datalist id="city-suggestions">
-                {suggestions?.map((s) => (
-                  <option key={s.place_id} value={s.display_name} />
+                {suggestions?.map((s, index) => (
+                  <option key={index} value={s} />
                 ))}
               </datalist>
             </div>

@@ -154,7 +154,6 @@ const PropertiesPage: React.FC = () => {
                     Map preview
                   </p>
                   <div className="mt-4 h-[240px] w-full rounded-2xl bg-slate-900/80 ring-1 ring-white/10 lg:h-full">
-                    {/* TODO: Embed Leaflet / OSM map here */}
                     <div
                       id="map"
                       className="flex h-full items-center justify-center text-slate-400"

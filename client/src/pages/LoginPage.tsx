@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { logInUser } from "../state/user/userSlice";
 import { useDispatch } from "react-redux";
+import axios from "axios";
 import { Lock, Mail } from "lucide-react";
 import baseURL from "../config/baseUrl";
 import { setAuthToken } from "../utils/auth";
+import { logInUser } from "../state/user/userSlice";
+import { AppDispatch } from "../state/store";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const dispatch = useDispatch();
-
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +30,12 @@ const LoginPage: React.FC = () => {
         setAuthToken(token);
         dispatch(
           logInUser({
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
+            id: String(user.id ?? "-1"),
+            firstName: user.firstName || "",
+            lastName: user.lastName || "",
+            email: user.email || "",
+            phone: user.phone || "",
             password: "",
-            phone: user.phone,
           }),
         );
         navigate("/account");

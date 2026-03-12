@@ -10,7 +10,6 @@ export const useProperties = (currentUser: any) => {
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch inițial
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -25,7 +24,6 @@ export const useProperties = (currentUser: any) => {
         const allProps = propRes.data;
         setProperties(allProps);
 
-        // Filtrare inițială (include și proprietățile proprii)
         setFilteredProperties(allProps);
 
         if (savedRes.data) {
@@ -40,7 +38,6 @@ export const useProperties = (currentUser: any) => {
     loadData();
   }, [currentUser.id]);
 
-  // Funcția de căutare/filtrare
   const applyFilters = (filters: Filter) => {
     let filtered = [...properties];
 
@@ -52,7 +49,6 @@ export const useProperties = (currentUser: any) => {
     if (filters.minPrice) {
       filtered = filtered.filter((p) => p.price >= parseInt(filters.minPrice));
     }
-    // ... restul filtrelor
 
     setFilteredProperties(filtered);
   };

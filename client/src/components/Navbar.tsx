@@ -4,13 +4,11 @@ import { RootState } from "../state/store";
 import { logOutUser } from "../state/user/userSlice";
 import { clearAuthToken } from "../utils/auth";
 
-// Navbar buttons route the user into his account or homepage
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const userId = useSelector((state: RootState) => state.user.id);
 
   const handleClick = () => {
-    clearAuthToken();
     dispatch(logOutUser());
   };
 
@@ -38,7 +36,7 @@ const Navbar: React.FC = () => {
               >
                 My Account
               </Link>
-              <Link to="/">
+              <Link to="/home">
                 <button
                   onClick={handleClick}
                   className="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/20"

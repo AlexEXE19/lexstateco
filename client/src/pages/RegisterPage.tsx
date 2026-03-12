@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Lock, Mail, Phone, User } from "lucide-react";
 import baseURL from "../config/baseUrl";
-import { useDispatch } from "react-redux";
-import { logInUser } from "../state/user/userSlice";
 import { setAuthToken } from "../utils/auth";
 
 const RegisterPage: React.FC = () => {
@@ -14,7 +12,6 @@ const RegisterPage: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,16 +34,7 @@ const RegisterPage: React.FC = () => {
       ) {
         const { token, user } = response.data;
         setAuthToken(token);
-        dispatch(
-          logInUser({
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            password: "",
-            phone: user.phone,
-          }),
-        );
+
         navigate("/account");
       } else {
         alert("Error registering user, please try again.");

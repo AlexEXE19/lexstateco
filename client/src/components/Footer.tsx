@@ -41,9 +41,9 @@ const Footer: React.FC = () => {
               <span>
                 LexEstate HQ
                 <br />
-                123 Market Street
+                123 Creativity Street
                 <br />
-                Seattle, WA
+                Bucharest, RO
               </span>
             </div>
           </div>
@@ -54,11 +54,11 @@ const Footer: React.FC = () => {
             </p>
             <div className="flex items-center gap-3 text-sm text-slate-200">
               <Phone size={16} className="text-blue-200" />
-              <span>(555) 123-9876</span>
+              <span>(123) 456-7890</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-200">
               <Mail size={16} className="text-blue-200" />
-              <span>hello@lexestate.co</span>
+              <span>creativity@lexestate.xyz</span>
             </div>
           </div>
 

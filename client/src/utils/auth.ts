@@ -48,3 +48,11 @@ export const decodeUserFromToken = (token: string): User | null => {
     return null;
   }
 };
+
+export const getCurrentUser = (): User | null => {
+  const token = getStoredToken();
+  if (!token) return null;
+
+  const user = decodeUserFromToken(token);
+  return user;
+};

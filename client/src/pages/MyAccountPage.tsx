@@ -1,25 +1,31 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../state/store";
 import SavedPropertiesTab from "../components/SavedPropertiesTab";
 import UserPropertiesTab from "../components/UserPropertiesTab";
 import PropertyListingTab from "../components/PropertyListingTab";
 import MyAudienceTab from "../components/MyAudienceTab";
+import { getCurrentUser } from "../utils/auth";
+import { User } from "../types/types";
+import { setTab } from "../state/tab/tabSlice";
 
 const MyAccountPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("saved");
+  const activeTab = useSelector((state: RootState) => state.tab).type;
+  const dispatch = useDispatch();
 
   const firstName = useSelector((state: RootState) => state.user.firstName);
   const userId = useSelector((state: RootState) => state.user.id);
 
   const navigate = useNavigate();
 
+  const [currentUser] = useState<User | null>(getCurrentUser());
+
   useEffect(() => {
-    if (userId === "-1") {
-      navigate("/");
+    if (currentUser === null) {
+      navigate("/home");
     }
-  }, [userId, navigate]);
+  }, [currentUser, navigate]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -32,7 +38,8 @@ const MyAccountPage: React.FC = () => {
             Welcome back{firstName ? `, ${firstName}` : ""}.
           </h1>
           <p className="max-w-2xl text-slate-200">
-            Manage your saved homes, your listings, and your audience in one calm workspace.
+            Manage your saved homes, your listings, and your audience in one
+            calm workspace.
           </p>
         </div>
       </section>
@@ -44,11 +51,12 @@ const MyAccountPage: React.FC = () => {
               { key: "saved", label: "Saved" },
               { key: "myProperties", label: "My Properties" },
               { key: "list", label: "List a Property" },
+              { key: "requests", label: "My Requests" },
               { key: "audience", label: "My Audience" },
             ].map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => dispatch(setTab(tab.key))}
                 className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
                   activeTab === tab.key
                     ? "bg-blue-500 text-white shadow-lg shadow-blue-500/30"
