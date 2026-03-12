@@ -47,7 +47,7 @@ VITE_API_HOST=http://localhost
 VITE_API_PORT=5000
 ```
 
-> The frontend builds its API base URL from VITE_API_HOST and VITE_API_PORT (see [client/src/config/baseUrl.ts](client/src/config/baseUrl.ts#L1-L3)).
+> The frontend builds its API base URL from VITE_API_HOST and VITE_API_PORT (see [client/src/config/baseUrl.ts](client/src/config/baseUrl.ts)).
 
 ### Quick Start (Development)
 
@@ -114,3 +114,14 @@ The root dev script runs both servers concurrently (API on PORT, Vite on 5173 by
 - MySQL tables are auto-synced on server start via Sequelize sync (see [server/server.js](server/server.js#L62-L74)). Ensure the configured database exists and the DB user has create/alter rights.
 - The property model marks image_data as required, but the create endpoint does not yet upload images; set a database default or relax the column if you do not store images.
 - Docs generation: `npm run docs` (root) to generate TypeDoc output for the server, or `npm run docs --prefix server` for JSDoc docs.
+
+### Docker / Swarm
+
+- Images: `lexstate_client:latest` (static SPA via Nginx), `lexstate_server:latest` (API), `mysql:8.0`.
+- Stack file: [docker-stack.yml](docker-stack.yml) defines services, networks, and MySQL volume (`mysql_data`).
+- Build locally before deploy (swarm won’t build):
+  - `docker build -t lexstate_server:latest ./server`
+  - `docker build -t lexstate_client:latest ./client`
+- Deploy: `docker stack deploy -c docker-stack.yml lexstate`
+- DB data persists via named volume; removing it will recreate schema on next deploy.
+- Known issue: If client API env vars are missing/mis-set at build time, the SPA will call port 80 and get 405 from Nginx. Set `VITE_API_HOST` to the reachable API host (e.g., `http://<node-ip>`) and `VITE_API_PORT=5000` when building the client image.
