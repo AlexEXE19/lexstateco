@@ -1,0 +1,63 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-change_me}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-lexstate}
+      MYSQL_USER: ${MYSQL_USER:-lexuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-change_me}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - backend
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+
+  server:
+    build: ./server
+    environment:
+      NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${MYSQL_USER:-lexuser}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-change_me}
+      DB_NAME: ${MYSQL_DATABASE:-lexstate}
+      JWT_SECRET: ${JWT_SECRET:-replace_me}
+    depends_on:
+      - db
+    networks:
+      - backend
+      - frontend
+    ports:
+      - "5000:5000"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  client:
+    build: ./client
+    environment:
+      VITE_API_HOST: http://server:5000
+      VITE_API_PORT: ""
+    depends_on:
+      - server
+    networks:
+      - frontend
+    ports:
+      - "80:80"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  mysql_data:
+
+networks:
+  backend:
+  frontend:
