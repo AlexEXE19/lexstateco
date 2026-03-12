@@ -1,6 +1,17 @@
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
 
+// Get all users (used by MyAudienceTab)
+const getAllUsers = async (_req, res) => {
+  try {
+    const users = await User.findAll();
+    res.json(users);
+  } catch (err) {
+    console.error("Error getting users: ", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // Get user by ID
 const getUserById = async (req, res) => {
   const { id } = req.params;
@@ -19,9 +30,13 @@ const getUserById = async (req, res) => {
   }
 };
 
-// Get user by his email - not used yet, subject to removal
+// Get user by email (query param)
 const getUserByEmail = async (req, res) => {
-  const { email } = req.body;
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email query param is required" });
+  }
 
   try {
     const user = await User.findOne({ where: { email } });
@@ -114,6 +129,7 @@ const updateUserPassword = async (req, res) => {
 };
 
 module.exports = {
+  getAllUsers,
   getUserById,
   getUserByEmail,
   authenticateUser,

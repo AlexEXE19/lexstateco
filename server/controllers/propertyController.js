@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const Property = require("../models/Property"); // Import the Sequelize model
 
 // Get all properties
@@ -12,7 +14,6 @@ const getAllProperties = async (req, res) => {
       .json({ message: "An error occurred while fetching properties." });
   }
 };
-
 // Get a property by its ID
 const getPropertyById = async (req, res) => {
   const { id } = req.params;
@@ -81,18 +82,29 @@ const getPropertyBySellerId = async (req, res) => {
 
 // Create a new property
 const createProperty = async (req, res) => {
-  const { title, price, location, description, size, distance, sellerId } =
-    req.body;
+  const {
+    title,
+    price,
+    location,
+    neighborhood,
+    zipCode,
+    description,
+    size,
+    imageRefs = [],
+    sellerId,
+  } = req.body;
 
   try {
     const property = await Property.create({
       title,
       price,
       location,
+      neighborhood,
+      zip_code: zipCode,
       description,
       size,
-      distance,
-      sellerId,
+      image_refs: imageRefs,
+      seller_id: sellerId,
     });
 
     res.status(201).json({
@@ -110,13 +122,35 @@ const createProperty = async (req, res) => {
 // Edit an existing property - not used yet, also subject for future update
 const editProperty = async (req, res) => {
   const { propertyId } = req.params;
-  const { title, price, location, description, size, distance } = req.body;
+  const {
+    title,
+    price,
+    location,
+    neighborhood,
+    zipCode,
+    description,
+    size,
+    imageRefs,
+  } = req.body;
 
   try {
-    const [updated] = await Property.update(
-      { title, price, location, description, size, distance },
-      { where: { id: propertyId } }
-    );
+    const updatedFields = {
+      title,
+      price,
+      location,
+      neighborhood,
+      zip_code: zipCode,
+      description,
+      size,
+    };
+
+    if (imageRefs !== undefined) {
+      updatedFields.image_refs = imageRefs;
+    }
+
+    const [updated] = await Property.update(updatedFields, {
+      where: { id: propertyId },
+    });
 
     if (updated === 0) {
       return res.status(404).json({ message: "Property not found" });
@@ -154,6 +188,41 @@ const deleteProperty = async (req, res) => {
   }
 };
 
+// Upload images for a property (max handled by multer in route)
+const uploadPropertyImages = async (req, res) => {
+  const { propertyId } = req.params;
+
+  try {
+    const property = await Property.findByPk(propertyId);
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    const uploadedPaths = (req.files || []).map((file) => {
+      // store relative path for frontend consumption
+      const relative = path
+        .relative(path.join(__dirname, ".."), file.path)
+        .replace(/\\/g, "/");
+      return relative;
+    });
+
+    const updatedImages = [...(property.image_refs || []), ...uploadedPaths];
+    property.image_refs = updatedImages.slice(0, 8); // enforce max 8
+    await property.save();
+
+    return res.status(200).json({
+      message: "Images uploaded",
+      imageRefs: property.image_refs,
+    });
+  } catch (err) {
+    console.error("Error uploading property images: ", err);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while uploading images." });
+  }
+};
+
 module.exports = {
   getAllProperties,
   getPropertyById,
@@ -162,4 +231,5 @@ module.exports = {
   createProperty,
   editProperty,
   deleteProperty,
+  uploadPropertyImages,
 };

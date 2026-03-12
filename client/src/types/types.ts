@@ -3,9 +3,11 @@ export interface Property {
   title: string;
   description: string;
   location: string;
+  neighborhood: string;
+  zipCode: string;
   price: number;
   size: number;
-  distance: string;
+  imageRefs: string[];
   sellerId: number;
 }
 

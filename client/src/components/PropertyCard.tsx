@@ -10,6 +10,8 @@ import {
   Tag,
   Pencil,
   Trash2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Property } from "../types/types";
 import { RootState } from "../state/store";
@@ -35,6 +37,7 @@ const PropertyCard: React.FC<{
   const [loading, setLoading] = useState<boolean>(true);
   const [isSaved, setIsSaved] = useState<boolean>(saved);
   const [deleted, setDeleted] = useState<boolean>(false);
+  const [activeImage, setActiveImage] = useState<number>(0);
   const currentUser = useSelector((state: RootState) => state.user);
   const isModalOpen = useSelector(
     (state: RootState) => state.modal.isModalOpen,
@@ -45,6 +48,10 @@ const PropertyCard: React.FC<{
   useEffect(() => {
     setIsSaved(saved);
   }, [saved]);
+
+  useEffect(() => {
+    setActiveImage(0);
+  }, [property.id]);
 
   useEffect(() => {
     const checkIfPropertyIsDeleted = async () => {
@@ -143,6 +150,18 @@ const PropertyCard: React.FC<{
     [property.price],
   );
 
+  const imageCount = property.imageRefs?.length || 0;
+  const base = baseURL.replace(/\/$/, "");
+  const currentImage =
+    imageCount > 0
+      ? `${base}/${property.imageRefs[activeImage % imageCount]}`
+      : "/default_house.jpg";
+
+  const nextImage = (delta: number) => {
+    if (imageCount === 0) return;
+    setActiveImage((idx) => (idx + delta + imageCount) % imageCount);
+  };
+
   if (loading) {
     return (
       <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-white">
@@ -164,10 +183,32 @@ const PropertyCard: React.FC<{
     >
       <div className="relative overflow-hidden rounded-2xl">
         <img
-          src="/public/default_house.jpg"
+          src={currentImage}
           alt={property.title}
           className="h-44 w-full object-cover"
         />
+        {imageCount > 1 && (
+          <>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage(-1);
+              }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1 text-white shadow"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage(1);
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1 text-white shadow"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/20 to-transparent" />
         <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur">
           <Home size={14} />
@@ -176,6 +217,22 @@ const PropertyCard: React.FC<{
         <div className="absolute bottom-3 right-3 rounded-full bg-blue-500 px-3 py-1 text-xs font-semibold text-white shadow">
           {priceLabel}
         </div>
+        {imageCount > 1 && (
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1">
+            {property.imageRefs?.slice(0, 8).map((_, idx) => (
+              <button
+                key={idx}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveImage(idx);
+                }}
+                className={`h-2 w-2 rounded-full ${
+                  idx === activeImage ? "bg-white" : "bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="mt-4 flex flex-col gap-2">
@@ -184,18 +241,23 @@ const PropertyCard: React.FC<{
             <h2 className="text-lg font-semibold leading-tight">
               {property.title}
             </h2>
-            <p className="text-sm text-slate-300 line-clamp-2">
-              {property.description}
-            </p>
           </div>
-          <Bookmark
-            size={18}
-            className={`mt-1 transition ${
-              isSaved
-                ? "text-blue-300"
-                : "text-slate-400 group-hover:text-white"
-            }`}
-          />
+          {String(property.sellerId) !== String(currentUser.id) && (
+            <button
+              onClick={handleSaveClick}
+              className="rounded-full p-1 transition hover:bg-white/10"
+              aria-label={isSaved ? "Unsave property" : "Save property"}
+            >
+              <Bookmark
+                size={18}
+                className={`transition ${
+                  isSaved
+                    ? "text-sky-300 drop-shadow"
+                    : "text-slate-300 group-hover:text-white"
+                }`}
+              />
+            </button>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs text-slate-200">
@@ -203,7 +265,10 @@ const PropertyCard: React.FC<{
             <MapPin size={12} /> {property.location}
           </span>
           <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
-            <Tag size={12} /> {property.distance}
+            <Tag size={12} /> {property.neighborhood}
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
+            <Tag size={12} /> {property.zipCode}
           </span>
           <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
             <Phone size={12} /> {sellerPhone || "—"}
@@ -216,7 +281,7 @@ const PropertyCard: React.FC<{
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {String(property.sellerId) === String(currentUser.id) ? (
+        {String(property.sellerId) === String(currentUser.id) && (
           <>
             <button
               onClick={handleEditClick}
@@ -233,17 +298,6 @@ const PropertyCard: React.FC<{
               Delete
             </button>
           </>
-        ) : (
-          <button
-            onClick={handleSaveClick}
-            className="flex-1 rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow transition hover:-translate-y-[1px] hover:bg-blue-400"
-          >
-            {currentUser.id === "-1"
-              ? "Register to save"
-              : isSaved
-                ? "Unsave"
-                : "Save"}
-          </button>
         )}
       </div>
     </div>

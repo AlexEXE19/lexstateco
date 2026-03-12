@@ -3,12 +3,16 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import baseURL from "../config/baseUrl";
 import { RootState } from "../state/store";
+import { Loader2, Trash2, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { createPortal } from "react-dom";
 
 const DeletePropertyModal: React.FC = () => {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const propertyIdToBeChanged = useSelector(
-    (state: RootState) => state.modal.propertyIdToBeChanged
+    (state: RootState) => state.modal.propertyIdToBeChanged,
   );
 
   const handleCancelClick = () => {
@@ -16,45 +20,74 @@ const DeletePropertyModal: React.FC = () => {
   };
 
   const handleDeleteClick = async () => {
+    if (propertyIdToBeChanged === -1) return;
+    setLoading(true);
     try {
       await axios.delete(`${baseURL}/properties/${propertyIdToBeChanged}`);
-      console.log(`Property with id ${propertyIdToBeChanged} has been deleted`);
     } catch (error) {
       console.error("Error deleting property: ", error);
     } finally {
+      setLoading(false);
       dispatch(toggleModal());
-      return;
     }
   };
 
-  return (
-    <div className="fixed flex top-0 left-0 w-full h-full bg-black bg-opacity-50 z-20">
-      <div className="m-auto p-8 bg-white border-black border-2 rounded hover:bg-stone-200 transition-all">
-        <div className="text-2xl font-bold mb-2">DELETE ?</div>
-        <hr className="border-t border-stone-600 my-2" />
-        <div className="mb-6  text-xl text-center">
-          Are you sure you want to delete this property?
-          <br />
-          You will not be able to undo this action.
+  const modalContent = (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-8 backdrop-blur-sm"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleCancelClick();
+      }}
+    >
+      <div className="w-full max-w-lg overflow-hidden rounded-3xl bg-gradient-to-br from-white via-rose-50 to-amber-50 shadow-2xl ring-1 ring-slate-100">
+        <div className="flex items-center gap-3 border-b border-slate-200/70 px-6 py-4 bg-white/70 backdrop-blur">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
+            <Trash2 size={20} />
+          </div>
+          <div className="flex items-center gap-2 text-rose-800">
+            <Sparkles size={16} />
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-rose-700">
+                Delete property
+              </p>
+              <h2 className="text-lg font-semibold text-slate-900">
+                This cannot be undone
+              </h2>
+            </div>
+          </div>
         </div>
-        <hr className="border-t border-stone-600 my-2 mb-3" />
-        <div className="flex justify-between">
-          <button
-            onClick={handleDeleteClick}
-            className="mt-2 px-4 py-2 bg-red-600 text-white text-lg font-bold rounded shadow-2 shadow-xl border border-red-700 rounded hover:bg-red-700 transition-all hover:border-red-500 transition-all"
-          >
-            Delete
-          </button>
-          <button
-            onClick={handleCancelClick}
-            className="mt-2 px-4 py-2 bg-blue-600 text-white text-lg font-bold rounded shadow-2 shadow-xl border border-blue-700 rounded hover:bg-blue-700 transition-all hover:border-blue-600 transition-all"
-          >
-            Cancel
-          </button>
+
+        <div className="space-y-4 p-6 text-slate-700">
+          <p>
+            Are you sure you want to permanently remove this property from your
+            listings? Any associated images will remain on disk but the listing
+            will disappear for everyone.
+          </p>
+
+          <div className="flex items-center justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={handleCancelClick}
+              className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-[1px] hover:bg-white"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteClick}
+              className="inline-flex items-center gap-2 rounded-2xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-rose-400/40 transition hover:-translate-y-[1px] hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
+              disabled={loading}
+            >
+              {loading && <Loader2 size={16} className="animate-spin" />}
+              Delete listing
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default DeletePropertyModal;

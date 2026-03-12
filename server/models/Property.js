@@ -17,11 +17,21 @@ const Property = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    image_data: {
-      type: DataTypes.BLOB("long"),
+    image_refs: {
+      // Stores relative paths to images in uploads/property/<propertyId>/
+      type: DataTypes.JSON,
       allowNull: false,
+      defaultValue: [],
     },
     location: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    neighborhood: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    zip_code: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -33,10 +43,6 @@ const Property = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    distance: {
-      type: DataTypes.ENUM("City Center", "Around the Center", "Suburbs"),
-      allowNull: false,
-    },
     seller_id: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -46,12 +52,18 @@ const Property = sequelize.define(
     timestamps: false,
     underscored: true,
     tableName: "properties",
-  }
+  },
 );
 
 // Overwriting function - used for parsing from "snake case" to "camel case"
 Property.prototype.toJSON = function () {
   const values = Object.assign({}, this.get());
+
+  values.imageRefs = values.image_refs;
+  delete values.image_refs;
+
+  values.zipCode = values.zip_code;
+  delete values.zip_code;
 
   values.sellerId = values.seller_id;
   delete values.seller_id;
