@@ -44,7 +44,7 @@ const Property = sequelize.define(
       allowNull: false,
     },
     seller_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },

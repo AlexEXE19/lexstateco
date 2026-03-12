@@ -17,6 +17,7 @@ services:
     image: lexstate_server:latest
     environment:
       NODE_ENV: production
+      PORT: 5000
       DB_HOST: db
       DB_PORT: 3306
       DB_USER: ${MYSQL_USER:-lexuser}
