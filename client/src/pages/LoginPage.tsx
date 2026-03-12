@@ -5,6 +5,7 @@ import { logInUser } from "../state/user/userSlice";
 import { useDispatch } from "react-redux";
 import { Lock, Mail } from "lucide-react";
 import baseURL from "../config/baseUrl";
+import { setAuthToken } from "../utils/auth";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -23,18 +24,21 @@ const LoginPage: React.FC = () => {
         password,
       });
 
-      if (response.data.user) {
-        navigate("/account");
+      const { user, token } = response.data;
+
+      if (user && token) {
+        setAuthToken(token);
         dispatch(
           logInUser({
-            id: response.data.user.id,
-            firstName: response.data.user.firstName,
-            lastName: response.data.user.lastName,
-            email: response.data.user.email,
-            password: response.data.user.password,
-            phone: response.data.user.phone,
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            password: "",
+            phone: user.phone,
           }),
         );
+        navigate("/account");
       }
     } catch (error: any) {
       if (error.response && error.response.status === 404) {

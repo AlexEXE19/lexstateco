@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../state/store";
 import { logOutUser } from "../state/user/userSlice";
+import { clearAuthToken } from "../utils/auth";
 
 // Navbar buttons route the user into his account or homepage
 const Navbar: React.FC = () => {
@@ -9,13 +10,14 @@ const Navbar: React.FC = () => {
   const userId = useSelector((state: RootState) => state.user.id);
 
   const handleClick = () => {
+    clearAuthToken();
     dispatch(logOutUser());
   };
 
   return (
     <nav className="sticky top-0 z-20 w-full bg-gradient-to-r from-slate-950 via-slate-900 to-blue-900/90 text-white shadow-2xl shadow-black/20 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
-        <Link to="/" className="flex items-center gap-3 text-white">
+        <Link to="/home" className="flex items-center gap-3 text-white">
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-lg font-black tracking-tight ring-1 ring-white/15">
             LE
           </span>

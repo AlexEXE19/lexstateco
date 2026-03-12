@@ -8,6 +8,6 @@
     "concurrently": "^9.1.2"
   },
   "dependencies": {
-    "lucide-react": "^0.544.0"
+    "jsonwebtoken": "^9.0.3"
   }
 }

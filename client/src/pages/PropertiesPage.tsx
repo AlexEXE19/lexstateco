@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import Map from "../components/Map";
 import PropertyCard from "../components/PropertyCard";
 import { RootState } from "../state/store";
 import { useProperties } from "../hooks/useProperties";
@@ -154,8 +155,11 @@ const PropertiesPage: React.FC = () => {
                   </p>
                   <div className="mt-4 h-[240px] w-full rounded-2xl bg-slate-900/80 ring-1 ring-white/10 lg:h-full">
                     {/* TODO: Embed Leaflet / OSM map here */}
-                    <div className="flex h-full items-center justify-center text-slate-400">
-                      Map container placeholder
+                    <div
+                      id="map"
+                      className="flex h-full items-center justify-center text-slate-400"
+                    >
+                      <Map />
                     </div>
                   </div>
                 </div>

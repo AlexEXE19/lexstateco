@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Home, MapPin, Ruler, Tag, Upload } from "lucide-react";
 import { RootState } from "../state/store";
 import baseURL from "../config/baseUrl";
+import { getSuggestions } from "../utils/getCity";
 
 // Tab for listing a property
 const PropertyListingTab: React.FC = () => {
@@ -24,6 +25,19 @@ const PropertyListingTab: React.FC = () => {
   }>({ open: false, title: "", body: "", goToAccount: false });
   const userId = useSelector((state: RootState) => state.user.id);
   const navigate = useNavigate();
+
+  const [query, setQuery] = useState<string>();
+  const [suggestions, setSuggestions] = useState<any[]>();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (query !== undefined) {
+        getSuggestions(query, setSuggestions);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const closeStatusModal = () => {
     setStatusModal((prev) => ({ ...prev, open: false }));
@@ -148,14 +162,26 @@ const PropertyListingTab: React.FC = () => {
           Location
           <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
             <MapPin size={16} className="text-blue-200" />
-            <input
-              type="text"
-              placeholder="Austin, TX"
-              className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-              value={locationInput}
-              onChange={(e) => setLocationInput(e.target.value)}
-              required
-            />
+            <div>
+              {" "}
+              <input
+                type="text"
+                placeholder="Austin, TX"
+                className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                value={locationInput}
+                list="city-suggestions"
+                onChange={(e) => {
+                  setLocationInput(e.target.value);
+                  setQuery(e.target.value);
+                }}
+                required
+              />
+              <datalist id="city-suggestions">
+                {suggestions?.map((s) => (
+                  <option key={s.place_id} value={s.display_name} />
+                ))}
+              </datalist>
+            </div>
           </div>
         </label>
 

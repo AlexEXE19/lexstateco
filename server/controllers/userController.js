@@ -1,5 +1,10 @@
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+const signUserToken = (userPayload) =>
+  jwt.sign(userPayload, JWT_SECRET, { expiresIn: "7d" });
 
 // Get all users (used by MyAudienceTab)
 const getAllUsers = async (_req, res) => {
@@ -71,8 +76,22 @@ const authenticateUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
+    const safeUser = user.toJSON();
+    delete safeUser.password;
 
-    res.json({ message: "Got the user's credentials successfully", user });
+    const token = signUserToken({
+      id: safeUser.id,
+      firstName: safeUser.firstName,
+      lastName: safeUser.lastName,
+      email: safeUser.email,
+      phone: safeUser.phone,
+    });
+
+    res.json({
+      message: "Got the user's credentials successfully",
+      user: safeUser,
+      token,
+    });
   } catch (err) {
     console.error("Error getting the user's credentials: ", err);
     res.status(500).json({ message: "Internal server error" });
@@ -93,10 +112,21 @@ const createUser = async (req, res) => {
       password: hashedPassword,
       phone,
     });
+    const safeUser = user.toJSON();
+    delete safeUser.password;
+
+    const token = signUserToken({
+      id: safeUser.id,
+      firstName: safeUser.firstName,
+      lastName: safeUser.lastName,
+      email: safeUser.email,
+      phone: safeUser.phone,
+    });
 
     res.status(201).json({
       message: "User created successfully",
-      user,
+      user: safeUser,
+      token,
     });
   } catch (err) {
     console.error("Error creating user: ", err);

@@ -99,12 +99,12 @@ const PropertyCard: React.FC<{
     }
     try {
       if (!isSaved) {
-        await axios.post("http://localhost:5000/saved-properties", {
+        await axios.post(`${baseURL}/saved-properties`, {
           userId: currentUser.id,
           propertyId: property.id,
         });
       } else {
-        await axios.delete("http://localhost:5000/saved-properties", {
+        await axios.delete(`${baseURL}/saved-properties`, {
           data: {
             userId: currentUser.id,
             propertyId: property.id,
@@ -164,9 +164,7 @@ const PropertyCard: React.FC<{
 
   if (loading) {
     return (
-      <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-white">
-        Loading...
-      </div>
+      <div className="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-4 text-white shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"></div>
     );
   }
 
@@ -209,7 +207,7 @@ const PropertyCard: React.FC<{
             </button>
           </>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/20 to-transparent pointer-events-none" />
         <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur">
           <Home size={14} />
           <span>{property.size} sq ft</span>

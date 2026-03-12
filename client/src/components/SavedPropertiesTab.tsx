@@ -75,9 +75,12 @@ const SavedPropertiesTab: React.FC = () => {
           </div>
         </>
       ) : (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-slate-200">
+        <Link
+          to="/home"
+          className="block rounded-2xl border border-white/10 bg-white/5 p-8 text-slate-200 transition hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl cursor-pointer"
+        >
           Let's find some nice properties!
-        </div>
+        </Link>
       )}
     </div>
   );
