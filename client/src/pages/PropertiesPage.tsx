@@ -12,6 +12,7 @@ import PropertyCard from "../components/PropertyCard";
 import { RootState } from "../state/store";
 import { useProperties } from "../hooks/useProperties";
 import { Filter, Property, TourRequest } from "../types/types";
+import { useTranslation } from "../utils/i18n";
 import baseURL from "../config/baseUrl";
 
 const PropertiesPage: React.FC = () => {
@@ -33,6 +34,7 @@ const PropertiesPage: React.FC = () => {
   >("idle");
 
   const currentUser = useSelector((state: RootState) => state.user);
+  const { t } = useTranslation();
 
   const { filteredProperties, savedIds, applyFilters, loading } =
     useProperties(currentUser);
@@ -133,14 +135,13 @@ const PropertiesPage: React.FC = () => {
           <div className="flex flex-col gap-3">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-200 ring-1 ring-white/15 backdrop-blur">
               <SlidersHorizontal size={14} />
-              <span>Filter smarter</span>
+              <span>{t("properties.filter.tag")}</span>
             </div>
             <h1 className="text-3xl font-semibold md:text-4xl">
-              Explore properties with clean, focused filters.
+              {t("properties.filter.heading")}
             </h1>
             <p className="max-w-2xl text-slate-200">
-              Dial in by price, location, or neighborhood. No clutter—just
-              listings ready to tour.
+              {t("properties.filter.sub")}
             </p>
           </div>
 
@@ -149,10 +150,10 @@ const PropertiesPage: React.FC = () => {
             className="grid gap-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 backdrop-blur md:grid-cols-2 lg:grid-cols-5"
           >
             <label className="flex flex-col gap-2 text-sm text-slate-200">
-              Min price
+              {t("properties.filter.min")}
               <input
                 type="number"
-                placeholder="e.g. 120000"
+                placeholder={t("properties.filter.placeholder.min")}
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
                 className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -160,10 +161,10 @@ const PropertiesPage: React.FC = () => {
             </label>
 
             <label className="flex flex-col gap-2 text-sm text-slate-200">
-              Max price
+              {t("properties.filter.max")}
               <input
                 type="number"
-                placeholder="e.g. 450000"
+                placeholder={t("properties.filter.placeholder.max")}
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
                 className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -171,10 +172,10 @@ const PropertiesPage: React.FC = () => {
             </label>
 
             <label className="flex flex-col gap-2 text-sm text-slate-200">
-              Location
+              {t("properties.filter.location")}
               <input
                 type="text"
-                placeholder="City or town (even village)"
+                placeholder={t("properties.filter.placeholder.location")}
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -182,10 +183,10 @@ const PropertiesPage: React.FC = () => {
             </label>
 
             <label className="flex flex-col gap-2 text-sm text-slate-200">
-              Neighborhood
+              {t("properties.filter.neighborhood")}
               <input
                 type="text"
-                placeholder="e.g. Drumul Taberei"
+                placeholder={t("properties.filter.placeholder.neighborhood")}
                 value={neighborhood}
                 onChange={(e) => setNeighborhood(e.target.value)}
                 className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -198,7 +199,7 @@ const PropertiesPage: React.FC = () => {
                 className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-[1px] hover:bg-blue-400"
               >
                 <Search size={16} />
-                Apply filters
+                {t("properties.filter.apply")}
               </button>
             </div>
           </form>
@@ -210,10 +211,10 @@ const PropertiesPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-                Results
+                {t("properties.resultsLabel")}
               </p>
               <h2 className="text-2xl font-semibold text-white">
-                {filteredProperties.length} properties
+                {filteredProperties.length} {t("properties.results")}
               </h2>
             </div>
           </div>
@@ -223,7 +224,7 @@ const PropertiesPage: React.FC = () => {
               <div className="grid gap-4 lg:h-full lg:min-h-0 lg:grid-rows-[1fr_1fr]">
                 <div className="rounded-3xl bg-white/5 p-6 text-slate-200 ring-1 ring-white/10">
                   <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-                    Map preview
+                    {t("properties.map")}
                   </p>
                   <div className="mt-4 h-[240px] w-full rounded-2xl bg-slate-900/80 ring-1 ring-white/10 lg:h-full">
                     <div
@@ -236,7 +237,9 @@ const PropertiesPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 lg:min-h-0 lg:overflow-y-auto lg:pr-2">
-                  <div className="text-sm text-slate-300">Browse more</div>
+                  <div className="text-sm text-slate-300">
+                    {t("properties.browse")}
+                  </div>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     {filteredProperties.map((property) => (
                       <PropertyCard
@@ -254,13 +257,13 @@ const PropertiesPage: React.FC = () => {
               <div className="space-y-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 lg:h-full lg:overflow-hidden">
                 <div className="flex items-center justify-between">
                   <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-                    Details
+                    {t("properties.details")}
                   </p>
                   <button
                     onClick={() => setSelectedProperty(null)}
                     className="text-sm font-semibold text-slate-200 underline-offset-4 hover:underline"
                   >
-                    Back to results
+                    {t("properties.back")}
                   </button>
                 </div>
                 <div className="overflow-hidden rounded-2xl bg-slate-900/80 ring-1 ring-white/10">
@@ -339,7 +342,7 @@ const PropertiesPage: React.FC = () => {
                     <div className="flex flex-wrap items-center gap-2 text-xs text-slate-200">
                       <label className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-white/10">
                         <span className="text-[11px] uppercase tracking-[0.2em] text-slate-400">
-                          Date
+                          {t("properties.label.date")}
                         </span>
                         <input
                           type="date"
@@ -350,7 +353,7 @@ const PropertiesPage: React.FC = () => {
                       </label>
                       <label className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-white/10">
                         <span className="text-[11px] uppercase tracking-[0.2em] text-slate-400">
-                          Time
+                          {t("properties.label.time")}
                         </span>
                         <input
                           type="time"
@@ -372,31 +375,30 @@ const PropertiesPage: React.FC = () => {
                     >
                       {requestStatus === "loading"
                         ? isPending
-                          ? "Canceling..."
-                          : "Sending..."
+                          ? t("properties.canceling")
+                          : t("properties.sending")
                         : isPending
-                          ? "Cancel request"
-                          : "Request a tour"}
+                          ? t("requests.cancel")
+                          : t("properties.request")}
                     </button>
                     {requestStatus === "error" && (
                       <p className="text-xs text-rose-300">
-                        Could not send request. Please log in and try again.
+                        {t("properties.errorAuth")}
                       </p>
                     )}
                     {requestStatus === "success" && isPending && (
                       <p className="text-xs text-emerald-300">
-                        Request saved. See it in My Requests.
+                        {t("properties.requestSaved")}
                       </p>
                     )}
                     {requestStatus === "success" && !isPending && (
                       <p className="text-xs text-slate-300">
-                        Request canceled.
+                        {t("properties.requestCanceled")}
                       </p>
                     )}
                     {isCanceled && requestStatus === "idle" && (
                       <p className="text-xs text-slate-300">
-                        Last request was canceled. Choose a new time to book
-                        again.
+                        {t("properties.lastCanceled")}
                       </p>
                     )}
                   </div>
@@ -404,7 +406,9 @@ const PropertiesPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 gap-3 text-sm text-slate-200 sm:grid-cols-2">
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <p className="text-xs uppercase text-slate-400">Price</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      {t("properties.label.price")}
+                    </p>
                     <p className="text-lg font-semibold text-white">
                       {new Intl.NumberFormat("en-US", {
                         style: "currency",
@@ -416,7 +420,9 @@ const PropertiesPage: React.FC = () => {
                     </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <p className="text-xs uppercase text-slate-400">Size</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      {t("properties.label.size")}
+                    </p>
                     <p className="text-lg font-semibold text-white">
                       {selectedProperty.size} sq ft
                     </p>
@@ -424,7 +430,7 @@ const PropertiesPage: React.FC = () => {
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                     <p className="text-xs uppercase text-slate-400">
-                      Neighborhood
+                      {t("properties.label.neighborhood")}
                     </p>
                     <p className="text-lg font-semibold text-white">
                       {selectedProperty.neighborhood}
@@ -434,7 +440,9 @@ const PropertiesPage: React.FC = () => {
                     </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <p className="text-xs uppercase text-slate-400">ZIP</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      {t("properties.label.zip")}
+                    </p>
                     <p className="text-lg font-semibold text-white">
                       {selectedProperty.zipCode}
                     </p>
@@ -443,7 +451,9 @@ const PropertiesPage: React.FC = () => {
                     </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:col-span-2">
-                    <p className="text-xs uppercase text-slate-400">Seller</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      {t("properties.label.seller")}
+                    </p>
                     <p className="text-lg font-semibold text-white">
                       ID #{selectedProperty.sellerId}
                     </p>
@@ -473,8 +483,7 @@ const PropertiesPage: React.FC = () => {
 
               {filteredProperties.length === 0 && (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-slate-200">
-                  No properties match your filters yet. Try widening your
-                  search.
+                  {t("properties.empty")}
                 </div>
               )}
             </>

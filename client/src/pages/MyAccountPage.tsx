@@ -10,6 +10,7 @@ import MyRequestsTab from "../components/MyRequestsTab";
 import { getCurrentUser } from "../utils/auth";
 import { User } from "../types/types";
 import { setTab } from "../state/tab/tabSlice";
+import { useTranslation } from "../utils/i18n";
 
 const MyAccountPage: React.FC = () => {
   const activeTab = useSelector((state: RootState) => state.tab).type;
@@ -17,6 +18,7 @@ const MyAccountPage: React.FC = () => {
 
   const firstName = useSelector((state: RootState) => state.user.firstName);
   const userId = useSelector((state: RootState) => state.user.id);
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -49,11 +51,11 @@ const MyAccountPage: React.FC = () => {
         <div className="mx-auto max-w-6xl space-y-6">
           <div className="flex flex-wrap gap-3 rounded-2xl bg-white/5 p-2 ring-1 ring-white/10 backdrop-blur">
             {[
-              { key: "saved", label: "Saved" },
-              { key: "myProperties", label: "My Properties" },
-              { key: "list", label: "List a Property" },
-              { key: "requests", label: "My Requests" },
-              { key: "audience", label: "My Audience" },
+              { key: "saved", label: t("account.tabs.saved") },
+              { key: "myProperties", label: t("account.tabs.myProperties") },
+              { key: "list", label: t("account.tabs.list") },
+              { key: "requests", label: t("account.tabs.requests") },
+              { key: "audience", label: t("account.tabs.audience") },
             ].map((tab) => (
               <button
                 key={tab.key}

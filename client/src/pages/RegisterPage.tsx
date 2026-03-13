@@ -4,6 +4,7 @@ import axios from "axios";
 import { Lock, Mail, Phone, User } from "lucide-react";
 import baseURL from "../config/baseUrl";
 import { setAuthToken } from "../utils/auth";
+import { useTranslation } from "../utils/i18n";
 
 const RegisterPage: React.FC = () => {
   const [firstName, setFirstName] = useState<string>("");
@@ -12,6 +13,7 @@ const RegisterPage: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,11 +39,11 @@ const RegisterPage: React.FC = () => {
 
         navigate("/account");
       } else {
-        alert("Error registering user, please try again.");
+        alert(t("auth.register.error.generic"));
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      alert("An error occurred. Please try again later.");
+      alert(t("auth.register.error.later"));
     }
   };
 
@@ -51,18 +53,18 @@ const RegisterPage: React.FC = () => {
         <div className="w-full max-w-md rounded-3xl bg-white/5 p-8 shadow-2xl ring-1 ring-white/10 backdrop-blur">
           <div className="mb-8 space-y-2 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
-              Join LexEstateCo
+              {t("auth.register.cta")}
             </p>
-            <h2 className="text-3xl font-semibold">Create an account</h2>
-            <p className="text-sm text-slate-300">
-              Save searches, list faster, and pick up conversations seamlessly.
-            </p>
+            <h2 className="text-3xl font-semibold">
+              {t("auth.register.heading")}
+            </h2>
+            <p className="text-sm text-slate-300">{t("auth.register.desc")}</p>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="flex flex-col gap-2 text-sm text-slate-200">
-                First name
+                {t("auth.register.firstName")}
                 <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
                   <User size={16} className="text-blue-200" />
                   <input
@@ -77,7 +79,7 @@ const RegisterPage: React.FC = () => {
               </label>
 
               <label className="flex flex-col gap-2 text-sm text-slate-200">
-                Last name
+                {t("auth.register.lastName")}
                 <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
                   <User size={16} className="text-blue-200" />
                   <input
@@ -93,7 +95,7 @@ const RegisterPage: React.FC = () => {
             </div>
 
             <label className="flex flex-col gap-2 text-sm text-slate-200">
-              Email
+              {t("auth.register.email")}
               <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
                 <Mail size={16} className="text-blue-200" />
                 <input
@@ -108,7 +110,7 @@ const RegisterPage: React.FC = () => {
             </label>
 
             <label className="flex flex-col gap-2 text-sm text-slate-200">
-              Password
+              {t("auth.register.password")}
               <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
                 <Lock size={16} className="text-blue-200" />
                 <input
@@ -123,7 +125,7 @@ const RegisterPage: React.FC = () => {
             </label>
 
             <label className="flex flex-col gap-2 text-sm text-slate-200">
-              Phone
+              {t("auth.register.phone")}
               <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
                 <Phone size={16} className="text-blue-200" />
                 <input
@@ -141,7 +143,7 @@ const RegisterPage: React.FC = () => {
               className="w-full rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-[1px] hover:bg-blue-400"
               type="submit"
             >
-              Create account
+              {t("auth.register.submit")}
             </button>
           </form>
         </div>
@@ -156,23 +158,22 @@ const RegisterPage: React.FC = () => {
         <div className="relative mx-auto flex h-full max-w-xl flex-col justify-center gap-6 px-10 py-16 text-white">
           <div className="inline-flex w-fit items-center gap-3 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/15 backdrop-blur">
             <User size={16} />
-            <span>Start your journey</span>
+            <span>{t("auth.register.tag")}</span>
           </div>
           <h1 className="text-4xl font-semibold leading-tight md:text-5xl">
-            Create, save, and move faster.
+            {t("auth.register.title")}
           </h1>
           <p className="max-w-lg text-slate-200">
-            One account for listings, tours, and conversations. Keep everything
-            in one calm, modern workspace.
+            {t("auth.register.subtitle")}
           </p>
           <div className="grid grid-cols-2 gap-3 text-sm text-slate-200">
             <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
               <p className="text-lg font-semibold text-white">Verified</p>
-              <p className="text-xs">Listings and agents</p>
+              <p className="text-xs">{t("auth.register.client")}</p>
             </div>
             <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
               <p className="text-lg font-semibold text-white">Saved sync</p>
-              <p className="text-xs">Across all devices</p>
+              <p className="text-xs">{t("auth.register.sync")}</p>
             </div>
           </div>
         </div>

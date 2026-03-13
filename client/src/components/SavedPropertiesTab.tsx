@@ -7,12 +7,14 @@ import PropertyCard from "./PropertyCard";
 import { Property } from "../types/types";
 import { RootState } from "../state/store";
 import baseURL from "../config/baseUrl";
+import { useTranslation } from "../utils/i18n";
 
 // Tab showing user's saved properties
 const SavedPropertiesTab: React.FC = () => {
   const userId = useSelector((state: RootState) => state.user.id);
 
   const [savedProperties, setSavedProperties] = useState<Property[]>();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchSavedProperties = async () => {
@@ -52,7 +54,7 @@ const SavedPropertiesTab: React.FC = () => {
                 Saved
               </p>
               <h2 className="text-2xl font-semibold text-white">
-                Your Saved Properties
+                {t("saved.title")}
               </h2>
             </div>
             <Link
@@ -79,7 +81,7 @@ const SavedPropertiesTab: React.FC = () => {
           to="/home"
           className="block rounded-2xl border border-white/10 bg-white/5 p-8 text-slate-200 transition hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl cursor-pointer"
         >
-          Let's find some nice properties!
+          {t("saved.cta")}
         </Link>
       )}
     </div>

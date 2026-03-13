@@ -6,6 +6,7 @@ import { RootState } from "../state/store";
 import baseURL from "../config/baseUrl";
 import Map from "./Map";
 import { Property, TourRequest } from "../types/types";
+import { useTranslation } from "../utils/i18n";
 
 const statusColors: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-200 ring-amber-200/30",
@@ -32,6 +33,7 @@ const MyAudienceTab: React.FC = () => {
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchIncoming = async () => {
@@ -90,20 +92,20 @@ const MyAudienceTab: React.FC = () => {
             My audience
           </p>
           <h2 className="text-2xl font-semibold text-white">
-            Incoming tour requests
+            {t("audience.title")}
           </h2>
         </div>
       </div>
 
       {loading && (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-          Loading incoming requests...
+          {t("audience.loading")}
         </div>
       )}
 
       {!loading && requests.length === 0 && (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-          No one has requested a tour yet.
+          {t("audience.empty")}
         </div>
       )}
 
@@ -212,7 +214,9 @@ const MyAudienceTab: React.FC = () => {
 
                 <div className="grid gap-3 text-sm text-slate-200 sm:grid-cols-2">
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <p className="text-xs uppercase text-slate-400">Price</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      {t("audience.price")}
+                    </p>
                     <p className="text-lg font-semibold text-white">
                       {new Intl.NumberFormat("en-US", {
                         style: "currency",
@@ -221,21 +225,25 @@ const MyAudienceTab: React.FC = () => {
                     </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <p className="text-xs uppercase text-slate-400">Size</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      {t("audience.size")}
+                    </p>
                     <p className="text-lg font-semibold text-white">
                       {selectedProperty.size} sq ft
                     </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                     <p className="text-xs uppercase text-slate-400">
-                      Neighborhood
+                      {t("audience.neighborhood")}
                     </p>
                     <p className="text-lg font-semibold text-white">
                       {selectedProperty.neighborhood}
                     </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <p className="text-xs uppercase text-slate-400">ZIP</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      {t("audience.zip")}
+                    </p>
                     <p className="text-lg font-semibold text-white">
                       {selectedProperty.zipCode}
                     </p>
@@ -245,7 +253,7 @@ const MyAudienceTab: React.FC = () => {
                 <div className="rounded-2xl bg-slate-900/70 p-4 ring-1 ring-white/10">
                   <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
                     <MapPin size={14} />
-                    <span>Map preview</span>
+                    <span>{t("audience.map")}</span>
                   </div>
                   <div className="h-64 overflow-hidden rounded-xl bg-slate-900/90 ring-1 ring-white/10">
                     <Map />
@@ -262,8 +270,8 @@ const MyAudienceTab: React.FC = () => {
                       className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:-translate-y-[1px] hover:bg-emerald-400 disabled:opacity-70"
                     >
                       {updatingId === selectedRequest.id
-                        ? "Updating..."
-                        : "Accept"}
+                        ? t("audience.updating")
+                        : t("audience.accept")}
                     </button>
                     <button
                       onClick={() =>
@@ -273,15 +281,15 @@ const MyAudienceTab: React.FC = () => {
                       className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-rose-500/30 transition hover:-translate-y-[1px] hover:bg-rose-400 disabled:opacity-70"
                     >
                       {updatingId === selectedRequest.id
-                        ? "Updating..."
-                        : "Reject"}
+                        ? t("audience.updating")
+                        : t("audience.reject")}
                     </button>
                   </div>
                 )}
               </>
             ) : (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-                Select a request to see details.
+                {t("audience.select")}
               </div>
             )}
           </div>

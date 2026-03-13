@@ -6,6 +6,7 @@ import { Home, MapPin, Ruler, Tag, Upload } from "lucide-react";
 import { RootState } from "../state/store";
 import baseURL from "../config/baseUrl";
 import { useLocationSuggestions } from "../hooks/useLocationSuggestions";
+import { useTranslation } from "../utils/i18n";
 
 // Tab for listing a property
 const PropertyListingTab: React.FC = () => {
@@ -30,6 +31,7 @@ const PropertyListingTab: React.FC = () => {
   const [suggestions, setSuggestions] = useState<any[]>();
 
   useLocationSuggestions(query, setSuggestions);
+  const { t } = useTranslation();
 
   const closeStatusModal = () => {
     setStatusModal((prev) => ({ ...prev, open: false }));
@@ -110,10 +112,8 @@ const PropertyListingTab: React.FC = () => {
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
           List a property
         </p>
-        <h2 className="text-3xl font-semibold">Showcase your home</h2>
-        <p className="text-sm text-slate-300">
-          Add the essentials so buyers can discover and tour quickly.
-        </p>
+        <h2 className="text-3xl font-semibold">{t("listing.title")}</h2>
+        <p className="text-sm text-slate-300">{t("listing.subtitle")}</p>
       </div>
 
       <form
@@ -121,7 +121,7 @@ const PropertyListingTab: React.FC = () => {
         className="grid gap-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 backdrop-blur md:grid-cols-2"
       >
         <label className="flex flex-col gap-2 text-sm text-slate-200">
-          Title
+          {t("listing.label.title")}
           <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
             <Home size={16} className="text-blue-200" />
             <input
@@ -136,7 +136,7 @@ const PropertyListingTab: React.FC = () => {
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-slate-200">
-          Price (USD)
+          {t("listing.label.price")}
           <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
             <Tag size={16} className="text-blue-200" />
             <input
@@ -151,7 +151,7 @@ const PropertyListingTab: React.FC = () => {
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-slate-200">
-          Location
+          {t("listing.label.location")}
           <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
             <MapPin size={16} className="text-blue-200" />
             <div>
@@ -178,7 +178,7 @@ const PropertyListingTab: React.FC = () => {
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-slate-200 md:col-span-2">
-          Description
+          {t("listing.label.description")}
           <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
             <textarea
               placeholder="Describe the highlights, light, layout, and nearby spots."
@@ -191,7 +191,7 @@ const PropertyListingTab: React.FC = () => {
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-slate-200">
-          Neighborhood
+          {t("listing.label.neighborhood")}
           <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
             <MapPin size={16} className="text-blue-200" />
             <input
@@ -206,7 +206,7 @@ const PropertyListingTab: React.FC = () => {
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-slate-200">
-          ZIP code
+          {t("listing.label.zip")}
           <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
             <Tag size={16} className="text-blue-200" />
             <input
@@ -221,7 +221,7 @@ const PropertyListingTab: React.FC = () => {
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-slate-200">
-          Size (sq ft)
+          {t("listing.label.size")}
           <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
             <Ruler size={16} className="text-blue-200" />
             <input
@@ -236,7 +236,7 @@ const PropertyListingTab: React.FC = () => {
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-slate-200 md:col-span-2">
-          Upload images (max 8)
+          {t("listing.label.upload")}
           <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
             <Upload size={16} className="text-blue-200" />
             <input
@@ -266,7 +266,7 @@ const PropertyListingTab: React.FC = () => {
             type="submit"
             className="w-full rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-[1px] hover:bg-blue-400"
           >
-            List property
+            {t("listing.submit")}
           </button>
         </div>
       </form>
