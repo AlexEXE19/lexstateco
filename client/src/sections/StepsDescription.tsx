@@ -8,44 +8,47 @@ import {
 } from "lucide-react";
 
 import { Variants, motion } from "framer-motion";
+import { useTranslation } from "../utils/i18n";
 
 type StepsProps = {
   type: "buyer" | "seller";
 };
 
 export default function StepsDescription({ type }: StepsProps) {
+  const { t } = useTranslation();
+
   const buyerSteps = [
     {
-      title: "Browse homes you love",
-      desc: "Search by city, neighborhood, or price until something feels just right.",
+      title: t("steps.buyer.1.title"),
+      desc: t("steps.buyer.1.desc"),
       icon: Search,
     },
     {
-      title: "Book a visit",
-      desc: "Schedule a tour in seconds and see the property in person.",
+      title: t("steps.buyer.2.title"),
+      desc: t("steps.buyer.2.desc"),
       icon: CalendarCheck,
     },
     {
-      title: "Get the keys",
-      desc: "Finalize everything and move into your new home.",
+      title: t("steps.buyer.3.title"),
+      desc: t("steps.buyer.3.desc"),
       icon: Key,
     },
   ];
 
   const sellerSteps = [
     {
-      title: "List your property",
-      desc: "Add photos and details so buyers can discover your home.",
+      title: t("steps.seller.1.title"),
+      desc: t("steps.seller.1.desc"),
       icon: HousePlus,
     },
     {
-      title: "Choose an agent",
-      desc: "Pick a trusted agent to help manage visits and offers.",
+      title: t("steps.seller.2.title"),
+      desc: t("steps.seller.2.desc"),
       icon: UserCheck,
     },
     {
-      title: "Get paid",
-      desc: "Close the deal and receive your payment securely.",
+      title: t("steps.seller.3.title"),
+      desc: t("steps.seller.3.desc"),
       icon: BadgeDollarSign,
     },
   ];
@@ -97,16 +100,17 @@ export default function StepsDescription({ type }: StepsProps) {
       <div className="h-full w-full rounded-[22px] bg-slate-950/70 px-6 py-12 backdrop-blur sm:px-10">
         <div className="flex flex-col items-center gap-4 text-center text-white">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em]">
-            {type === "buyer" ? "For buyers" : "For sellers"}
+            {type === "buyer"
+              ? t("steps.label.buyer")
+              : t("steps.label.seller")}
           </div>
           <h2 className="text-3xl font-semibold sm:text-4xl">
             {type === "buyer"
-              ? "Finding your next home is smoother than you think"
-              : "Selling your home can be confident and calm"}
+              ? t("steps.title.buyer")
+              : t("steps.title.seller")}
           </h2>
           <p className="max-w-3xl text-sm text-slate-200 sm:text-base">
-            Follow the streamlined steps, each with the right context and
-            support. No clutter, just momentum.
+            {t("steps.subtitle")}
           </p>
         </div>
 
@@ -130,7 +134,7 @@ export default function StepsDescription({ type }: StepsProps) {
                       <Icon size={22} />
                     </div>
                     <span className="text-xs font-semibold text-slate-200">
-                      Step {index + 1}
+                      {t("steps.step")} {index + 1}
                     </span>
                   </div>
 
@@ -144,7 +148,7 @@ export default function StepsDescription({ type }: StepsProps) {
                   </div>
 
                   <div className="mt-auto text-xs font-semibold text-slate-300 opacity-0 transition group-hover:opacity-100">
-                    Stay guided, stay simple.
+                    {t("steps.hover")}
                   </div>
                 </div>
               </motion.div>

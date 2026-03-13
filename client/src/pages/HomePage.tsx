@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Clock3, MapPin, Search, ShieldCheck, Sparkles } from "lucide-react";
 import UserTypeSelector from "../sections/UserTypeSelector";
 import { useLocationSuggestions } from "../hooks/useLocationSuggestions";
@@ -14,6 +14,8 @@ const HomePage: React.FC = () => {
   const [suggestions, setSuggestions] = useState<any[]>();
 
   useLocationSuggestions(query, setSuggestions);
+
+  const navigate = useNavigate();
 
   const [currentUser] = useState(getCurrentUser());
   const dispatch = useDispatch();
@@ -201,9 +203,14 @@ const HomePage: React.FC = () => {
                         <p className="font-semibold text-white">{idea.title}</p>
                         <p className="text-sm text-slate-200">{idea.meta}</p>
                       </div>
-                      <span className="text-xs font-semibold text-sky-200">
+                      <button
+                        className="text-xs font-semibold text-sky-200"
+                        onClick={() => {
+                          navigate("/properties");
+                        }}
+                      >
                         {t("home.hero.curatedExplore")}
-                      </span>
+                      </button>
                     </div>
                   ))}
                 </div>

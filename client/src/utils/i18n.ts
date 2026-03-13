@@ -184,6 +184,45 @@ const translations: Translations = {
     "auth.register.submit": "Create account",
     "auth.register.error.generic": "Error registering user, please try again.",
     "auth.register.error.later": "An error occurred. Please try again later.",
+
+    "userType.tag": "Choose your path",
+    "userType.title": "Buyer or seller, we keep it calm and clear.",
+    "userType.subtitle":
+      "Pick the experience that fits you. We'll surface the next steps and the right tools so you can move without the noise.",
+    "userType.buyer.title": "I'm looking for a home",
+    "userType.buyer.desc":
+      "Discover spaces matched to your lifestyle, with fast tours and real guidance.",
+    "userType.seller.title": "I want to sell my property",
+    "userType.seller.desc":
+      "List beautifully, manage visits effortlessly, and close with confidence.",
+    "userType.meta": "Tailored steps and guidance",
+    "userType.selected": "Selected",
+    "userType.preview": "Preview next steps",
+
+    "steps.label.buyer": "For buyers",
+    "steps.label.seller": "For sellers",
+    "steps.title.buyer": "Finding your next home is smoother than you think",
+    "steps.title.seller": "Selling your home can be confident and calm",
+    "steps.subtitle":
+      "Follow the streamlined steps, each with the right context and support. No clutter, just momentum.",
+    "steps.step": "Step",
+    "steps.hover": "Stay guided, stay simple.",
+    "steps.buyer.1.title": "Browse homes you love",
+    "steps.buyer.1.desc":
+      "Search by city, neighborhood, or price until something feels just right.",
+    "steps.buyer.2.title": "Book a visit",
+    "steps.buyer.2.desc":
+      "Schedule a tour in seconds and see the property in person.",
+    "steps.buyer.3.title": "Get the keys",
+    "steps.buyer.3.desc": "Finalize everything and move into your new home.",
+    "steps.seller.1.title": "List your property",
+    "steps.seller.1.desc":
+      "Add photos and details so buyers can discover your home.",
+    "steps.seller.2.title": "Choose an agent",
+    "steps.seller.2.desc":
+      "Pick a trusted agent to help manage visits and offers.",
+    "steps.seller.3.title": "Get paid",
+    "steps.seller.3.desc": "Close the deal and receive your payment securely.",
   },
   ro: {
     "navbar.brandTag": "Case fără zgomot",
@@ -362,6 +401,47 @@ const translations: Translations = {
     "auth.register.error.generic": "Eroare la înregistrare, încearcă din nou.",
     "auth.register.error.later":
       "A apărut o eroare. Te rugăm să încerci mai târziu.",
+
+    "userType.tag": "Alege-ți traseul",
+    "userType.title":
+      "Cumpărător sau vânzător, păstrăm totul clar și liniștit.",
+    "userType.subtitle":
+      "Alege experiența potrivită. Îți arătăm pașii următori și instrumentele potrivite ca să te miști fără zgomot.",
+    "userType.buyer.title": "Caut o locuință",
+    "userType.buyer.desc":
+      "Descoperă locuri potrivite stilului tău de viață, cu tururi rapide și ghidare reală.",
+    "userType.seller.title": "Vreau să vând proprietatea",
+    "userType.seller.desc":
+      "Publică frumos, gestionează vizitele ușor și încheie cu încredere.",
+    "userType.meta": "Pași și ghidare personalizate",
+    "userType.selected": "Selectat",
+    "userType.preview": "Vezi pașii următori",
+
+    "steps.label.buyer": "Pentru cumpărători",
+    "steps.label.seller": "Pentru vânzători",
+    "steps.title.buyer":
+      "Să găsești următoarea locuință e mai simplu decât crezi",
+    "steps.title.seller": "Vânzarea poate fi sigură și calmă",
+    "steps.subtitle":
+      "Urmează pașii clari, cu context și suport la fiecare etapă. Fără aglomerație, doar progres.",
+    "steps.step": "Pas",
+    "steps.hover": "Rămâi ghidat, rămâi simplu.",
+    "steps.buyer.1.title": "Răsfoiește locuințe pe placul tău",
+    "steps.buyer.1.desc":
+      "Caută după oraș, cartier sau preț până găsești ceva potrivit.",
+    "steps.buyer.2.title": "Programează o vizită",
+    "steps.buyer.2.desc":
+      "Planifică un tur în câteva secunde și vezi locuința pe viu.",
+    "steps.buyer.3.title": "Primește cheile",
+    "steps.buyer.3.desc": "Finalizează tot și mută-te în noua casă.",
+    "steps.seller.1.title": "Publică proprietatea",
+    "steps.seller.1.desc": "Adaugă poze și detalii ca să fie descoperită ușor.",
+    "steps.seller.2.title": "Alege un agent",
+    "steps.seller.2.desc":
+      "Alege un agent de încredere pentru vizite și oferte.",
+    "steps.seller.3.title": "Încasează plata",
+    "steps.seller.3.desc":
+      "Închide tranzacția și încasează banii în siguranță.",
   },
 };
 

@@ -2,28 +2,30 @@ import { ArrowRight, Home, KeyRound, Sparkles, Wand2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import StepsDescription from "./StepsDescription";
+import { useTranslation } from "../utils/i18n";
 
 export default function UserTypeSelector() {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<"buyer" | "seller" | null>(null);
 
   const cards = useMemo(
     () => [
       {
         key: "buyer" as const,
-        title: "I'm looking for a home",
-        desc: "Discover spaces matched to your lifestyle, with fast tours and real guidance.",
+        title: t("userType.buyer.title"),
+        desc: t("userType.buyer.desc"),
         icon: Home,
         accent: "blue",
       },
       {
         key: "seller" as const,
-        title: "I want to sell my property",
-        desc: "List beautifully, manage visits effortlessly, and close with confidence.",
+        title: t("userType.seller.title"),
+        desc: t("userType.seller.desc"),
         icon: KeyRound,
         accent: "green",
       },
     ],
-    [],
+    [t],
   );
 
   return (
@@ -31,14 +33,13 @@ export default function UserTypeSelector() {
       <div className="flex flex-col items-center gap-3 text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur">
           <Sparkles size={14} />
-          <span>Choose your path</span>
+          <span>{t("userType.tag")}</span>
         </div>
         <h2 className="text-3xl font-semibold sm:text-4xl">
-          Buyer or seller, we keep it calm and clear.
+          {t("userType.title")}
         </h2>
         <p className="max-w-2xl text-sm text-slate-200 sm:text-base">
-          Pick the experience that fits you. We’ll surface the next steps and
-          the right tools so you can move without the noise.
+          {t("userType.subtitle")}
         </p>
       </div>
 
@@ -81,7 +82,7 @@ export default function UserTypeSelector() {
                       {card.title}
                     </p>
                     <p className="text-xs text-slate-200">
-                      Tailored steps and guidance
+                      {t("userType.meta")}
                     </p>
                   </div>
                 </div>
@@ -90,7 +91,9 @@ export default function UserTypeSelector() {
 
                 <div className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-white/90">
                   <Wand2 size={16} className="text-white/80" />
-                  <span>{active ? "Selected" : "Preview next steps"}</span>
+                  <span>
+                    {active ? t("userType.selected") : t("userType.preview")}
+                  </span>
                   <ArrowRight
                     size={16}
                     className="transition group-hover:translate-x-1"

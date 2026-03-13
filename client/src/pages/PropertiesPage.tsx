@@ -14,6 +14,7 @@ import { useProperties } from "../hooks/useProperties";
 import { Filter, Property, TourRequest } from "../types/types";
 import { useTranslation } from "../utils/i18n";
 import baseURL from "../config/baseUrl";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const PropertiesPage: React.FC = () => {
   const [location, setLocation] = useState<string>("");
@@ -78,10 +79,12 @@ const PropertiesPage: React.FC = () => {
     fetchExisting();
   }, [selectedProperty, currentUser]);
 
+  const navigate = useNavigate();
+
   const handleRequestTour = async () => {
     if (!selectedProperty) return;
     if (!currentUser || currentUser.id === "-1") {
-      setRequestStatus("error");
+      navigate("/login");
       return;
     }
 
