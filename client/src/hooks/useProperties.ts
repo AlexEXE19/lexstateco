@@ -7,7 +7,7 @@ import { Property, Filter } from "../types/types";
 export const useProperties = (currentUser: any) => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
-  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [savedIds, setSavedIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export const useProperties = (currentUser: any) => {
         setFilteredProperties(allProps);
 
         if (savedRes.data) {
-          setSavedIds(savedRes.data.map((obj: any) => obj.propertyId));
+          setSavedIds(savedRes.data.map((obj: any) => Number(obj.propertyId)));
         }
       } catch (err) {
         console.error(err);

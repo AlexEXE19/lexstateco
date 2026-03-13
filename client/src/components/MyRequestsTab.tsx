@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { CalendarClock, MapPin, Phone, Mail } from "lucide-react";
+import { CalendarClock, MapPin } from "lucide-react";
 import { RootState } from "../state/store";
 import baseURL from "../config/baseUrl";
 import Map from "./Map";
@@ -24,8 +24,8 @@ const formatDateTime = (value: string) => {
       })}`;
 };
 
-const MyAudienceTab: React.FC = () => {
-  const sellerId = useSelector((state: RootState) => state.user.id);
+const MyRequestsTab: React.FC = () => {
+  const userId = useSelector((state: RootState) => state.user.id);
   const [requests, setRequests] = useState<TourRequest[]>([]);
   const [selectedRequestId, setSelectedRequestId] = useState<number | null>(
     null,
@@ -34,30 +34,29 @@ const MyAudienceTab: React.FC = () => {
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchIncoming = async () => {
+    const fetchRequests = async () => {
       try {
         setLoading(true);
-        const res = await axios.get<TourRequest[]>(
-          `${baseURL}/tour-requests/seller/${sellerId}`,
+        const response = await axios.get<TourRequest[]>(
+          `${baseURL}/tour-requests/requester/${userId}`,
         );
-        setRequests(res.data);
-        if (res.data.length > 0) {
-          setSelectedRequestId(res.data[0].id);
+        setRequests(response.data);
+        if (response.data.length > 0) {
+          setSelectedRequestId(response.data[0].id);
         }
-      } catch (err) {
-        console.error("Error fetching incoming tour requests:", err);
+      } catch (error) {
+        console.error("Error fetching tour requests:", error);
       } finally {
         setLoading(false);
       }
     };
-
-    if (sellerId && sellerId !== "-1") {
-      fetchIncoming();
+    if (userId && userId !== "-1") {
+      fetchRequests();
     }
-  }, [sellerId]);
+  }, [userId]);
 
   const selectedRequest = useMemo(
-    () => requests.find((r) => r.id === selectedRequestId) || null,
+    () => requests.find((req) => req.id === selectedRequestId) || null,
     [requests, selectedRequestId],
   );
 
@@ -66,17 +65,21 @@ const MyAudienceTab: React.FC = () => {
     ? `${baseURL.replace(/\/$/, "")}/${selectedProperty.imageRefs[0]}`
     : "/default_house.jpg";
 
-  const updateStatus = async (id: number, status: "accepted" | "rejected") => {
+  const cancelRequest = async (id: number) => {
     try {
       setUpdatingId(id);
-      const res = await axios.put(`${baseURL}/tour-requests/${id}/status`, {
-        status,
-      });
-      setRequests((prev) =>
-        prev.map((r) => (r.id === id ? res.data.tourRequest : r)),
+      const response = await axios.put(
+        `${baseURL}/tour-requests/${id}/status`,
+        {
+          status: "canceled",
+        },
       );
-    } catch (err) {
-      console.error("Error updating request status:", err);
+
+      setRequests((prev) =>
+        prev.map((r) => (r.id === id ? response.data.tourRequest : r)),
+      );
+    } catch (error) {
+      console.error("Error canceling tour request:", error);
     } finally {
       setUpdatingId(null);
     }
@@ -87,23 +90,23 @@ const MyAudienceTab: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-            My audience
+            My requests
           </p>
           <h2 className="text-2xl font-semibold text-white">
-            Incoming tour requests
+            Tour requests you sent
           </h2>
         </div>
       </div>
 
       {loading && (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-          Loading incoming requests...
+          Loading your tour requests...
         </div>
       )}
 
       {!loading && requests.length === 0 && (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-          No one has requested a tour yet.
+          You haven't requested any tours yet.
         </div>
       )}
 
@@ -152,6 +155,23 @@ const MyAudienceTab: React.FC = () => {
                     <p className="text-xs text-slate-400">
                       {formatDateTime(request.requestedAt)}
                     </p>
+                    {request.status === "pending" && (
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            cancelRequest(request.id);
+                          }}
+                          disabled={updatingId === request.id}
+                          className="rounded-lg bg-rose-500/90 px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-rose-500/30 transition hover:-translate-y-[1px] hover:bg-rose-500 disabled:opacity-70"
+                        >
+                          {updatingId === request.id
+                            ? "Canceling..."
+                            : "Cancel request"}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </button>
               );
@@ -159,7 +179,7 @@ const MyAudienceTab: React.FC = () => {
           </div>
 
           <div className="space-y-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-            {selectedProperty && selectedRequest ? (
+            {selectedProperty ? (
               <>
                 <div className="overflow-hidden rounded-2xl ring-1 ring-white/10">
                   <img
@@ -180,34 +200,12 @@ const MyAudienceTab: React.FC = () => {
                   </div>
                   <span
                     className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ${
-                      statusColors[selectedRequest.status] ||
+                      statusColors[selectedRequest?.status || "pending"] ||
                       "bg-white/10 text-white"
                     }`}
                   >
-                    {selectedRequest.status}
+                    {selectedRequest?.status}
                   </span>
-                </div>
-
-                <div className="rounded-2xl bg-white/5 p-4 text-sm text-slate-200 ring-1 ring-white/10">
-                  <div className="mb-3 flex flex-wrap gap-2 text-xs text-slate-300">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
-                      <CalendarClock size={14} />
-                      {formatDateTime(selectedRequest.requestedAt)}
-                    </span>
-                    {selectedRequest.requester && (
-                      <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
-                        <Mail size={14} />
-                        {selectedRequest.requester.email}
-                      </span>
-                    )}
-                    {selectedRequest.requester && (
-                      <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
-                        <Phone size={14} />
-                        {selectedRequest.requester.phone}
-                      </span>
-                    )}
-                  </div>
-                  {selectedProperty.description}
                 </div>
 
                 <div className="grid gap-3 text-sm text-slate-200 sm:grid-cols-2">
@@ -242,6 +240,16 @@ const MyAudienceTab: React.FC = () => {
                   </div>
                 </div>
 
+                <div className="rounded-2xl bg-white/5 p-4 text-sm text-slate-200 ring-1 ring-white/10">
+                  <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-slate-200 ring-1 ring-white/10">
+                    <CalendarClock size={14} />
+                    <span>
+                      {formatDateTime(selectedRequest?.requestedAt || "")}
+                    </span>
+                  </div>
+                  {selectedProperty.description}
+                </div>
+
                 <div className="rounded-2xl bg-slate-900/70 p-4 ring-1 ring-white/10">
                   <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
                     <MapPin size={14} />
@@ -251,33 +259,6 @@ const MyAudienceTab: React.FC = () => {
                     <Map />
                   </div>
                 </div>
-
-                {selectedRequest.status === "pending" && (
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      onClick={() =>
-                        updateStatus(selectedRequest.id, "accepted")
-                      }
-                      disabled={updatingId === selectedRequest.id}
-                      className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:-translate-y-[1px] hover:bg-emerald-400 disabled:opacity-70"
-                    >
-                      {updatingId === selectedRequest.id
-                        ? "Updating..."
-                        : "Accept"}
-                    </button>
-                    <button
-                      onClick={() =>
-                        updateStatus(selectedRequest.id, "rejected")
-                      }
-                      disabled={updatingId === selectedRequest.id}
-                      className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-rose-500/30 transition hover:-translate-y-[1px] hover:bg-rose-400 disabled:opacity-70"
-                    >
-                      {updatingId === selectedRequest.id
-                        ? "Updating..."
-                        : "Reject"}
-                    </button>
-                  </div>
-                )}
               </>
             ) : (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
@@ -291,4 +272,4 @@ const MyAudienceTab: React.FC = () => {
   );
 };
 
-export default MyAudienceTab;
+export default MyRequestsTab;

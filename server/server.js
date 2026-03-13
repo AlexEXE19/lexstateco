@@ -8,6 +8,7 @@ const { sequelize } = require("./models/index");
 const userRoutes = require("./routes/users");
 const propertyRoutes = require("./routes/properties");
 const savedPropertiesRoutes = require("./routes/savedProperties");
+const tourRequestRoutes = require("./routes/tourRequests");
 
 app.use(cors());
 
@@ -20,6 +21,7 @@ const PORT = process.env.PORT || 3000;
 app.use("/users/", userRoutes);
 app.use("/properties/", propertyRoutes);
 app.use("/saved-properties/", savedPropertiesRoutes);
+app.use("/tour-requests/", tourRequestRoutes);
 
 // Syncs Sequelize models with the database, altering tables to match models
 (async () => {

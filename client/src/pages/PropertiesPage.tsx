@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 import {
   SlidersHorizontal,
   Search,
@@ -10,7 +11,7 @@ import Map from "../components/Map";
 import PropertyCard from "../components/PropertyCard";
 import { RootState } from "../state/store";
 import { useProperties } from "../hooks/useProperties";
-import { Filter, Property } from "../types/types";
+import { Filter, Property, TourRequest } from "../types/types";
 import baseURL from "../config/baseUrl";
 
 const PropertiesPage: React.FC = () => {
@@ -22,6 +23,14 @@ const PropertiesPage: React.FC = () => {
     null,
   );
   const [detailImageIndex, setDetailImageIndex] = useState<number>(0);
+  const [tourRequest, setTourRequest] = useState<TourRequest | null>(null);
+  const [requestDate, setRequestDate] = useState<string>(
+    new Date().toISOString().slice(0, 10),
+  );
+  const [requestTime, setRequestTime] = useState<string>("10:00");
+  const [requestStatus, setRequestStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
   const currentUser = useSelector((state: RootState) => state.user);
 
@@ -41,7 +50,81 @@ const PropertiesPage: React.FC = () => {
 
   useEffect(() => {
     setDetailImageIndex(0);
+    setTourRequest(null);
+    setRequestStatus("idle");
+    setRequestDate(new Date().toISOString().slice(0, 10));
+    setRequestTime("10:00");
   }, [selectedProperty?.id]);
+
+  useEffect(() => {
+    const fetchExisting = async () => {
+      if (!selectedProperty || !currentUser || currentUser.id === "-1") {
+        setTourRequest(null);
+        return;
+      }
+
+      try {
+        const res = await axios.get<TourRequest>(
+          `${baseURL}/tour-requests/requester/${currentUser.id}/property/${selectedProperty.id}`,
+        );
+        setTourRequest(res.data);
+      } catch (err: any) {
+        setTourRequest(null);
+      }
+    };
+
+    fetchExisting();
+  }, [selectedProperty, currentUser]);
+
+  const handleRequestTour = async () => {
+    if (!selectedProperty) return;
+    if (!currentUser || currentUser.id === "-1") {
+      setRequestStatus("error");
+      return;
+    }
+
+    if (tourRequest && tourRequest.status === "pending") {
+      try {
+        setRequestStatus("loading");
+        const res = await axios.put(
+          `${baseURL}/tour-requests/${tourRequest.id}/status`,
+          {
+            status: "canceled",
+          },
+        );
+        setTourRequest(res.data.tourRequest);
+        setRequestStatus("success");
+      } catch (error) {
+        console.error("Error canceling tour request:", error);
+        setRequestStatus("error");
+      }
+      return;
+    }
+
+    const isoDateTime = new Date(
+      `${requestDate}T${requestTime}:00`,
+    ).toISOString();
+
+    try {
+      setRequestStatus("loading");
+      const res = await axios.post(`${baseURL}/tour-requests`, {
+        propertyId: selectedProperty.id,
+        sellerId: selectedProperty.sellerId,
+        requesterId: Number(currentUser.id),
+        requestedAt: isoDateTime,
+        status: "pending",
+      });
+      setTourRequest(res.data.tourRequest);
+      setRequestStatus("success");
+    } catch (error) {
+      console.error("Error creating tour request:", error);
+      setRequestStatus("error");
+    }
+  };
+
+  const currentStatus = tourRequest?.status || "none";
+  const isPending = currentStatus === "pending";
+  const isCanceled = currentStatus === "canceled";
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -185,7 +268,7 @@ const PropertiesPage: React.FC = () => {
                     <div className="relative h-64 w-full">
                       {selectedProperty.imageRefs?.length ? (
                         <img
-                          src={`${baseURL.replace(/\/$/, "")}/$${"{"}selectedProperty.imageRefs[detailImageIndex % selectedProperty.imageRefs.length]{"}"}`}
+                          src={`${baseURL.replace(/\/$/, "")}/${selectedProperty.imageRefs[detailImageIndex % selectedProperty.imageRefs.length]}`}
                           alt={selectedProperty.title}
                           className="h-full w-full object-cover"
                         />
@@ -242,15 +325,85 @@ const PropertiesPage: React.FC = () => {
                   )}
                 </div>
 
-                <h3 className="text-2xl font-semibold text-white">
-                  {selectedProperty.title}
-                </h3>
-                <p className="text-sm text-slate-200">
-                  {selectedProperty.location}
-                </p>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-2xl font-semibold text-white">
+                      {selectedProperty.title}
+                    </h3>
+                    <p className="text-sm text-slate-200">
+                      {selectedProperty.location}
+                    </p>
+                  </div>
 
-                <div className="grid grid-cols-2 gap-3 text-sm text-slate-200">
-                  <div className="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
+                  <div className="flex flex-col gap-2 sm:items-end">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-200">
+                      <label className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-white/10">
+                        <span className="text-[11px] uppercase tracking-[0.2em] text-slate-400">
+                          Date
+                        </span>
+                        <input
+                          type="date"
+                          value={requestDate}
+                          onChange={(e) => setRequestDate(e.target.value)}
+                          className="bg-transparent text-white focus:outline-none"
+                        />
+                      </label>
+                      <label className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-white/10">
+                        <span className="text-[11px] uppercase tracking-[0.2em] text-slate-400">
+                          Time
+                        </span>
+                        <input
+                          type="time"
+                          value={requestTime}
+                          onChange={(e) => setRequestTime(e.target.value)}
+                          className="bg-transparent text-white focus:outline-none"
+                        />
+                      </label>
+                    </div>
+
+                    <button
+                      onClick={handleRequestTour}
+                      disabled={requestStatus === "loading"}
+                      className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-cyan-300 ${
+                        isPending
+                          ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
+                          : "bg-gradient-to-r from-sky-500 to-cyan-400 text-white shadow-lg shadow-sky-400/30 hover:-translate-y-[1px] hover:shadow-cyan-400/40"
+                      } ${requestStatus === "loading" ? "opacity-70" : ""}`}
+                    >
+                      {requestStatus === "loading"
+                        ? isPending
+                          ? "Canceling..."
+                          : "Sending..."
+                        : isPending
+                          ? "Cancel request"
+                          : "Request a tour"}
+                    </button>
+                    {requestStatus === "error" && (
+                      <p className="text-xs text-rose-300">
+                        Could not send request. Please log in and try again.
+                      </p>
+                    )}
+                    {requestStatus === "success" && isPending && (
+                      <p className="text-xs text-emerald-300">
+                        Request saved. See it in My Requests.
+                      </p>
+                    )}
+                    {requestStatus === "success" && !isPending && (
+                      <p className="text-xs text-slate-300">
+                        Request canceled.
+                      </p>
+                    )}
+                    {isCanceled && requestStatus === "idle" && (
+                      <p className="text-xs text-slate-300">
+                        Last request was canceled. Choose a new time to book
+                        again.
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 text-sm text-slate-200 sm:grid-cols-2">
+                  <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                     <p className="text-xs uppercase text-slate-400">Price</p>
                     <p className="text-lg font-semibold text-white">
                       {new Intl.NumberFormat("en-US", {
@@ -258,30 +411,49 @@ const PropertiesPage: React.FC = () => {
                         currency: "USD",
                       }).format(selectedProperty.price)}
                     </p>
+                    <p className="text-xs text-slate-400">
+                      Includes taxes and fees
+                    </p>
                   </div>
-                  <div className="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
+                  <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                     <p className="text-xs uppercase text-slate-400">Size</p>
                     <p className="text-lg font-semibold text-white">
                       {selectedProperty.size} sq ft
                     </p>
+                    <p className="text-xs text-slate-400">Usable living area</p>
                   </div>
-                  <div className="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
+                  <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                     <p className="text-xs uppercase text-slate-400">
                       Neighborhood
                     </p>
                     <p className="text-lg font-semibold text-white">
                       {selectedProperty.neighborhood}
                     </p>
+                    <p className="text-xs text-slate-400">
+                      Local vibe and nearby spots
+                    </p>
                   </div>
-                  <div className="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
+                  <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                     <p className="text-xs uppercase text-slate-400">ZIP</p>
                     <p className="text-lg font-semibold text-white">
                       {selectedProperty.zipCode}
                     </p>
+                    <p className="text-xs text-slate-400">
+                      Delivery + school zone
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:col-span-2">
+                    <p className="text-xs uppercase text-slate-400">Seller</p>
+                    <p className="text-lg font-semibold text-white">
+                      ID #{selectedProperty.sellerId}
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      Direct contact shared after you request
+                    </p>
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-white/5 p-3 text-sm text-slate-200 ring-1 ring-white/10">
+                <div className="rounded-2xl bg-white/5 p-4 text-sm text-slate-200 ring-1 ring-white/10">
                   {selectedProperty.description}
                 </div>
               </div>

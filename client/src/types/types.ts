@@ -1,5 +1,5 @@
 export interface Property {
-  id: string;
+  id: number;
   title: string;
   description: string;
   location: string;
@@ -9,6 +9,17 @@ export interface Property {
   size: number;
   imageRefs: string[];
   sellerId: number;
+}
+
+export interface TourRequest {
+  id: number;
+  propertyId: number;
+  sellerId: number;
+  requesterId: number;
+  requestedAt: string;
+  status: "pending" | "accepted" | "rejected" | "canceled";
+  Property?: Property;
+  requester?: User;
 }
 
 export interface User {

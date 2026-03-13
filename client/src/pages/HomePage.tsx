@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="bg-slate-950 text-slate-50">
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 pointer-events-none">
           <div className="absolute inset-0 bg-[url('/homepage.jpg')] bg-cover bg-[center_top_15%] opacity-40" />
           <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900/85 to-sky-900/70" />
           <div className="absolute -left-16 -top-20 h-72 w-72 rounded-full bg-sky-400/30 blur-[120px]" />
@@ -204,7 +204,7 @@ const HomePage: React.FC = () => {
       </section>
 
       <section className="relative bg-slate-950">
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 pointer-events-none">
           <div className="absolute left-0 top-0 h-72 w-72 rounded-full bg-blue-500/20 blur-[120px]" />
           <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-cyan-400/20 blur-[120px]" />
         </div>

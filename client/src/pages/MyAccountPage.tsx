@@ -6,6 +6,7 @@ import SavedPropertiesTab from "../components/SavedPropertiesTab";
 import UserPropertiesTab from "../components/UserPropertiesTab";
 import PropertyListingTab from "../components/PropertyListingTab";
 import MyAudienceTab from "../components/MyAudienceTab";
+import MyRequestsTab from "../components/MyRequestsTab";
 import { getCurrentUser } from "../utils/auth";
 import { User } from "../types/types";
 import { setTab } from "../state/tab/tabSlice";
@@ -72,6 +73,7 @@ const MyAccountPage: React.FC = () => {
             {activeTab === "saved" && <SavedPropertiesTab />}
             {activeTab === "myProperties" && <UserPropertiesTab />}
             {activeTab === "list" && <PropertyListingTab />}
+            {activeTab === "requests" && <MyRequestsTab />}
             {activeTab === "audience" && <MyAudienceTab />}
           </div>
         </div>
