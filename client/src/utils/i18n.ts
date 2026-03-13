@@ -42,6 +42,17 @@ const translations: Translations = {
     "account.tabs.list": "List a Property",
     "account.tabs.requests": "My Requests",
     "account.tabs.audience": "My Audience",
+    "account.tabs.messages": "Messages",
+
+    "account.group.buyer": "Buyer tools",
+    "account.group.seller": "Seller tools",
+    "account.group.chat": "Conversations",
+
+    "account.messages.title": "Messages",
+    "account.messages.subtitle":
+      "Chat with buyers and sellers from one inbox.",
+    "account.messages.placeholder":
+      "Chat workspace coming soon. You'll see threads, message history, and quick actions here.",
 
     "saved.title": "Your Saved Properties",
     "saved.cta": "Let's find some nice properties!",
@@ -257,6 +268,17 @@ const translations: Translations = {
     "account.tabs.list": "Adaugă o proprietate",
     "account.tabs.requests": "Cererile mele",
     "account.tabs.audience": "Publicul meu",
+    "account.tabs.messages": "Mesaje",
+
+    "account.group.buyer": "Pentru cumpărători",
+    "account.group.seller": "Pentru vânzători",
+    "account.group.chat": "Conversații",
+
+    "account.messages.title": "Mesaje",
+    "account.messages.subtitle":
+      "Comunică cu cumpărătorii și vânzătorii într-o singură căsuță.",
+    "account.messages.placeholder":
+      "Zona de chat apare în curând. Vei vedea conversații, istoric și acțiuni rapide aici.",
 
     "saved.title": "Proprietățile tale salvate",
     "saved.cta": "Hai să găsim proprietăți interesante!",
