@@ -1,5 +1,22 @@
-const { TourRequest, Property } = require("../models");
-const { User } = require("../models");
+const { TourRequest, Property, Notification, User } = require("../models");
+
+const createNotificationSafe = async ({
+  ownerId,
+  title,
+  description,
+  type,
+}) => {
+  try {
+    await Notification.create({
+      owner_id: ownerId,
+      title,
+      description,
+      type,
+    });
+  } catch (err) {
+    console.error("Error creating notification:", err);
+  }
+};
 
 // Create a tour request
 const createTourRequest = async (req, res) => {
@@ -22,6 +39,14 @@ const createTourRequest = async (req, res) => {
 
     const withProperty = await TourRequest.findByPk(tourRequest.id, {
       include: [{ model: Property }],
+    });
+
+    const propertyTitle = withProperty?.Property?.title || "your property";
+    await createNotificationSafe({
+      ownerId: sellerId,
+      title: "New tour request",
+      description: `You have a new tour request for ${propertyTitle}.`,
+      type: "incoming_request",
     });
 
     return res
@@ -51,16 +76,33 @@ const updateTourRequestStatus = async (req, res) => {
       });
     }
 
-    const [updated] = await TourRequest.update({ status }, { where: { id } });
+    const request = await TourRequest.findByPk(id, {
+      include: [
+        { model: Property },
+        {
+          model: User,
+          as: "requester",
+          attributes: ["id", "first_name", "last_name"],
+        },
+      ],
+    });
 
-    if (!updated) {
+    if (!request) {
       return res.status(404).json({ message: "Tour request not found" });
     }
 
-    const refreshed = await TourRequest.findByPk(id, {
-      include: [{ model: Property }],
+    request.status = status;
+    await request.save();
+
+    const propertyTitle = request?.Property?.title || "your property";
+    await createNotificationSafe({
+      ownerId: request.requester_id,
+      title: "Tour request updated",
+      description: `Status for ${propertyTitle} changed to ${status}.`,
+      type: "request_update",
     });
-    return res.json({ message: "Status updated", tourRequest: refreshed });
+
+    return res.json({ message: "Status updated", tourRequest: request });
   } catch (err) {
     console.error("Error updating tour request status:", err);
     return res.status(500).json({ message: "Internal server error" });

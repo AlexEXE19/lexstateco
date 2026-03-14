@@ -22,6 +22,15 @@ export interface TourRequest {
   requester?: User;
 }
 
+export interface Notification {
+  id: number;
+  ownerId: number;
+  title: string;
+  description: string;
+  timestamp: string;
+  type: "incoming_request" | "request_update" | string;
+}
+
 export interface User {
   id: string;
   firstName: string;

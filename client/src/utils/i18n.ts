@@ -49,8 +49,7 @@ const translations: Translations = {
     "account.group.chat": "Conversations",
 
     "account.messages.title": "Messages",
-    "account.messages.subtitle":
-      "Chat with buyers and sellers from one inbox.",
+    "account.messages.subtitle": "Chat with buyers and sellers from one inbox.",
     "account.messages.placeholder":
       "Chat workspace coming soon. You'll see threads, message history, and quick actions here.",
 

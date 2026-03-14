@@ -154,8 +154,12 @@ const MyAccountPage: React.FC = () => {
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
                   {t("account.group.chat")}
                 </p>
-                <h2 className="text-2xl font-semibold">{t("account.messages.title")}</h2>
-                <p className="text-sm text-slate-300">{t("account.messages.subtitle")}</p>
+                <h2 className="text-2xl font-semibold">
+                  {t("account.messages.title")}
+                </h2>
+                <p className="text-sm text-slate-300">
+                  {t("account.messages.subtitle")}
+                </p>
                 <div className="rounded-2xl border border-dashed border-white/20 bg-white/5 p-5 text-sm text-slate-200">
                   {t("account.messages.placeholder")}
                 </div>
