@@ -267,7 +267,11 @@ const MyRequestsTab: React.FC = () => {
                     <span>{t("audience.map")}</span>
                   </div>
                   <div className="h-64 overflow-hidden rounded-xl bg-slate-900/90 ring-1 ring-white/10">
-                    <Map />
+                    <Map
+                      location={selectedProperty.location}
+                      label={selectedProperty.title}
+                      zoom={12}
+                    />
                   </div>
                 </div>
               </>

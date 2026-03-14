@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import {
   SlidersHorizontal,
@@ -15,6 +15,7 @@ import { Filter, Property, TourRequest } from "../types/types";
 import { useTranslation } from "../utils/i18n";
 import baseURL from "../config/baseUrl";
 import { Navigate, useNavigate } from "react-router-dom";
+import { setTab } from "../state/tab/tabSlice";
 
 const PropertiesPage: React.FC = () => {
   const [location, setLocation] = useState<string>("");
@@ -33,7 +34,13 @@ const PropertiesPage: React.FC = () => {
   const [requestStatus, setRequestStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+  const [showMessageCompose, setShowMessageCompose] = useState(false);
+  const [messageText, setMessageText] = useState("");
+  const [messageStatus, setMessageStatus] = useState<
+    "idle" | "loading" | "error"
+  >("idle");
 
+  const dispatch = useDispatch();
   const currentUser = useSelector((state: RootState) => state.user);
   const { t } = useTranslation();
 
@@ -57,6 +64,9 @@ const PropertiesPage: React.FC = () => {
     setRequestStatus("idle");
     setRequestDate(new Date().toISOString().slice(0, 10));
     setRequestTime("10:00");
+    setShowMessageCompose(false);
+    setMessageText("");
+    setMessageStatus("idle");
   }, [selectedProperty?.id]);
 
   useEffect(() => {
@@ -124,6 +134,52 @@ const PropertiesPage: React.FC = () => {
     } catch (error) {
       console.error("Error creating tour request:", error);
       setRequestStatus("error");
+    }
+  };
+
+  const goToConversation = (conversationId: number | null) => {
+    dispatch(setTab({ type: "messages", conversationId }));
+    navigate("/account");
+  };
+
+  const handleMessageClick = async () => {
+    if (!selectedProperty) return;
+    if (!currentUser || currentUser.id === "-1") {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await axios.get(
+        `${baseURL}/conversations/property/${selectedProperty.id}/user/${currentUser.id}`,
+      );
+      goToConversation(res.data.id);
+    } catch (err: any) {
+      if (err?.response?.status === 404) {
+        setShowMessageCompose(true);
+      } else {
+        console.error("Error checking conversation", err);
+      }
+    }
+  };
+
+  const handleSendFirstMessage = async () => {
+    if (!selectedProperty) return;
+    if (!messageText.trim()) return;
+    setMessageStatus("loading");
+    try {
+      const res = await axios.post(`${baseURL}/conversations/start`, {
+        propertyId: selectedProperty.id,
+        senderId: Number(currentUser.id),
+        content: messageText.trim(),
+      });
+      setMessageStatus("idle");
+      setShowMessageCompose(false);
+      setMessageText("");
+      goToConversation(res.data.conversation.id);
+    } catch (err) {
+      console.error("Error starting conversation", err);
+      setMessageStatus("error");
     }
   };
 
@@ -234,7 +290,10 @@ const PropertiesPage: React.FC = () => {
                       id="map"
                       className="flex h-full items-center justify-center text-slate-400"
                     >
-                      <Map />
+                      <Map
+                        location={selectedProperty?.location}
+                        label={`${selectedProperty?.title || "Property"} • ${selectedProperty?.location || ""}`}
+                      />
                     </div>
                   </div>
                 </div>
@@ -257,7 +316,7 @@ const PropertiesPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 lg:h-full lg:overflow-hidden">
+              <div className="space-y-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 lg:h-full lg:overflow-y-auto lg:pr-2">
                 <div className="flex items-center justify-between">
                   <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
                     {t("properties.details")}
@@ -384,6 +443,12 @@ const PropertiesPage: React.FC = () => {
                           ? t("requests.cancel")
                           : t("properties.request")}
                     </button>
+                    <button
+                      onClick={handleMessageClick}
+                      className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/20"
+                    >
+                      {t("account.messages.messageOwner")}
+                    </button>
                     {requestStatus === "error" && (
                       <p className="text-xs text-rose-300">
                         {t("properties.errorAuth")}
@@ -404,6 +469,42 @@ const PropertiesPage: React.FC = () => {
                         {t("properties.lastCanceled")}
                       </p>
                     )}
+                    {showMessageCompose && (
+                      <div className="mt-3 space-y-2 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
+                        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                          {t("account.messages.firstMessage")}
+                        </p>
+                        <textarea
+                          value={messageText}
+                          onChange={(e) => setMessageText(e.target.value)}
+                          rows={3}
+                          className="w-full rounded-xl bg-slate-900/60 px-3 py-2 text-sm text-white ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          placeholder={t("account.messages.inputPlaceholder")}
+                        />
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={handleSendFirstMessage}
+                            disabled={messageStatus === "loading"}
+                            className="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-[1px] hover:bg-blue-400 disabled:opacity-70"
+                          >
+                            {messageStatus === "loading"
+                              ? t("properties.sending")
+                              : (t("account.messages.send") ?? "Send")}
+                          </button>
+                          <button
+                            onClick={() => setShowMessageCompose(false)}
+                            className="text-sm text-slate-200 underline"
+                          >
+                            {t("common.cancel") ?? "Cancel"}
+                          </button>
+                        </div>
+                        {messageStatus === "error" && (
+                          <p className="text-xs text-rose-300">
+                            {t("properties.errorAuth")}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -419,7 +520,7 @@ const PropertiesPage: React.FC = () => {
                       }).format(selectedProperty.price)}
                     </p>
                     <p className="text-xs text-slate-400">
-                      Includes taxes and fees
+                      {t("properties.price.includesFees")}
                     </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
@@ -427,9 +528,11 @@ const PropertiesPage: React.FC = () => {
                       {t("properties.label.size")}
                     </p>
                     <p className="text-lg font-semibold text-white">
-                      {selectedProperty.size} sq ft
+                      {selectedProperty.size} {t("properties.size.unit")}
                     </p>
-                    <p className="text-xs text-slate-400">Usable living area</p>
+                    <p className="text-xs text-slate-400">
+                      {t("properties.size.hint")}
+                    </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                     <p className="text-xs uppercase text-slate-400">
@@ -439,7 +542,7 @@ const PropertiesPage: React.FC = () => {
                       {selectedProperty.neighborhood}
                     </p>
                     <p className="text-xs text-slate-400">
-                      Local vibe and nearby spots
+                      {t("properties.neighborhood.hint")}
                     </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
@@ -450,7 +553,7 @@ const PropertiesPage: React.FC = () => {
                       {selectedProperty.zipCode}
                     </p>
                     <p className="text-xs text-slate-400">
-                      Delivery + school zone
+                      {t("properties.zip.hint")}
                     </p>
                   </div>
                   <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:col-span-2">
@@ -461,7 +564,7 @@ const PropertiesPage: React.FC = () => {
                       ID #{selectedProperty.sellerId}
                     </p>
                     <p className="text-xs text-slate-400">
-                      Direct contact shared after you request
+                      {t("properties.seller.hint")}
                     </p>
                   </div>
                 </div>

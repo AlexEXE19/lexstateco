@@ -7,7 +7,7 @@ import { setLanguage } from "../state/lang/langSlice";
 import { useTranslation } from "../utils/i18n";
 import { useNotifications, formatTimeAgo } from "../hooks/useNotifications";
 import { Notification } from "../types/types";
-import { setTab } from "../state/tab/tabSlice";
+import { setTab, setConversationId } from "../state/tab/tabSlice";
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
@@ -68,11 +68,15 @@ const Navbar: React.FC = () => {
   };
 
   const handleNotificationClick = async (notification: Notification) => {
-    const targetTab =
-      notification.type === "incoming_request" ? "audience" : "requests";
+    let targetTab = "requests";
+    if (notification.type === "incoming_request") targetTab = "audience";
+    if (notification.type === "message") targetTab = "messages";
 
     navigate("/account");
     dispatch(setTab(targetTab));
+    if (notification.type === "message") {
+      dispatch(setConversationId(null));
+    }
     setNotificationsOpen(false);
 
     await deleteNotification(notification.id);

@@ -19,6 +19,12 @@ const translations: Translations = {
     "navbar.english": "English",
     "navbar.romanian": "Romanian",
 
+    "common.refresh": "Refresh",
+    "common.hide": "Hide",
+    "common.show": "Show",
+    "common.cancel": "Cancel",
+    "common.na": "—",
+
     "audience.title": "Incoming tour requests",
     "audience.loading": "Loading incoming requests...",
     "audience.empty": "No one has requested a tour yet.",
@@ -52,6 +58,14 @@ const translations: Translations = {
     "account.messages.subtitle": "Chat with buyers and sellers from one inbox.",
     "account.messages.placeholder":
       "Chat workspace coming soon. You'll see threads, message history, and quick actions here.",
+    "account.messages.select": "Select a conversation",
+    "account.messages.send": "Send",
+    "account.messages.empty": "No conversations yet.",
+    "account.messages.inputPlaceholder": "Type a message",
+    "account.messages.messageOwner": "Message owner",
+    "account.messages.firstMessage": "Send a message",
+    "account.messages.role.seller": "Seller",
+    "account.messages.role.buyer": "Buyer",
 
     "saved.title": "Your Saved Properties",
     "saved.cta": "Let's find some nice properties!",
@@ -101,6 +115,18 @@ const translations: Translations = {
     "properties.label.seller": "Seller",
     "properties.label.date": "Date",
     "properties.label.time": "Time",
+    "properties.actions.save": "Save property",
+    "properties.actions.unsave": "Unsave property",
+    "properties.actions.edit": "Edit",
+    "properties.actions.delete": "Delete",
+    "properties.listedBy": "Listed by",
+    "properties.listedBy.agent": "Agent",
+    "properties.price.includesFees": "Includes taxes and fees",
+    "properties.size.unit": "sq ft",
+    "properties.size.hint": "Usable living area",
+    "properties.neighborhood.hint": "Local vibe and nearby spots",
+    "properties.zip.hint": "Delivery + school zone",
+    "properties.seller.hint": "Direct contact shared after you request",
     "properties.empty":
       "No properties match your filters yet. Try widening your search.",
     "properties.errorAuth":
@@ -244,6 +270,12 @@ const translations: Translations = {
     "navbar.english": "Engleză",
     "navbar.romanian": "Română",
 
+    "common.refresh": "Reîmprospătează",
+    "common.hide": "Ascunde",
+    "common.show": "Afișează",
+    "common.cancel": "Anulează",
+    "common.na": "—",
+
     "audience.title": "Cereri de tur primite",
     "audience.loading": "Se încarcă cererile...",
     "audience.empty": "Nu ai încă cereri de tur.",
@@ -278,6 +310,14 @@ const translations: Translations = {
       "Comunică cu cumpărătorii și vânzătorii într-o singură căsuță.",
     "account.messages.placeholder":
       "Zona de chat apare în curând. Vei vedea conversații, istoric și acțiuni rapide aici.",
+    "account.messages.select": "Selectează o conversație",
+    "account.messages.send": "Trimite",
+    "account.messages.empty": "Nu există conversații încă.",
+    "account.messages.inputPlaceholder": "Scrie un mesaj",
+    "account.messages.messageOwner": "Trimite mesaj proprietarului",
+    "account.messages.firstMessage": "Trimite un mesaj",
+    "account.messages.role.seller": "Vânzător",
+    "account.messages.role.buyer": "Cumpărător",
 
     "saved.title": "Proprietățile tale salvate",
     "saved.cta": "Hai să găsim proprietăți interesante!",
@@ -326,6 +366,18 @@ const translations: Translations = {
     "properties.label.seller": "Vânzător",
     "properties.label.date": "Dată",
     "properties.label.time": "Oră",
+    "properties.actions.save": "Salvează proprietatea",
+    "properties.actions.unsave": "Șterge din salvate",
+    "properties.actions.edit": "Editează",
+    "properties.actions.delete": "Șterge",
+    "properties.listedBy": "Publicat de",
+    "properties.listedBy.agent": "Agent",
+    "properties.price.includesFees": "Include taxe și comisioane",
+    "properties.size.unit": "mp",
+    "properties.size.hint": "Suprafață utilă",
+    "properties.neighborhood.hint": "Atmosferă locală și puncte apropiate",
+    "properties.zip.hint": "Zonă de livrare + școală",
+    "properties.seller.hint": "Datele de contact apar după solicitare",
     "properties.empty":
       "Nicio proprietate nu corespunde filtrelor. Lărgește căutarea.",
     "properties.errorAuth":

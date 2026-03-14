@@ -22,6 +22,7 @@ import {
   setModalType,
 } from "../state/modal/modalSlice";
 import baseURL from "../config/baseUrl";
+import { useTranslation } from "../utils/i18n";
 
 // Property card holds the information about a property
 const PropertyCard: React.FC<{
@@ -31,6 +32,7 @@ const PropertyCard: React.FC<{
   onSelect?: (property: Property) => void;
 }> = ({ property, saved, selected = false, onSelect }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [sellerName, setSellerName] = useState<string>("");
   const [sellerPhone, setSellerPhone] = useState<string>("");
@@ -223,7 +225,9 @@ const PropertyCard: React.FC<{
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/20 to-transparent pointer-events-none" />
         <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur">
           <Home size={14} />
-          <span>{property.size} sq ft</span>
+          <span>
+            {property.size} {t("properties.size.unit")}
+          </span>
         </div>
         <div className="absolute bottom-3 right-3 rounded-full bg-blue-500 px-3 py-1 text-xs font-semibold text-white shadow">
           {priceLabel}
@@ -257,7 +261,11 @@ const PropertyCard: React.FC<{
             <button
               onClick={handleSaveClick}
               className="rounded-full p-1 transition hover:bg-white/10"
-              aria-label={isSaved ? "Unsave property" : "Save property"}
+              aria-label={
+                isSaved
+                  ? t("properties.actions.unsave")
+                  : t("properties.actions.save")
+              }
             >
               <Bookmark
                 size={18}
@@ -282,12 +290,13 @@ const PropertyCard: React.FC<{
             <Tag size={12} /> {property.zipCode}
           </span>
           <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
-            <Phone size={12} /> {sellerPhone || "—"}
+            <Phone size={12} /> {sellerPhone || t("common.na")}
           </span>
         </div>
 
         <div className="text-xs text-slate-300">
-          Listed by {sellerName || "Agent"}
+          {t("properties.listedBy")}{" "}
+          {sellerName || t("properties.listedBy.agent")}
         </div>
       </div>
 
@@ -299,14 +308,14 @@ const PropertyCard: React.FC<{
               className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/8 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-black/10 transition hover:-translate-y-[1px] hover:border-white/30 hover:bg-white/12"
             >
               <Pencil size={14} />
-              Edit
+              {t("properties.actions.edit")}
             </button>
             <button
               onClick={handleDeleteClick}
               className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-red-400/50 bg-white/5 px-4 py-2 text-sm font-semibold text-red-50 shadow-lg shadow-black/20 transition hover:-translate-y-[1px] hover:bg-red-500/20 hover:border-red-400"
             >
               <Trash2 size={14} />
-              Delete
+              {t("properties.actions.delete")}
             </button>
           </>
         )}

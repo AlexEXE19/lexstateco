@@ -18,10 +18,13 @@ import MyRequestsTab from "../components/MyRequestsTab";
 import { getCurrentUser } from "../utils/auth";
 import { User } from "../types/types";
 import { setTab } from "../state/tab/tabSlice";
+import MessagesTab from "../components/MessagesTab";
 import { useTranslation } from "../utils/i18n";
 
 const MyAccountPage: React.FC = () => {
-  const activeTab = useSelector((state: RootState) => state.tab).type;
+  const tabState = useSelector((state: RootState) => state.tab);
+  const activeTab = tabState.type;
+  const activeConversationId = tabState.conversationId;
   const dispatch = useDispatch();
 
   const firstName = useSelector((state: RootState) => state.user.firstName);
@@ -130,11 +133,6 @@ const MyAccountPage: React.FC = () => {
                             {item.label}
                           </span>
                         </div>
-                        {item.key === "messages" && (
-                          <span className="rounded-full bg-white/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-white/90">
-                            Soon
-                          </span>
-                        )}
                       </button>
                     );
                   })}
@@ -150,20 +148,7 @@ const MyAccountPage: React.FC = () => {
             {activeTab === "requests" && <MyRequestsTab />}
             {activeTab === "audience" && <MyAudienceTab />}
             {activeTab === "messages" && (
-              <div className="space-y-3 text-slate-100">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-                  {t("account.group.chat")}
-                </p>
-                <h2 className="text-2xl font-semibold">
-                  {t("account.messages.title")}
-                </h2>
-                <p className="text-sm text-slate-300">
-                  {t("account.messages.subtitle")}
-                </p>
-                <div className="rounded-2xl border border-dashed border-white/20 bg-white/5 p-5 text-sm text-slate-200">
-                  {t("account.messages.placeholder")}
-                </div>
-              </div>
+              <MessagesTab activeConversationId={activeConversationId} />
             )}
           </div>
         </div>

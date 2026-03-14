@@ -28,7 +28,24 @@ export interface Notification {
   title: string;
   description: string;
   timestamp: string;
-  type: "incoming_request" | "request_update" | string;
+  type: "incoming_request" | "request_update" | "message" | string;
+}
+
+export interface Conversation {
+  id: number;
+  propertyId: number;
+  buyerId: number;
+  sellerId: number;
+  Property?: Property;
+  updatedAt?: string;
+}
+
+export interface ChatMessage {
+  id: number;
+  conversationId: number;
+  senderId: number;
+  content: string;
+  createdAt: string;
 }
 
 export interface User {

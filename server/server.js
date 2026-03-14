@@ -10,6 +10,7 @@ const propertyRoutes = require("./routes/properties");
 const savedPropertiesRoutes = require("./routes/savedProperties");
 const tourRequestRoutes = require("./routes/tourRequests");
 const notificationRoutes = require("./routes/notifications");
+const conversationRoutes = require("./routes/conversations");
 
 app.use(cors());
 
@@ -24,6 +25,7 @@ app.use("/properties/", propertyRoutes);
 app.use("/saved-properties/", savedPropertiesRoutes);
 app.use("/tour-requests/", tourRequestRoutes);
 app.use("/notifications/", notificationRoutes);
+app.use("/conversations/", conversationRoutes);
 
 // Syncs Sequelize models with the database, altering tables to match models
 (async () => {

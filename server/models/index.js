@@ -5,6 +5,8 @@ const Property = require("./Property");
 const SavedProperty = require("./SavedProperty");
 const TourRequest = require("./TourRequest");
 const Notification = require("./Notification");
+const Conversation = require("./Conversation");
+const Message = require("./Message");
 
 // Defining the relationships
 User.hasMany(Property, { foreignKey: "seller_id" });
@@ -24,6 +26,24 @@ TourRequest.belongsTo(User, { as: "requester", foreignKey: "requester_id" });
 User.hasMany(Notification, { as: "notifications", foreignKey: "owner_id" });
 Notification.belongsTo(User, { as: "owner", foreignKey: "owner_id" });
 
+Property.hasMany(Conversation, { foreignKey: "property_id" });
+Conversation.belongsTo(Property, { foreignKey: "property_id" });
+
+User.hasMany(Conversation, {
+  as: "buyerConversations",
+  foreignKey: "buyer_id",
+});
+User.hasMany(Conversation, {
+  as: "sellerConversations",
+  foreignKey: "seller_id",
+});
+Conversation.belongsTo(User, { as: "buyer", foreignKey: "buyer_id" });
+Conversation.belongsTo(User, { as: "seller", foreignKey: "seller_id" });
+
+Conversation.hasMany(Message, { foreignKey: "conversation_id" });
+Message.belongsTo(Conversation, { foreignKey: "conversation_id" });
+Message.belongsTo(User, { as: "sender", foreignKey: "sender_id" });
+
 Property.hasMany(TourRequest, { foreignKey: "property_id" });
 TourRequest.belongsTo(Property, { foreignKey: "property_id" });
 
@@ -34,4 +54,6 @@ module.exports = {
   SavedProperty,
   TourRequest,
   Notification,
+  Conversation,
+  Message,
 };
