@@ -5,6 +5,7 @@ const cors = require("cors");
 const path = require("path");
 const { sequelize, User, Property } = require("./models/index");
 
+const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
 const propertyRoutes = require("./routes/properties");
 const savedPropertiesRoutes = require("./routes/savedProperties");
@@ -23,6 +24,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const PORT = process.env.PORT || 3000;
 
 // Register route middleware for handling user, property, and saved property endpoints
+app.use("/auth/", authRoutes);
 app.use("/users/", userRoutes);
 app.use("/properties/", propertyRoutes);
 app.use("/saved-properties/", savedPropertiesRoutes);

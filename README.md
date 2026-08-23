@@ -78,12 +78,15 @@ The root dev script runs both servers concurrently (API on PORT, Vite on 5173 by
 
 ### API Surface (Server)
 
-**Users** (see [server/routes/users.js](server/routes/users.js#L16-L77))
+**Auth** (see [server/routes/auth.js](server/routes/auth.js))
+
+- `POST /auth/login` – authenticate (email, password)
+- `POST /auth/register` – create user (password hashed with bcrypt)
+
+**Users** (see [server/routes/users.js](server/routes/users.js))
 
 - `GET /users/:id` – fetch user by id
 - `GET /users?email=` – fetch user by email
-- `POST /users/auth` – authenticate (email, password)
-- `POST /users/register` – create user (password hashed with bcrypt)
 - `PUT /users/change-password` – update password
 
 **Properties** (see [server/routes/properties.js](server/routes/properties.js#L19-L74))
