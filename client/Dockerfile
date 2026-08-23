@@ -4,6 +4,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 COPY . .
+ARG VITE_API_HOST
+ARG VITE_API_PORT
+ENV VITE_API_HOST=${VITE_API_HOST}
+ENV VITE_API_PORT=${VITE_API_PORT}
 RUN npm run build
 
 # Runtime stage
