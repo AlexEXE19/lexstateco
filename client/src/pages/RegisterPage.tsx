@@ -1,9 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Lock, Mail, Phone, User } from "lucide-react";
-import baseURL from "../config/baseUrl";
-import { setAuthToken } from "../utils/auth";
+import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "../utils/i18n";
 
 const RegisterPage: React.FC = () => {
@@ -12,38 +9,29 @@ const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
-  const navigate = useNavigate();
+
   const { t } = useTranslation();
+
+  const { register } = useAuth();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const userData = {
+    const errorMessage = await register({
       firstName,
       lastName,
       email,
       password,
       phone,
-    };
+    });
 
-    try {
-      const response = await axios.post(`${baseURL}/users/register`, userData);
-
-      if (
-        response.status === 201 &&
-        response.data?.token &&
-        response.data?.user
-      ) {
-        const { token, user } = response.data;
-        setAuthToken(token);
-
-        navigate("/account");
-      } else {
-        alert(t("auth.register.error.generic"));
-      }
-    } catch (error) {
-      console.error("Error during registration:", error);
-      alert(t("auth.register.error.later"));
+    if (errorMessage) {
+      alert(errorMessage);
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setPhone("");
     }
   };
 

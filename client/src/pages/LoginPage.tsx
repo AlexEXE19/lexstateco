@@ -1,53 +1,24 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import axios from "axios";
+import { Link } from "react-router-dom";
 import { Lock, Mail } from "lucide-react";
-import baseURL from "../config/baseUrl";
-import { setAuthToken } from "../utils/auth";
-import { logInUser } from "../state/user/userSlice";
-import { AppDispatch } from "../state/store";
+import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "../utils/i18n";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
+
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post(`${baseURL}/users/auth`, {
-        email,
-        password,
-      });
+    const errorMessage = await login({ email, password });
 
-      const { user, token } = response.data;
-
-      if (user && token) {
-        setAuthToken(token);
-        dispatch(
-          logInUser({
-            id: String(user.id ?? "-1"),
-            firstName: user.firstName || "",
-            lastName: user.lastName || "",
-            email: user.email || "",
-            phone: user.phone || "",
-            password: "",
-          }),
-        );
-        navigate("/account");
-      }
-    } catch (error: any) {
-      if (error.response && error.response.status === 404) {
-        alert(t("auth.login.error.notFound"));
-      } else {
-        alert(t("auth.login.error.generic"));
-      }
+    if (errorMessage) {
+      alert(errorMessage);
       setEmail("");
       setPassword("");
     }
