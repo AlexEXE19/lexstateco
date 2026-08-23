@@ -4,6 +4,7 @@
   "main": "server.js",
   "scripts": {
     "test": "jest",
+    "test:integration": "jest --config jest.integration.config.js",
     "start": "node server.js",
     "dev": "npx nodemon server"
   },
