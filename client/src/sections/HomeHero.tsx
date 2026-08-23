@@ -83,7 +83,7 @@ const HomeHero: React.FC<HomeHeroProps> = ({ featureHighlights }) => {
             <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="flex flex-1 items-center gap-3 rounded-xl bg-white/10 px-4 py-3 ring-1 ring-white/15">
                 <Search size={18} className="text-primary-200" />
-                <div>
+                <div className="min-w-0 flex-1">
                   <input
                     type="text"
                     value={searchedLocation ?? ""}
@@ -112,7 +112,7 @@ const HomeHero: React.FC<HomeHeroProps> = ({ featureHighlights }) => {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-4">
+          {/* <div className="flex flex-wrap gap-4">
             <Link
               to="/properties"
               className="rounded-xl bg-secondary-500/20 px-4 py-2 text-sm font-semibold text-white ring-1 ring-secondary-300/30 transition hover:bg-secondary-500/30 hover:ring-secondary-200/50"
@@ -128,7 +128,7 @@ const HomeHero: React.FC<HomeHeroProps> = ({ featureHighlights }) => {
             >
               {t("home.hero.listProperty")}
             </Link>
-          </div>
+          </div> */}
 
           <div className="grid gap-4 sm:grid-cols-3">
             {stats.map((stat) => (
@@ -183,7 +183,7 @@ const HomeHero: React.FC<HomeHeroProps> = ({ featureHighlights }) => {
                 </span>
               </div>
 
-              <div className="space-y-3">
+               <div className="space-y-3">
                 {curatedIdeas.map((idea) => (
                   <div
                     key={idea.title}
@@ -203,7 +203,7 @@ const HomeHero: React.FC<HomeHeroProps> = ({ featureHighlights }) => {
                     </button>
                   </div>
                 ))}
-              </div>
+              </div> 
             </div>
           </div>
         </div>

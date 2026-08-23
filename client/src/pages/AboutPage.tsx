@@ -1,9 +1,8 @@
 import { Clock3, MapPin, ShieldCheck } from "lucide-react";
-import HomeHero from "../sections/HomeHero";
 import HomeFeatureSection from "../sections/HomeFeatureSection";
 import { useTranslation } from "../utils/i18n";
 
-const HomePage: React.FC = () => {
+const AboutPage: React.FC = () => {
   const { t } = useTranslation();
 
   const featureHighlights = [
@@ -26,10 +25,9 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="bg-background text-slate-50">
-      <HomeHero featureHighlights={featureHighlights} />
-      {/* <HomeFeatureSection featureHighlights={featureHighlights} /> */}
+      <HomeFeatureSection featureHighlights={featureHighlights} />
     </div>
   );
 };
 
-export default HomePage;
+export default AboutPage;

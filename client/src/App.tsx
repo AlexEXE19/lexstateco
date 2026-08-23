@@ -12,6 +12,7 @@ import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import PropertiesPage from "./pages/PropertiesPage";
 import RedirectPage from "./pages/RedirectPage";
+import AboutPage from "./pages/AboutPage";
 
 const App: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const App: React.FC = () => {
 
       <Routes>
         <Route path="/home" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/properties" element={<PropertiesPage />}></Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
