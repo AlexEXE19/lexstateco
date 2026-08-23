@@ -57,9 +57,9 @@ const ConversationList: React.FC<ConversationListProps> = ({
             <button
               key={conv.id}
               onClick={() => onSelect(conv.id)}
-              className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left transition hover:-translate-y-[1px] hover:ring-1 hover:ring-sky-300/40 ${
+              className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left transition hover:-translate-y-[1px] hover:ring-1 hover:ring-secondary-300/40 ${
                 isActive
-                  ? "bg-gradient-to-r from-sky-600 to-cyan-500 text-white shadow-lg shadow-sky-500/30"
+                  ? "bg-gradient-to-r from-secondary-600 to-cyan-500 text-white shadow-lg shadow-secondary-500/30"
                   : "bg-white/5 text-slate-100 ring-1 ring-white/10"
               }`}
             >

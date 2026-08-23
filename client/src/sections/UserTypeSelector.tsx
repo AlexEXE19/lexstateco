@@ -29,7 +29,7 @@ export default function UserTypeSelector() {
   );
 
   return (
-    <div className="flex flex-col items-center gap-12 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 px-4 py-16 text-white">
+    <div className="flex flex-col items-center gap-12 bg-gradient-to-b from-background-surface via-background-surface to-background px-4 py-16 text-white">
       <div className="flex flex-col items-center gap-3 text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur">
           <Sparkles size={14} />
@@ -49,7 +49,7 @@ export default function UserTypeSelector() {
           const active = selected === card.key;
           const accentStyles =
             card.accent === "blue"
-              ? "from-blue-500/70 to-cyan-500/70"
+              ? "from-primary-500/70 to-cyan-500/70"
               : "from-emerald-500/70 to-lime-500/70";
 
           return (
@@ -58,7 +58,7 @@ export default function UserTypeSelector() {
               whileHover={{ scale: 1.015, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setSelected(card.key)}
-              className={`group relative overflow-hidden rounded-3xl p-[1px] text-left shadow-2xl transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950
+              className={`group relative overflow-hidden rounded-3xl p-[1px] text-left shadow-2xl transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background
               ${active ? "ring-2 ring-white/40" : "ring-0"}
             `}
             >

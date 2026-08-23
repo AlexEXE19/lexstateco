@@ -14,7 +14,7 @@ const ConversationPropertyPanel: React.FC<{ property: Property }> = ({
     <div className="overflow-hidden rounded-2xl ring-1 ring-white/10">
       <button
         onClick={() => setShowDetails((v) => !v)}
-        className="flex w-full items-center justify-between bg-slate-900/60 px-4 py-3 text-left text-slate-100"
+        className="flex w-full items-center justify-between bg-background-surface/60 px-4 py-3 text-left text-slate-100"
       >
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
@@ -23,12 +23,12 @@ const ConversationPropertyPanel: React.FC<{ property: Property }> = ({
           <p className="text-lg font-semibold">{property.title}</p>
           <p className="text-sm text-slate-300">{property.location}</p>
         </div>
-        <span className="text-xs text-blue-200 underline">
+        <span className="text-xs text-primary-200 underline">
           {showDetails ? t("common.hide") : t("common.show")}
         </span>
       </button>
       {showDetails && (
-        <div className="grid gap-4 bg-slate-900/80 p-4 md:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid gap-4 bg-background-surface/80 p-4 md:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-2">
             <div className="overflow-hidden rounded-xl ring-1 ring-white/10">
               <img

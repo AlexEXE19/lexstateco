@@ -26,8 +26,8 @@ const PropertiesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-900/80 px-6 py-14">
+    <div className="min-h-screen bg-background text-white">
+      <section className="bg-gradient-to-br from-background via-background-surface to-primary-900/80 px-6 py-14">
         <PropertyFilterForm onSubmit={handleFilterSubmit} />
       </section>
 
@@ -51,7 +51,7 @@ const PropertiesPage: React.FC = () => {
                   <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
                     {t("properties.map")}
                   </p>
-                  <div className="mt-4 h-[240px] w-full rounded-2xl bg-slate-900/80 ring-1 ring-white/10 lg:h-full">
+                  <div className="mt-4 h-[240px] w-full rounded-2xl bg-background-surface/80 ring-1 ring-white/10 lg:h-full">
                     <div
                       id="map"
                       className="flex h-full items-center justify-center text-slate-400"

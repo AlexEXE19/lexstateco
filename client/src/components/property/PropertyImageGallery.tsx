@@ -18,7 +18,7 @@ const PropertyImageGallery: React.FC<{ property: Property }> = ({
     : "/default_house.jpg";
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-slate-900/80 ring-1 ring-white/10">
+    <div className="overflow-hidden rounded-2xl bg-background-surface/80 ring-1 ring-white/10">
       <div className="relative h-64 w-full">
         <img
           src={currentImage}

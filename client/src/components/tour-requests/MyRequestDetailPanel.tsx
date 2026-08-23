@@ -92,12 +92,12 @@ const MyRequestDetailPanel: React.FC<MyRequestDetailPanelProps> = ({
         {property.description}
       </div>
 
-      <div className="rounded-2xl bg-slate-900/70 p-4 ring-1 ring-white/10">
+      <div className="rounded-2xl bg-background-surface/70 p-4 ring-1 ring-white/10">
         <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
           <MapPin size={14} />
           <span>{t("audience.map")}</span>
         </div>
-        <div className="h-64 overflow-hidden rounded-xl bg-slate-900/90 ring-1 ring-white/10">
+        <div className="h-64 overflow-hidden rounded-xl bg-background-surface/90 ring-1 ring-white/10">
           <Map
             location={property.location}
             label={property.title}

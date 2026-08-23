@@ -26,11 +26,11 @@ const TourRequestListItem: React.FC<TourRequestListItemProps> = ({
   return (
     <button
       onClick={onSelect}
-      className={`flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-slate-900/80 to-slate-900/40 p-3 text-left transition hover:-translate-y-[1px] hover:border-sky-300/30 hover:shadow-lg hover:shadow-sky-500/10 ${
-        active ? "ring-2 ring-sky-400" : ""
+      className={`flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-background-surface/80 to-background-surface/40 p-3 text-left transition hover:-translate-y-[1px] hover:border-secondary-300/30 hover:shadow-lg hover:shadow-secondary-500/10 ${
+        active ? "ring-2 ring-secondary-400" : ""
       }`}
     >
-      <div className="h-20 w-28 overflow-hidden rounded-xl bg-slate-800">
+      <div className="h-20 w-28 overflow-hidden rounded-xl bg-background-elevated">
         <img
           src={thumb}
           alt={property?.title || "Property"}

@@ -41,14 +41,14 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             rows={3}
-            className="w-full rounded-xl bg-slate-900/60 px-3 py-2 text-sm text-white ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full rounded-xl bg-background-surface/60 px-3 py-2 text-sm text-white ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-primary-400"
             placeholder={t("account.messages.inputPlaceholder")}
           />
           <div className="flex items-center gap-2">
             <button
               onClick={onSend}
               disabled={messageStatus === "loading"}
-              className="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-[1px] hover:bg-blue-400 disabled:opacity-70"
+              className="rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400 disabled:opacity-70"
             >
               {messageStatus === "loading"
                 ? t("properties.sending")

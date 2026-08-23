@@ -12,14 +12,14 @@ const RedirectPage: React.FC = () => {
   }, [navigate]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
+    <div className="flex min-h-screen items-center justify-center bg-background text-white">
       <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 text-center shadow-2xl ring-1 ring-white/10 backdrop-blur">
-        <div className="absolute -left-14 -top-10 h-40 w-40 rounded-full bg-sky-500/25 blur-[90px]" />
+        <div className="absolute -left-14 -top-10 h-40 w-40 rounded-full bg-secondary-500/25 blur-[90px]" />
         <div className="absolute -bottom-12 right-0 h-48 w-48 rounded-full bg-cyan-400/20 blur-[100px]" />
 
         <div className="relative space-y-5">
           <motion.div
-            className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-500/15 ring-1 ring-sky-300/30"
+            className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary-500/15 ring-1 ring-secondary-300/30"
             initial={{ rotate: -6, y: -8, opacity: 0 }}
             animate={{ rotate: [0, -4, 3, 0], y: [0, -6, 0], opacity: 1 }}
             transition={{
@@ -29,7 +29,7 @@ const RedirectPage: React.FC = () => {
               ease: "easeInOut",
             }}
           >
-            <Compass className="text-sky-200" size={30} />
+            <Compass className="text-secondary-200" size={30} />
           </motion.div>
 
           <div className="space-y-2">
@@ -55,7 +55,7 @@ const RedirectPage: React.FC = () => {
           <div className="flex flex-col items-center gap-3">
             <Link
               to="/home"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-400 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-400/30 transition hover:-translate-y-[1px] hover:shadow-cyan-400/40"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-secondary-500 to-cyan-400 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-secondary-400/30 transition hover:-translate-y-[1px] hover:shadow-cyan-400/40"
             >
               <Home size={16} />
               Go now

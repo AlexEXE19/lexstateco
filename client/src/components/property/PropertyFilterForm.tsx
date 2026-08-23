@@ -47,7 +47,7 @@ const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
             placeholder={t("properties.filter.placeholder.min")}
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </label>
 
@@ -58,7 +58,7 @@ const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
             placeholder={t("properties.filter.placeholder.max")}
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </label>
 
@@ -69,7 +69,7 @@ const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
             placeholder={t("properties.filter.placeholder.location")}
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </label>
 
@@ -80,14 +80,14 @@ const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
             placeholder={t("properties.filter.placeholder.neighborhood")}
             value={neighborhood}
             onChange={(e) => setNeighborhood(e.target.value)}
-            className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </label>
 
         <div className="flex items-end">
           <button
             type="submit"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-[1px] hover:bg-blue-400"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400"
           >
             <Search size={16} />
             {t("properties.filter.apply")}

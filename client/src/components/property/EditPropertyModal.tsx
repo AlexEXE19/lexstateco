@@ -65,17 +65,17 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-8 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background-surface/40 px-4 py-8 backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) onCancel();
       }}
     >
-      <div className="w-full max-w-3xl max-h-[85vh] overflow-hidden rounded-3xl bg-gradient-to-br from-white via-sky-50 to-blue-50 shadow-2xl ring-1 ring-slate-100">
+      <div className="w-full max-w-3xl max-h-[85vh] overflow-hidden rounded-3xl bg-gradient-to-br from-white via-secondary-50 to-primary-50 shadow-2xl ring-1 ring-slate-100">
         <div className="flex items-center justify-between border-b border-slate-200/70 px-6 py-4 bg-white/70 backdrop-blur">
-          <div className="flex items-center gap-2 text-sky-800">
+          <div className="flex items-center gap-2 text-secondary-800">
             <Sparkles size={16} />
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-sky-700">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-secondary-700">
                 Edit property
               </p>
               <h2 className="text-xl font-semibold text-slate-900">
@@ -147,7 +147,7 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="min-h-[120px] rounded-2xl border border-slate-200 px-3 py-3 text-slate-900 shadow-sm focus:border-sky-400 focus:outline-none"
+                className="min-h-[120px] rounded-2xl border border-slate-200 px-3 py-3 text-slate-900 shadow-sm focus:border-secondary-400 focus:outline-none"
                 required
               />
             </label>
@@ -157,7 +157,7 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <textarea
                 value={imageRefsInput}
                 onChange={(e) => setImageRefsInput(e.target.value)}
-                className="min-h-[80px] rounded-2xl border border-slate-200 px-3 py-3 text-slate-900 shadow-sm focus:border-sky-400 focus:outline-none"
+                className="min-h-[80px] rounded-2xl border border-slate-200 px-3 py-3 text-slate-900 shadow-sm focus:border-secondary-400 focus:outline-none"
                 placeholder="uploads/property/123/1699990000-front.jpg, uploads/property/123/1699990001-living.jpg"
               />
               <p className="text-xs text-slate-500">
@@ -176,7 +176,7 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 rounded-2xl bg-sky-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-400/40 transition hover:-translate-y-[1px] hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex items-center gap-2 rounded-2xl bg-secondary-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-secondary-400/40 transition hover:-translate-y-[1px] hover:bg-secondary-400 disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={saving}
               >
                 {saving && <Loader2 size={16} className="animate-spin" />}

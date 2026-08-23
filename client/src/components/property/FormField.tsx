@@ -27,7 +27,7 @@ const FormField: React.FC<FormFieldProps> = ({
     className={`flex flex-col gap-2 text-sm text-slate-200 ${className}`}
   >
     {label}
-    <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
+    <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
       {icon}
       <input
         type={type}

@@ -43,7 +43,7 @@ const NavAuthLinks: React.FC<NavAuthLinksProps> = ({
       </Link>
       <Link
         to="/register"
-        className="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-[1px] hover:bg-blue-400"
+        className="rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400"
       >
         {t("navbar.register")}
       </Link>

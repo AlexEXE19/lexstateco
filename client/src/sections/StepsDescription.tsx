@@ -56,11 +56,11 @@ export default function StepsDescription({ type }: StepsProps) {
   const steps = type === "buyer" ? buyerSteps : sellerSteps;
 
   const iconColor =
-    type === "buyer" ? "bg-blue-600 text-white" : "bg-green-600 text-white";
+    type === "buyer" ? "bg-primary-600 text-white" : "bg-green-600 text-white";
 
   const borderColor =
     type === "buyer"
-      ? "border-blue-200 bg-blue-50"
+      ? "border-primary-200 bg-primary-50"
       : "border-green-200 bg-green-50";
 
   const container: Variants = {
@@ -90,14 +90,14 @@ export default function StepsDescription({ type }: StepsProps) {
     <motion.div
       className={`mt-16 w-full overflow-hidden rounded-3xl bg-gradient-to-br ${
         type === "buyer"
-          ? "from-blue-900/90 via-slate-900 to-blue-800"
-          : "from-emerald-900/90 via-slate-900 to-emerald-800"
+          ? "from-primary-900/90 via-background-surface to-primary-800"
+          : "from-emerald-900/90 via-background-surface to-emerald-800"
       } p-[1px] shadow-2xl ring-1 ring-white/10`}
       initial="hidden"
       animate="show"
       variants={container}
     >
-      <div className="h-full w-full rounded-[22px] bg-slate-950/70 px-6 py-12 backdrop-blur sm:px-10">
+      <div className="h-full w-full rounded-[22px] bg-background/70 px-6 py-12 backdrop-blur sm:px-10">
         <div className="flex flex-col items-center gap-4 text-center text-white">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em]">
             {type === "buyer"
@@ -126,7 +126,7 @@ export default function StepsDescription({ type }: StepsProps) {
                 <div
                   className={`absolute inset-0 ${borderColor} opacity-10 blur-3xl`}
                 />
-                <div className="relative flex h-full flex-col gap-4 rounded-[18px] bg-slate-950/80 p-5 backdrop-blur">
+                <div className="relative flex h-full flex-col gap-4 rounded-[18px] bg-background/80 p-5 backdrop-blur">
                   <div className="flex items-center justify-between">
                     <div
                       className={`flex h-12 w-12 items-center justify-center rounded-xl ${iconColor} shadow-lg shadow-black/20`}

@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
     "https://www.linkedin.com/in/alexandru-florentin-ion-430a83249/";
 
   return (
-    <footer className="w-full bg-gradient-to-br from-slate-950 via-slate-900 to-blue-900/90 text-white">
+    <footer className="w-full bg-gradient-to-br from-background via-background-surface to-primary-900/90 text-white">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-12 md:flex-row md:items-start md:justify-between">
         <div className="space-y-3">
           <div className="inline-flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-2 ring-1 ring-white/10">
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
               Visit
             </p>
             <div className="flex items-start gap-3 text-sm text-slate-200">
-              <MapPin size={16} className="mt-[2px] text-blue-200" />
+              <MapPin size={16} className="mt-[2px] text-primary-200" />
               <span>
                 LexEstate HQ
                 <br />
@@ -53,11 +53,11 @@ const Footer: React.FC = () => {
               Contact
             </p>
             <div className="flex items-center gap-3 text-sm text-slate-200">
-              <Phone size={16} className="text-blue-200" />
+              <Phone size={16} className="text-primary-200" />
               <span>(123) 456-7890</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-200">
-              <Mail size={16} className="text-blue-200" />
+              <Mail size={16} className="text-primary-200" />
               <span>creativity@lexestate.xyz</span>
             </div>
           </div>
@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      <div className="border-t border-white/10 bg-slate-950/60">
+      <div className="border-t border-white/10 bg-background/60">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 px-6 py-4 text-xs text-slate-300 sm:flex-row sm:items-center">
           <span>
             © {new Date().getFullYear()} LexEstateCo. All rights reserved.

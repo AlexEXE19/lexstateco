@@ -83,8 +83,8 @@ const MyAccountPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-900/80 px-6 py-10">
+    <div className="min-h-screen bg-background text-white">
+      <section className="bg-gradient-to-br from-background via-background-surface to-primary-900/80 px-6 py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-4">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
             My account
@@ -115,10 +115,10 @@ const MyAccountPage: React.FC = () => {
                       <button
                         key={item.key}
                         onClick={() => dispatch(setTab(item.key))}
-                        className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left transition focus:outline-none focus:ring-2 focus:ring-blue-400/60 focus:ring-offset-2 focus:ring-offset-slate-950 ${
+                        className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left transition focus:outline-none focus:ring-2 focus:ring-primary-400/60 focus:ring-offset-2 focus:ring-offset-background ${
                           isActive
-                            ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/30"
-                            : "bg-white/5 text-slate-100 ring-1 ring-white/10 hover:-translate-y-[1px] hover:ring-blue-300/40"
+                            ? "bg-gradient-to-r from-primary-600 to-cyan-500 text-white shadow-lg shadow-primary-500/30"
+                            : "bg-white/5 text-slate-100 ring-1 ring-white/10 hover:-translate-y-[1px] hover:ring-primary-300/40"
                         }`}
                       >
                         <div className="flex items-center gap-3">

@@ -32,7 +32,7 @@ const LanguageMenu: React.FC<LanguageMenuProps> = ({
         <span className="text-[10px] text-slate-200">▼</span>
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-36 overflow-hidden rounded-xl bg-slate-900/90 text-sm text-white shadow-lg ring-1 ring-white/15">
+        <div className="absolute right-0 mt-2 w-36 overflow-hidden rounded-xl bg-background-surface/90 text-sm text-white shadow-lg ring-1 ring-white/15">
           <button
             className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-white/10"
             onClick={() => onChange("en")}

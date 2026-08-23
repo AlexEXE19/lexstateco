@@ -25,11 +25,11 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="grid min-h-screen grid-cols-1 bg-slate-950 text-white md:grid-cols-[1fr_0.9fr]">
+    <div className="grid min-h-screen grid-cols-1 bg-background text-white md:grid-cols-[1fr_0.9fr]">
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/loginimage.jpg')] bg-cover bg-center opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900/95 to-blue-900/80" />
-        <div className="absolute -left-10 top-10 h-64 w-64 rounded-full bg-blue-500/30 blur-[120px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-surface/95 to-primary-900/80" />
+        <div className="absolute -left-10 top-10 h-64 w-64 rounded-full bg-primary-500/30 blur-[120px]" />
         <div className="absolute right-0 bottom-10 h-56 w-56 rounded-full bg-cyan-400/25 blur-[120px]" />
 
         <div className="relative mx-auto flex h-full max-w-xl flex-col justify-center gap-6 px-10 py-16">
@@ -54,7 +54,7 @@ const LoginPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 px-6 py-12">
+      <div className="flex items-center justify-center bg-gradient-to-b from-background-surface via-background to-background px-6 py-12">
         <div className="w-full max-w-md rounded-3xl bg-white/5 p-8 shadow-2xl ring-1 ring-white/10 backdrop-blur">
           <div className="mb-8 space-y-2 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
@@ -69,8 +69,8 @@ const LoginPage: React.FC = () => {
           <form onSubmit={handleLogin} className="space-y-4">
             <label className="flex flex-col gap-2 text-sm text-slate-200">
               {t("auth.login.email")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
-                <Mail size={16} className="text-blue-200" />
+              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
+                <Mail size={16} className="text-primary-200" />
                 <input
                   type="email"
                   placeholder="you@example.com"
@@ -84,8 +84,8 @@ const LoginPage: React.FC = () => {
 
             <label className="flex flex-col gap-2 text-sm text-slate-200">
               {t("auth.login.password")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-blue-400">
-                <Lock size={16} className="text-blue-200" />
+              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
+                <Lock size={16} className="text-primary-200" />
                 <input
                   type="password"
                   placeholder="••••••••"
@@ -98,7 +98,7 @@ const LoginPage: React.FC = () => {
             </label>
 
             <button
-              className="w-full rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-[1px] hover:bg-blue-400"
+              className="w-full rounded-2xl bg-primary-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400"
               type="submit"
             >
               {t("auth.login.submit")}

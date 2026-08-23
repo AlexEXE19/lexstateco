@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="bg-slate-950 text-slate-50">
+    <div className="bg-background text-slate-50">
       <HomeHero featureHighlights={featureHighlights} />
       <HomeFeatureSection featureHighlights={featureHighlights} />
     </div>

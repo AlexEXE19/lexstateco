@@ -23,7 +23,7 @@ const ModalFormField: React.FC<ModalFormFieldProps> = ({
       type={type}
       value={value}
       onChange={onChange}
-      className="rounded-2xl border border-slate-200 px-3 py-3 text-slate-900 shadow-sm focus:border-sky-400 focus:outline-none"
+      className="rounded-2xl border border-slate-200 px-3 py-3 text-slate-900 shadow-sm focus:border-secondary-400 focus:outline-none"
       required={required}
     />
   </label>

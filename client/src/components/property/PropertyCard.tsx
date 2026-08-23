@@ -58,7 +58,7 @@ const PropertyCard: React.FC<{
     <div
       onClick={() => onSelect?.(property)}
       className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-4 text-white shadow-xl transition hover:-translate-y-1 hover:shadow-2xl ${
-        selected ? "ring-2 ring-blue-400/70" : "ring-1 ring-white/10"
+        selected ? "ring-2 ring-primary-400/70" : "ring-1 ring-white/10"
       }`}
     >
       <div className="relative overflow-hidden rounded-2xl">
@@ -89,14 +89,14 @@ const PropertyCard: React.FC<{
             </button>
           </>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background-surface/20 to-transparent pointer-events-none" />
         <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur">
           <Home size={14} />
           <span>
             {property.size} {t("properties.size.unit")}
           </span>
         </div>
-        <div className="absolute bottom-3 right-3 rounded-full bg-blue-500 px-3 py-1 text-xs font-semibold text-white shadow">
+        <div className="absolute bottom-3 right-3 rounded-full bg-primary-500 px-3 py-1 text-xs font-semibold text-white shadow">
           {priceLabel}
         </div>
         {imageCount > 1 && (
@@ -138,7 +138,7 @@ const PropertyCard: React.FC<{
                 size={18}
                 className={`transition ${
                   isSaved
-                    ? "text-sky-300 drop-shadow"
+                    ? "text-secondary-300 drop-shadow"
                     : "text-slate-300 group-hover:text-white"
                 }`}
               />

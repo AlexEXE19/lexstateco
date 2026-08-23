@@ -26,7 +26,7 @@ const StatusModal: React.FC<StatusModalProps> = ({
       <div className="mt-6 flex items-center justify-end">
         <button
           onClick={onClose}
-          className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:-translate-y-[1px] hover:bg-blue-500"
+          className="rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary-500/25 transition hover:-translate-y-[1px] hover:bg-primary-500"
         >
           {confirmLabel}
         </button>
