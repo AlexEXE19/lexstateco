@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import baseURL from "../config/baseUrl";
-import { Property, Filter } from "../types/types";
+import baseURL from "../../config/baseUrl";
+import { Property, Filter } from "../../types/types";
 
 // useProperties.ts
 export const useProperties = (currentUser: any) => {
