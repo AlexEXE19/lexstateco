@@ -57,12 +57,6 @@ export interface User {
   phone: string;
 }
 
-export interface Modal {
-  isModalOpen: boolean;
-  propertyIdToBeChanged: number;
-  modalType: string;
-}
-
 export interface Filter {
   location: string;
   minPrice: string;

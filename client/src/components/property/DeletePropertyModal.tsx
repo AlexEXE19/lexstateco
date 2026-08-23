@@ -1,34 +1,31 @@
-import { toggleModal } from "../state/modal/modalSlice";
-import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import baseURL from "../config/baseUrl";
-import { RootState } from "../state/store";
+import baseURL from "../../config/baseUrl";
 import { Loader2, Trash2, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { Property } from "../../types/types";
 
-const DeletePropertyModal: React.FC = () => {
-  const dispatch = useDispatch();
+interface DeletePropertyModalProps {
+  property: Property;
+  onCancel: () => void;
+  onDeleted: () => void;
+}
+
+const DeletePropertyModal: React.FC<DeletePropertyModalProps> = ({
+  property,
+  onCancel,
+  onDeleted,
+}) => {
   const [loading, setLoading] = useState(false);
 
-  const propertyIdToBeChanged = useSelector(
-    (state: RootState) => state.modal.propertyIdToBeChanged,
-  );
-
-  const handleCancelClick = () => {
-    dispatch(toggleModal());
-  };
-
   const handleDeleteClick = async () => {
-    if (propertyIdToBeChanged === -1) return;
     setLoading(true);
     try {
-      await axios.delete(`${baseURL}/properties/${propertyIdToBeChanged}`);
+      await axios.delete(`${baseURL}/properties/${property.id}`);
+      onDeleted();
     } catch (error) {
       console.error("Error deleting property: ", error);
-    } finally {
       setLoading(false);
-      dispatch(toggleModal());
     }
   };
 
@@ -36,7 +33,7 @@ const DeletePropertyModal: React.FC = () => {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-8 backdrop-blur-sm"
       onClick={(e) => {
-        if (e.target === e.currentTarget) handleCancelClick();
+        if (e.target === e.currentTarget) onCancel();
       }}
     >
       <div className="w-full max-w-lg overflow-hidden rounded-3xl bg-gradient-to-br from-white via-rose-50 to-amber-50 shadow-2xl ring-1 ring-slate-100">
@@ -59,15 +56,15 @@ const DeletePropertyModal: React.FC = () => {
 
         <div className="space-y-4 p-6 text-slate-700">
           <p>
-            Are you sure you want to permanently remove this property from your
-            listings? Any associated images will remain on disk but the listing
-            will disappear for everyone.
+            Are you sure you want to permanently remove "{property.title}"
+            from your listings? Any associated images will remain on disk but
+            the listing will disappear for everyone.
           </p>
 
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="button"
-              onClick={handleCancelClick}
+              onClick={onCancel}
               className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-[1px] hover:bg-white"
             >
               Cancel
