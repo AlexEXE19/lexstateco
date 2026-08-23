@@ -6,11 +6,20 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 const signUserToken = (userPayload) =>
   jwt.sign(userPayload, JWT_SECRET, { expiresIn: "7d" });
 
+// Sequelize instances expose toJSON() (which also renames first_name/
+// last_name/etc to camelCase); plain objects, like the mocks unit tests
+// pass in, don't - so only call it when it's actually there.
+const toSafeUser = (user) => {
+  const safeUser = typeof user.toJSON === "function" ? user.toJSON() : user;
+  delete safeUser.password;
+  return safeUser;
+};
+
 // Get all users (used by MyAudienceTab)
 const getAllUsers = async (_req, res) => {
   try {
     const users = await User.findAll();
-    res.json(users);
+    res.json(users.map(toSafeUser));
   } catch (err) {
     console.error("Error getting users: ", err);
     res.status(500).json({ message: "Internal server error" });
@@ -28,7 +37,7 @@ const getUserById = async (req, res) => {
       return res.status(404).json({ message: "No user found with this ID" });
     }
 
-    res.json(user);
+    res.json(toSafeUser(user));
   } catch (err) {
     console.error("Error getting the user: ", err);
     res.status(500).json({ message: "Internal server error" });
@@ -52,7 +61,7 @@ const getUserByEmail = async (req, res) => {
         .json({ message: "There are no users with this email" });
     }
 
-    res.json({ message: "Got the user successfully", user });
+    res.json({ message: "Got the user successfully", user: toSafeUser(user) });
   } catch (err) {
     console.error("Error getting the user: ", err);
     res.status(500).json({ message: "Internal server error" });
@@ -76,8 +85,7 @@ const authenticateUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const safeUser = user.toJSON();
-    delete safeUser.password;
+    const safeUser = toSafeUser(user);
 
     const token = signUserToken({
       id: safeUser.id,
@@ -112,8 +120,7 @@ const createUser = async (req, res) => {
       password: hashedPassword,
       phone,
     });
-    const safeUser = user.toJSON();
-    delete safeUser.password;
+    const safeUser = toSafeUser(user);
 
     const token = signUserToken({
       id: safeUser.id,
