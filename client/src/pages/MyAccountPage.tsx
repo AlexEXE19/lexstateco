@@ -10,15 +10,15 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { RootState } from "../state/store";
-import SavedPropertiesTab from "../components/SavedPropertiesTab";
-import UserPropertiesTab from "../components/UserPropertiesTab";
-import PropertyListingTab from "../components/PropertyListingTab";
-import MyAudienceTab from "../components/MyAudienceTab";
-import MyRequestsTab from "../components/MyRequestsTab";
+import SavedPropertiesTab from "../components/property/SavedPropertiesTab";
+import UserPropertiesTab from "../components/property/UserPropertiesTab";
+import PropertyListingTab from "../components/property/PropertyListingTab";
+import MyAudienceTab from "../components/tour-requests/MyAudienceTab";
+import MyRequestsTab from "../components/tour-requests/MyRequestsTab";
 import { getCurrentUser } from "../utils/auth";
 import { User } from "../types/types";
 import { setTab } from "../state/tab/tabSlice";
-import MessagesTab from "../components/MessagesTab";
+import MessagesTab from "../components/messaging/MessagesTab";
 import { useTranslation } from "../utils/i18n";
 
 const MyAccountPage: React.FC = () => {
@@ -27,8 +27,6 @@ const MyAccountPage: React.FC = () => {
   const activeConversationId = tabState.conversationId;
   const dispatch = useDispatch();
 
-  const firstName = useSelector((state: RootState) => state.user.firstName);
-  const userId = useSelector((state: RootState) => state.user.id);
   const { t } = useTranslation();
 
   const navigate = useNavigate();
@@ -80,6 +78,10 @@ const MyAccountPage: React.FC = () => {
     [t],
   );
 
+  if (currentUser === null) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-900/80 px-6 py-10">
@@ -88,7 +90,7 @@ const MyAccountPage: React.FC = () => {
             My account
           </p>
           <h1 className="text-3xl font-semibold md:text-4xl">
-            Welcome back{firstName ? `, ${firstName}` : ""}.
+            Welcome back{currentUser.firstName ? `, ${currentUser.firstName}` : ""}.
           </h1>
           <p className="max-w-2xl text-slate-200">
             Manage your saved homes, your listings, and your audience in one
