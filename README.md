@@ -1,43 +1,59 @@
 ## LexEstateCo
 
-Full-stack real-estate marketplace where sellers list properties and buyers browse, filter, and save them. Built with a React + Vite frontend and an Express + Sequelize API backed by MySQL.
+A full-stack real-estate marketplace — sellers list properties, buyers browse/filter/save them, and both sides can message each other and book tours. React + Vite on the frontend, Express + Sequelize (MySQL) on the backend. Started as a way to properly learn how a full app fits together end to end, so some corners are more polished than others.
 
-### Highlights
+### What's actually in here
 
-- Email/password auth with session kept in Redux state
-- Property CRUD for sellers and public browsing for everyone
+- Email/password auth, JWT-based (token issued on login/register, verified on every write)
+- Property listings: create/edit/delete for the owner only, public browsing for everyone, image uploads
 - Saved properties (favorites) per user
-- Basic search/filtering on the home page
+- Tour requests — buyers ask to view a property, sellers accept/reject, buyers can cancel
+- In-app messaging per property between buyer and seller
+- Notifications for the above (new request, request updated, etc.)
+- A tiny `/stats` endpoint (user/property counts + an in-memory feedback rating, resets on server restart — not trying to be a real analytics pipeline)
+- Global color tokens in Tailwind (`primary` / `secondary` / `background`) so the whole theme can be re-skinned from one config file instead of hunting down every `blue-500`
 
-### Repository Layout
+### Tech stack
 
-- [client/](client) – React + TypeScript app (Vite, Tailwind, Redux Toolkit, React Router)
-- [server/](server) – Express API with Sequelize models and MySQL
-- [docs/](docs) – Generated API docs (JSDoc/TypeDoc output)
+- **Client**: React 18, TypeScript, Vite, Redux Toolkit, React Router, TailwindCSS
+- **Server**: Node/Express, Sequelize, MySQL, JWT, bcrypt, multer for uploads
+- **Testing**: Jest (server, unit + an integration suite that spins up a real throwaway MySQL container), Vitest + React Testing Library (client)
+- **CI**: GitHub Actions runs both test suites + a production build on push/PR
 
-### Tech Stack
+### Layout
 
-- Frontend: React 18, TypeScript, Vite, Redux Toolkit, TailwindCSS
-- Backend: Node.js, Express, Sequelize ORM, MySQL
-- Tooling: Concurrent dev runner, JSDoc/TypeDoc for docs
+```
+client/src/
+  components/   grouped by domain: property, layout, messaging, tour-requests, common
+  hooks/        same grouping — most components lean on a hook for data/state
+  pages/        route-level components
+  sections/     bigger page chunks (hero, feature sections, etc.)
+  state/        redux slices (user, tab, lang — that's it now, modal state got folded into components)
 
-### Prerequisites
+server/
+  routes/       one file per resource, auth middleware applied per-route
+  controllers/  business logic + ownership checks
+  models/       Sequelize models
+  middlewares/  requireAuth / assertSelf
+  test/         integration test harness (spins up its own MySQL container)
+```
 
-- Node.js 18+ and npm
-- MySQL running locally or accessible via network
+Nothing too clever — it's a pretty standard REST API with a normal-shaped React app on top.
 
-### Environment Configuration
+### Getting set up
 
-Create environment files before running the app.
+You need Node 18+ (I run this through nvm) and either a local MySQL instance or the Docker setup below.
 
 **server/.env**
 
 ```
 PORT=5000
 DB_HOST=localhost
+DB_PORT=3306
 DB_USER=<your-db-username>
 DB_PASSWORD=<your-db-password>
 DB_NAME=<your-db-name>
+JWT_SECRET=<anything-long-and-random>
 ```
 
 **client/.env**
@@ -47,83 +63,60 @@ VITE_API_HOST=http://localhost
 VITE_API_PORT=5000
 ```
 
-> The frontend builds its API base URL from VITE_API_HOST and VITE_API_PORT (see [client/src/config/baseUrl.ts](client/src/config/baseUrl.ts)).
-
-### Quick Start (Development)
+Then:
 
 ```bash
-# from repo root
-npm install            # installs root dev tools (concurrently, docs tooling)
 npm install --prefix server
 npm install --prefix client
-
-# start API + frontend together
-npm run dev
+npm run dev   # from the repo root, runs both concurrently
 ```
 
-The root dev script runs both servers concurrently (API on PORT, Vite on 5173 by default).
+API lands on `PORT` (5000 by default), Vite dev server on `5173` with hot reload for anything client-side, including Tailwind changes — no rebuild needed for that, just don't run it through Docker while you're iterating (see Docker section below).
 
-### Building and Running
+### Testing
 
-- Frontend production build: `npm run build --prefix client`
-- Frontend preview: `npm run preview --prefix client`
-- API (dev with nodemon): `npm run dev --prefix server`
-- API (production): `npm run start --prefix server`
+```bash
+npm test --prefix server              # unit tests, mocked Sequelize
+npm run test:integration --prefix server   # real MySQL in a throwaway docker container, needs Docker running
+npm test --prefix client              # Vitest + RTL
+```
 
-### Application Flow (Frontend)
+The integration suite exists because mocks will happily accept a query with the wrong column name and just return whatever you told them to — which is exactly how a real bug slipped through earlier (a saved-property lookup querying `userId`/`propertyId` against columns actually named `user_id`/`property_id`, silently always returning "not saved"). Worth having both layers.
 
-- Public routes: `/` (home with search + grid), `/login`, `/register`
-- Authenticated route: `/account` with tabs for saved properties, user listings, listing form, and the My Audience placeholder
-- Global state: user session ([client/src/state/user/userSlice.ts](client/src/state/user/userSlice.ts#L5-L34)) and modal state ([client/src/state/modal/modalSlice.ts](client/src/state/modal/modalSlice.ts#L5-L32)); store setup in [client/src/state/store.ts](client/src/state/store.ts#L1-L14)
+### API surface (quick reference)
 
-### API Surface (Server)
+| Resource | Routes | Auth |
+|---|---|---|
+| Auth | `POST /auth/login`, `POST /auth/register` | public |
+| Users | `GET /users/`, `GET /users/:id`, `GET /users/email/search`, `PUT /users/change-password` | change-password only |
+| Properties | `GET /properties/`, `GET /properties/:id`, `GET /properties/seller-id/:sellerId`, `GET /properties/location/:location`, `POST /properties/`, `PUT /properties/:propertyId`, `DELETE /properties/:propertyId`, `POST /properties/:propertyId/images` | reads public, writes require auth + ownership |
+| Saved properties | `GET /saved-properties/:userId`, `POST /saved-properties/check`, `POST /saved-properties/`, `DELETE /saved-properties/` | auth required |
+| Tour requests | `POST /tour-requests/`, `GET /tour-requests/requester/:requesterId`, `GET /tour-requests/seller/:sellerId`, `GET /tour-requests/requester/:requesterId/property/:propertyId`, `PUT /tour-requests/:id/status` | auth required |
+| Conversations | `POST /conversations/start`, `GET /conversations/user/:userId`, `GET /conversations/property/:propertyId/user/:userId`, `GET /conversations/:conversationId/messages/:userId`, `POST /conversations/:conversationId/messages` | auth required |
+| Notifications | `GET /notifications/:ownerId`, `DELETE /notifications/:ownerId`, `DELETE /notifications/:ownerId/:notificationId` | auth required |
+| Stats | `GET /stats/`, `POST /stats/feedback` | public |
 
-**Auth** (see [server/routes/auth.js](server/routes/auth.js))
+"Auth required" means a valid bearer token; most of these also check that the token's user actually owns the thing they're trying to touch (can't edit someone else's listing just because you're logged in).
 
-- `POST /auth/login` – authenticate (email, password)
-- `POST /auth/register` – create user (password hashed with bcrypt)
+### Data models
 
-**Users** (see [server/routes/users.js](server/routes/users.js))
-
-- `GET /users/:id` – fetch user by id
-- `GET /users?email=` – fetch user by email
-- `PUT /users/change-password` – update password
-
-**Properties** (see [server/routes/properties.js](server/routes/properties.js#L19-L74))
-
-- `GET /properties/` – list all
-- `GET /properties/:id` – fetch by id
-- `GET /properties/seller-id/:sellerId` – list by seller
-- `GET /properties/location/:location` – list by location
-- `POST /properties/` – create
-- `PUT /properties/:propertyId` – update
-- `DELETE /properties/:propertyId` – delete
-
-**Saved Properties** (see [server/routes/savedProperties.js](server/routes/savedProperties.js#L15-L65))
-
-- `GET /saved-properties/:userId` – list saved property ids for a user
-- `POST /saved-properties/check` – existence check
-- `POST /saved-properties/` – save
-- `DELETE /saved-properties/` – unsave
-
-### Data Models
-
-- Property: title, price, location, description, size, distance, sellerId, image_data (binary; currently expected by model) – defined in [server/models/Property.js](server/models/Property.js#L22-L99)
-- User: firstName, lastName, email, password (hashed), phone – defined in [server/models/User.js](server/models/User.js#L19-L81)
-- SavedProperty: userId + propertyId composite key – defined in [server/models/SavedProperty.js](server/models/SavedProperty.js#L19-L65)
-
-### Notes and Tips
-
-- MySQL tables are auto-synced on server start via Sequelize sync (see [server/server.js](server/server.js#L62-L74)). Ensure the configured database exists and the DB user has create/alter rights.
-- The property model marks image_data as required, but the create endpoint does not yet upload images; set a database default or relax the column if you do not store images.
-- Docs generation: `npm run docs` (root) to generate TypeDoc output for the server, or `npm run docs --prefix server` for JSDoc docs.
+- **User** — first/last name, email, hashed password, phone
+- **Property** — title, price, location, neighborhood, zip code, description, size, image refs, seller (FK to User)
+- **SavedProperty** — user + property, basically a favorites join table
+- **TourRequest** — property, seller, requester, requested time, status (pending/accepted/rejected/canceled)
+- **Conversation** / **Message** — one conversation per buyer+property, messages belong to a conversation
+- **Notification** — owner, title, description, type
 
 ### Docker Compose
 
-- Images: `lexstate_client:latest` (static SPA via Nginx), `lexstate_server:latest` (API), `mysql:8.0`.
-- Compose file: [docker-compose.yml](docker-compose.yml) defines services, networks, and MySQL volume (`mysql_data`), and builds `server`/`client` from their Dockerfiles automatically.
-- Start (builds images as needed): `docker compose up --build`
-- The client is published on `http://localhost:8080` (mapped to Nginx's port 80 in the container) and the API on `http://localhost:5000`.
-- The client's `VITE_API_HOST`/`VITE_API_PORT` are baked in at build time via Docker build args (see [client/Dockerfile](client/Dockerfile)); override them by setting `VITE_API_HOST`/`VITE_API_PORT` in a root `.env` file or your shell before running `docker compose up --build`.
-- DB data persists via named volume; removing it (`docker compose down -v`) will recreate schema on next start.
-- `server` waits for MySQL's healthcheck before connecting, avoiding `ECONNREFUSED` errors during MySQL's first-run initialization.
+- `docker compose up --build` spins up MySQL + the API + the client (served as a static build via nginx)
+- Client on `http://localhost:8080`, API on `http://localhost:5000`
+- The client's API URL is baked in at build time (see `client/Dockerfile`), so if you change `VITE_API_HOST`/`VITE_API_PORT` you need to rebuild that image, not just restart it
+- This is the "does it actually work end to end" setup, not a dev loop — for actually iterating on the UI, run `npm run dev --prefix client` locally against the dockerized API instead, you'll get instant hot reload instead of a multi-second rebuild every time
+
+### Known rough edges
+
+- No pagination on `GET /properties/` — fine for a demo dataset, would matter at real scale
+- The stats/feedback rating is in-memory and resets whenever the server restarts
+- Bundle size warning on client build (one big chunk, ~660kb) — haven't bothered code-splitting yet
+- No refresh tokens — JWT is a flat 7-day expiry, you just get logged out and have to log back in
