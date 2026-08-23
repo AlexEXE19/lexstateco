@@ -1,4 +1,5 @@
 const { TourRequest, Property, Notification, User } = require("../models");
+const { assertSelf } = require("../middlewares/auth");
 
 const createNotificationSafe = async ({
   ownerId,
@@ -18,20 +19,28 @@ const createNotificationSafe = async ({
   }
 };
 
-// Create a tour request
+// Create a tour request - the requester is always the authenticated user;
+// the seller is looked up from the property rather than trusted from the
+// client, so you can't file a request that notifies the wrong seller.
 const createTourRequest = async (req, res) => {
   try {
-    const { propertyId, sellerId, requesterId, requestedAt, status } = req.body;
+    const { propertyId, requestedAt, status } = req.body;
+    const requesterId = req.user.id;
 
-    if (!propertyId || !sellerId || !requesterId || !requestedAt) {
+    if (!propertyId || !requestedAt) {
       return res.status(400).json({
-        message: "propertyId, sellerId, requesterId, requestedAt are required",
+        message: "propertyId and requestedAt are required",
       });
+    }
+
+    const property = await Property.findByPk(propertyId);
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
     }
 
     const tourRequest = await TourRequest.create({
       property_id: propertyId,
-      seller_id: sellerId,
+      seller_id: property.seller_id,
       requester_id: requesterId,
       requested_at: requestedAt,
       status: status || "pending",
@@ -43,7 +52,7 @@ const createTourRequest = async (req, res) => {
 
     const propertyTitle = withProperty?.Property?.title || "your property";
     await createNotificationSafe({
-      ownerId: sellerId,
+      ownerId: property.seller_id,
       title: "New tour request",
       description: `You have a new tour request for ${propertyTitle}.`,
       type: "incoming_request",
@@ -58,7 +67,8 @@ const createTourRequest = async (req, res) => {
   }
 };
 
-// Update status for a tour request (cancel, accept, reject)
+// Update status for a tour request (cancel, accept, reject) - only the
+// requester may cancel, and only the seller may accept/reject.
 const updateTourRequestStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -91,6 +101,19 @@ const updateTourRequestStatus = async (req, res) => {
       return res.status(404).json({ message: "Tour request not found" });
     }
 
+    const isSeller = String(request.seller_id) === String(req.user.id);
+    const isRequester = String(request.requester_id) === String(req.user.id);
+    const sellerOnlyStatus = status === "accepted" || status === "rejected";
+    const requesterOnlyStatus = status === "canceled";
+
+    if (
+      (sellerOnlyStatus && !isSeller) ||
+      (requesterOnlyStatus && !isRequester) ||
+      (!sellerOnlyStatus && !requesterOnlyStatus && !isSeller && !isRequester)
+    ) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
     request.status = status;
     await request.save();
 
@@ -113,6 +136,7 @@ const updateTourRequestStatus = async (req, res) => {
 const getTourRequestsByRequester = async (req, res) => {
   try {
     const { requesterId } = req.params;
+    if (!assertSelf(req, res, requesterId)) return;
 
     const requests = await TourRequest.findAll({
       where: { requester_id: requesterId },
@@ -131,6 +155,7 @@ const getTourRequestsByRequester = async (req, res) => {
 const getTourRequestsBySeller = async (req, res) => {
   try {
     const { sellerId } = req.params;
+    if (!assertSelf(req, res, sellerId)) return;
 
     const requests = await TourRequest.findAll({
       where: { seller_id: sellerId },
@@ -156,6 +181,7 @@ const getTourRequestsBySeller = async (req, res) => {
 const getTourRequestByRequesterAndProperty = async (req, res) => {
   try {
     const { requesterId, propertyId } = req.params;
+    if (!assertSelf(req, res, requesterId)) return;
 
     const request = await TourRequest.findOne({
       where: { requester_id: requesterId, property_id: propertyId },

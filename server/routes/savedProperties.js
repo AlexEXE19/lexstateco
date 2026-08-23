@@ -7,6 +7,9 @@ const {
   saveProperty,
   unsaveProperty,
 } = require("../controllers/savedPropertiesController");
+const { requireAuth } = require("../middlewares/auth");
+
+router.use(requireAuth);
 
 // Get all saved properties by user ID
 router.get("/:userId", getSavedPropertiesByUserId);

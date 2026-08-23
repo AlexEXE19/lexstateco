@@ -8,6 +8,9 @@ const {
   getMessagesForConversation,
   postMessage,
 } = require("../controllers/conversationsController");
+const { requireAuth } = require("../middlewares/auth");
+
+router.use(requireAuth);
 
 router.post("/start", startConversation);
 router.get("/user/:userId", getConversationsByUser);

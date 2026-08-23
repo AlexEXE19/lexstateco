@@ -8,6 +8,9 @@ const {
   getTourRequestsBySeller,
   getTourRequestByRequesterAndProperty,
 } = require("../controllers/tourRequestController");
+const { requireAuth } = require("../middlewares/auth");
+
+router.use(requireAuth);
 
 // Create new tour request
 router.post("/", createTourRequest);

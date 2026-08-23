@@ -1,7 +1,9 @@
 const { Notification } = require("../models");
+const { assertSelf } = require("../middlewares/auth");
 
 const getNotificationsByOwner = async (req, res) => {
   const { ownerId } = req.params;
+  if (!assertSelf(req, res, ownerId)) return;
 
   try {
     const notifications = await Notification.findAll({
@@ -20,6 +22,7 @@ const getNotificationsByOwner = async (req, res) => {
 
 const clearNotificationsForOwner = async (req, res) => {
   const { ownerId } = req.params;
+  if (!assertSelf(req, res, ownerId)) return;
 
   try {
     await Notification.destroy({ where: { owner_id: ownerId } });
@@ -34,6 +37,7 @@ const clearNotificationsForOwner = async (req, res) => {
 
 const deleteNotification = async (req, res) => {
   const { ownerId, notificationId } = req.params;
+  if (!assertSelf(req, res, ownerId)) return;
 
   try {
     const deleted = await Notification.destroy({

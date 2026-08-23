@@ -80,7 +80,8 @@ const getPropertyBySellerId = async (req, res) => {
   }
 };
 
-// Create a new property
+// Create a new property - sellerId comes from the authenticated user, not
+// the request body, so you can't list a property under someone else's name.
 const createProperty = async (req, res) => {
   const {
     title,
@@ -91,7 +92,6 @@ const createProperty = async (req, res) => {
     description,
     size,
     imageRefs = [],
-    sellerId,
   } = req.body;
 
   try {
@@ -104,7 +104,7 @@ const createProperty = async (req, res) => {
       description,
       size,
       image_refs: imageRefs,
-      seller_id: sellerId,
+      seller_id: req.user.id,
     });
 
     res.status(201).json({
@@ -119,7 +119,7 @@ const createProperty = async (req, res) => {
   }
 };
 
-// Edit an existing property - not used yet, also subject for future update
+// Edit an existing property - only the listing's own seller may edit it.
 const editProperty = async (req, res) => {
   const { propertyId } = req.params;
   const {
@@ -134,6 +134,16 @@ const editProperty = async (req, res) => {
   } = req.body;
 
   try {
+    const property = await Property.findByPk(propertyId);
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    if (String(property.seller_id) !== String(req.user.id)) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
     const updatedFields = {
       title,
       price,
@@ -148,18 +158,11 @@ const editProperty = async (req, res) => {
       updatedFields.image_refs = imageRefs;
     }
 
-    const [updated] = await Property.update(updatedFields, {
-      where: { id: propertyId },
-    });
+    await property.update(updatedFields);
 
-    if (updated === 0) {
-      return res.status(404).json({ message: "Property not found" });
-    }
-
-    const updatedProperty = await Property.findByPk(propertyId);
     res
       .status(200)
-      .json({ message: "Property updated successfully", updatedProperty });
+      .json({ message: "Property updated successfully", updatedProperty: property });
   } catch (err) {
     console.error("Error updating property: ", err);
     return res
@@ -168,16 +171,22 @@ const editProperty = async (req, res) => {
   }
 };
 
-// Delete a property
+// Delete a property - only the listing's own seller may delete it.
 const deleteProperty = async (req, res) => {
   const { propertyId } = req.params;
 
   try {
-    const deleted = await Property.destroy({ where: { id: propertyId } });
+    const property = await Property.findByPk(propertyId);
 
-    if (deleted === 0) {
+    if (!property) {
       return res.status(404).json({ message: "Property not found" });
     }
+
+    if (String(property.seller_id) !== String(req.user.id)) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    await property.destroy();
 
     res.status(200).json({ message: "Property deleted successfully" });
   } catch (err) {
@@ -188,18 +197,34 @@ const deleteProperty = async (req, res) => {
   }
 };
 
-// Upload images for a property (max handled by multer in route)
+// Upload images for a property (max handled by multer in route). Multer
+// writes the files to disk before this handler runs, so on a rejection we
+// clean them back up rather than leaving orphaned files under someone
+// else's property id.
 const uploadPropertyImages = async (req, res) => {
   const { propertyId } = req.params;
+  const files = req.files || [];
+
+  const cleanupUploaded = () => {
+    files.forEach((file) => {
+      fs.unlink(file.path, () => {});
+    });
+  };
 
   try {
     const property = await Property.findByPk(propertyId);
 
     if (!property) {
+      cleanupUploaded();
       return res.status(404).json({ message: "Property not found" });
     }
 
-    const uploadedPaths = (req.files || []).map((file) => {
+    if (String(property.seller_id) !== String(req.user.id)) {
+      cleanupUploaded();
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    const uploadedPaths = files.map((file) => {
       // store relative path for frontend consumption
       const relative = path
         .relative(path.join(__dirname, ".."), file.path)
@@ -217,6 +242,7 @@ const uploadPropertyImages = async (req, res) => {
     });
   } catch (err) {
     console.error("Error uploading property images: ", err);
+    cleanupUploaded();
     return res
       .status(500)
       .json({ message: "An error occurred while uploading images." });

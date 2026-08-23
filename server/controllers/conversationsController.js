@@ -5,6 +5,7 @@ const {
   Notification,
   User,
 } = require("../models");
+const { assertSelf } = require("../middlewares/auth");
 
 const ensureParticipant = (conversation, userId) => {
   return (
@@ -37,12 +38,11 @@ const notifyMessage = async ({ conversation, senderId, content }) => {
 
 const startConversation = async (req, res) => {
   try {
-    const { propertyId, senderId, content } = req.body;
+    const { propertyId, content } = req.body;
+    const senderId = req.user.id;
 
-    if (!propertyId || !senderId) {
-      return res
-        .status(400)
-        .json({ message: "propertyId and senderId are required" });
+    if (!propertyId) {
+      return res.status(400).json({ message: "propertyId is required" });
     }
 
     const property = await Property.findByPk(propertyId);
@@ -99,6 +99,8 @@ const startConversation = async (req, res) => {
 
 const getConversationsByUser = async (req, res) => {
   const { userId } = req.params;
+  if (!assertSelf(req, res, userId)) return;
+
   try {
     const conversations = await Conversation.findAll({
       where: {
@@ -120,6 +122,8 @@ const getConversationsByUser = async (req, res) => {
 
 const getConversationForProperty = async (req, res) => {
   const { propertyId, userId } = req.params;
+  if (!assertSelf(req, res, userId)) return;
+
   try {
     const conversation = await Conversation.findOne({
       where: { property_id: propertyId, buyer_id: userId },
@@ -138,11 +142,11 @@ const getConversationForProperty = async (req, res) => {
 };
 
 const getMessagesForConversation = async (req, res) => {
-  const { conversationId, userId } = req.params;
+  const { conversationId } = req.params;
 
   try {
     const conversation = await Conversation.findByPk(conversationId);
-    if (!ensureParticipant(conversation, userId)) {
+    if (!ensureParticipant(conversation, req.user.id)) {
       return res.status(403).json({ message: "Not allowed" });
     }
 
@@ -160,10 +164,11 @@ const getMessagesForConversation = async (req, res) => {
 
 const postMessage = async (req, res) => {
   const { conversationId } = req.params;
-  const { senderId, content } = req.body;
+  const { content } = req.body;
+  const senderId = req.user.id;
 
-  if (!senderId || !content) {
-    return res.status(400).json({ message: "senderId and content required" });
+  if (!content) {
+    return res.status(400).json({ message: "content is required" });
   }
 
   try {

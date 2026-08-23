@@ -143,19 +143,36 @@ const createUser = async (req, res) => {
   }
 };
 
-// Update user password - not used yet, subject to use it via next updates
+// Update the authenticated user's own password. Requires the current
+// password so a stolen/guessed session token alone can't lock the real
+// owner out.
 const updateUserPassword = async (req, res) => {
-  const { email, password } = req.body;
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "currentPassword and newPassword are required" });
+  }
 
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findByPk(req.user.id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    user.password = hashedPassword;
+    const isCurrentValid = await bcrypt.compare(
+      currentPassword,
+      user.password,
+    );
+    if (!isCurrentValid) {
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect" });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
     res.json({ message: "User's password updated successfully" });

@@ -14,6 +14,7 @@ const {
   deleteProperty,
   uploadPropertyImages,
 } = require("../controllers/propertyController");
+const { requireAuth } = require("../middlewares/auth");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -37,6 +38,7 @@ const upload = multer({
   limits: { files: 8, fileSize: 10 * 1024 * 1024 },
 });
 
+// Browsing is public - anyone can view listings without logging in.
 // Route to get all properties
 router.get("/", getAllProperties);
 
@@ -49,18 +51,21 @@ router.get("/seller-id/:sellerId/", getPropertyBySellerId);
 // Route to get properties by location
 router.get("/location/:location/", getPropertiesByLocation);
 
+// Creating, editing, deleting, and uploading images requires being
+// authenticated (and, inside the controllers, being the property's owner).
 // Route to create a new property
-router.post("/", createProperty);
+router.post("/", requireAuth, createProperty);
 
 // Route to edit a property by ID
-router.put("/:propertyId/", editProperty);
+router.put("/:propertyId/", requireAuth, editProperty);
 
 // Route to delete a property by ID
-router.delete("/:propertyId", deleteProperty);
+router.delete("/:propertyId", requireAuth, deleteProperty);
 
 // Route to upload images for a property (max 8 images)
 router.post(
   "/:propertyId/images",
+  requireAuth,
   upload.array("images", 8),
   uploadPropertyImages,
 );
