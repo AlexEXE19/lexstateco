@@ -115,13 +115,12 @@ The root dev script runs both servers concurrently (API on PORT, Vite on 5173 by
 - The property model marks image_data as required, but the create endpoint does not yet upload images; set a database default or relax the column if you do not store images.
 - Docs generation: `npm run docs` (root) to generate TypeDoc output for the server, or `npm run docs --prefix server` for JSDoc docs.
 
-### Docker / Swarm
+### Docker Compose
 
 - Images: `lexstate_client:latest` (static SPA via Nginx), `lexstate_server:latest` (API), `mysql:8.0`.
-- Stack file: [docker-stack.yml](docker-stack.yml) defines services, networks, and MySQL volume (`mysql_data`).
-- Build locally before deploy (swarm won’t build):
-  - `docker build -t lexstate_server:latest ./server`
-  - `docker build -t lexstate_client:latest ./client`
-- Deploy: `docker stack deploy -c docker-stack.yml lexstate`
-- DB data persists via named volume; removing it will recreate schema on next deploy.
-- Known issue: If client API env vars are missing/mis-set at build time, the SPA will call port 80 and get 405 from Nginx. Set `VITE_API_HOST` to the reachable API host (e.g., `http://<node-ip>`) and `VITE_API_PORT=5000` when building the client image.
+- Compose file: [docker-compose.yml](docker-compose.yml) defines services, networks, and MySQL volume (`mysql_data`), and builds `server`/`client` from their Dockerfiles automatically.
+- Start (builds images as needed): `docker compose up --build`
+- The client is published on `http://localhost:8080` (mapped to Nginx's port 80 in the container) and the API on `http://localhost:5000`.
+- The client's `VITE_API_HOST`/`VITE_API_PORT` are baked in at build time via Docker build args (see [client/Dockerfile](client/Dockerfile)); override them by setting `VITE_API_HOST`/`VITE_API_PORT` in a root `.env` file or your shell before running `docker compose up --build`.
+- DB data persists via named volume; removing it (`docker compose down -v`) will recreate schema on next start.
+- `server` waits for MySQL's healthcheck before connecting, avoiding `ECONNREFUSED` errors during MySQL's first-run initialization.
