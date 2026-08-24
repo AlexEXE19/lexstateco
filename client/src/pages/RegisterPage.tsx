@@ -138,7 +138,7 @@ const RegisterPage: React.FC = () => {
       </div>
 
       <div className="relative order-1 overflow-hidden md:order-2">
-        <div className="absolute inset-0 bg-[url('/registerimage.jpg')] bg-cover bg-center opacity-35" />
+        <div className="absolute inset-0 bg-[url('/registerimage.jpg')] bg-cover bg-center" />
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background-surface/95 to-primary-900/80" />
         <div className="absolute left-6 top-8 h-60 w-60 rounded-full bg-primary-500/30 blur-[120px]" />
         <div className="absolute bottom-10 right-4 h-56 w-56 rounded-full bg-cyan-400/25 blur-[120px]" />

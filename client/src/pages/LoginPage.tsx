@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="grid min-h-screen grid-cols-1 bg-background text-white md:grid-cols-[1fr_0.9fr]">
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/loginimage.jpg')] bg-cover bg-center opacity-30" />
+        <div className="absolute inset-0 bg-[url('/loginimage.jpg')] bg-cover bg-center" />
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background-surface/95 to-primary-900/80" />
         <div className="absolute -left-10 top-10 h-64 w-64 rounded-full bg-primary-500/30 blur-[120px]" />
         <div className="absolute right-0 bottom-10 h-56 w-56 rounded-full bg-cyan-400/25 blur-[120px]" />

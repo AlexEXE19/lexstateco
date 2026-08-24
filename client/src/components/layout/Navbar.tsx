@@ -82,7 +82,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className="sticky top-0 z-20 w-full bg-gradient-to-r from-background via-background-surface to-primary-900/90 text-white shadow-2xl shadow-black/20 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
-        <Link to="/home" className="flex items-center gap-3 text-white">
+        <Link to="/" className="flex items-center gap-3 text-white">
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-lg font-black tracking-tight ring-1 ring-white/15">
             LE
           </span>
@@ -95,6 +95,13 @@ const Navbar: React.FC = () => {
         </Link>
 
         <div className="flex items-center gap-3">
+          <Link
+            to="/get-started"
+            className="rounded-xl px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/10"
+          >
+            {t("navbar.getStarted")}
+          </Link>
+
           {userId !== "-1" && (
             <NotificationsMenu
               notifications={notifications}

@@ -4,6 +4,7 @@ import Map from "../components/common/Map";
 import PropertyCard from "../components/property/PropertyCard";
 import PropertyFilterForm from "../components/property/PropertyFilterForm";
 import PropertyDetailPanel from "../components/property/PropertyDetailPanel";
+import CuratedIdeas from "../components/property/CuratedIdeas";
 import { RootState } from "../state/store";
 import { useProperties } from "../hooks/property/useProperties";
 import { Filter, Property } from "../types/types";
@@ -28,10 +29,13 @@ const PropertiesPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-white">
       <section className="bg-gradient-to-br from-background via-background-surface to-primary-900/80 px-6 py-14">
-        <PropertyFilterForm onSubmit={handleFilterSubmit} />
+        <div className="mx-auto max-w-6xl space-y-8">
+          <PropertyFilterForm onSubmit={handleFilterSubmit} />
+          <CuratedIdeas />
+        </div>
       </section>
 
-      <section className="px-6 py-12">
+      <section id="properties-results" className="px-6 py-12">
         <div className="mx-auto max-w-6xl space-y-6">
           <div className="flex items-center justify-between">
             <div>

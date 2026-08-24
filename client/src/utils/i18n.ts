@@ -11,6 +11,7 @@ type Translations = Record<Locale, Dictionary>;
 const translations: Translations = {
   en: {
     "navbar.brandTag": "Homes without the noise",
+    "navbar.getStarted": "Get Started",
     "navbar.language": "Language",
     "navbar.myAccount": "My Account",
     "navbar.logout": "Logout",
@@ -262,6 +263,7 @@ const translations: Translations = {
   },
   ro: {
     "navbar.brandTag": "Case fără zgomot",
+    "navbar.getStarted": "Începe acum",
     "navbar.language": "Limbă",
     "navbar.myAccount": "Contul meu",
     "navbar.logout": "Deconectare",

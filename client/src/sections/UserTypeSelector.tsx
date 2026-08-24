@@ -1,12 +1,29 @@
 import { ArrowRight, Home, KeyRound, Sparkles, Wand2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import StepsDescription from "./StepsDescription";
 import { useTranslation } from "../utils/i18n";
+import { getCurrentUser } from "../utils/auth";
+import { setTab } from "../state/tab/tabSlice";
 
 export default function UserTypeSelector() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState<"buyer" | "seller" | null>(null);
+
+  const goToProperties = () => navigate("/properties");
+
+  const goToListProperty = () => {
+    if (getCurrentUser()) {
+      dispatch(setTab("list"));
+      navigate("/account");
+    } else {
+      navigate("/register");
+    }
+  };
 
   const cards = useMemo(
     () => [
@@ -114,6 +131,24 @@ export default function UserTypeSelector() {
           className="w-full max-w-5xl"
         >
           <StepsDescription type={selected} />
+
+          <div className="mt-8 flex justify-center">
+            {selected === "buyer" ? (
+              <button
+                onClick={goToProperties}
+                className="rounded-xl bg-gradient-to-r from-primary-500 to-cyan-400 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:shadow-cyan-400/40"
+              >
+                {t("home.section.cta")}
+              </button>
+            ) : (
+              <button
+                onClick={goToListProperty}
+                className="rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:-translate-y-[1px] hover:bg-emerald-500"
+              >
+                {t("home.hero.listProperty")}
+              </button>
+            )}
+          </div>
         </motion.div>
       )}
     </div>

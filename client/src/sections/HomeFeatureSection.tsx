@@ -13,14 +13,13 @@ const HomeFeatureSection: React.FC<HomeFeatureSectionProps> = ({
   const { t } = useTranslation();
 
   return (
-    <section className="relative bg-background">
+    <section className="relative">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute left-0 top-0 h-72 w-72 rounded-full bg-primary-500/20 blur-[120px]" />
         <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-cyan-400/20 blur-[120px]" />
       </div>
-      <div className="relative mx-auto max-w-6xl space-y-10 px-6 py-16"></div>
 
-      <div className="mx-auto max-w-6xl space-y-10 px-6 py-12">
+      <div className="relative mx-auto max-w-6xl space-y-10 px-6 py-12">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">

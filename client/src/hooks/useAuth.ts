@@ -101,7 +101,7 @@ export const useAuth = () => {
             password: "",
           }),
         );
-        navigate("/account");
+        navigate("/get-started");
         return null;
       }
 
