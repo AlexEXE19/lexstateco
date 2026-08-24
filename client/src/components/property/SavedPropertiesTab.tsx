@@ -15,7 +15,7 @@ const SavedPropertiesTab: React.FC = () => {
   if (!properties || properties.length === 0) {
     return (
       <Link
-        to="/home"
+        to="/properties"
         className="block rounded-2xl border border-white/10 bg-white/5 p-8 text-slate-200 transition hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl cursor-pointer"
       >
         {t("saved.cta")}

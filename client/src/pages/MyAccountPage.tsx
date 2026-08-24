@@ -35,7 +35,7 @@ const MyAccountPage: React.FC = () => {
 
   useEffect(() => {
     if (currentUser === null) {
-      navigate("/home");
+      navigate("/");
     }
   }, [currentUser, navigate]);
 

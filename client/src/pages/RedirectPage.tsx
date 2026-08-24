@@ -7,7 +7,7 @@ const RedirectPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(() => navigate("/home"), 2600);
+    const timer = setTimeout(() => navigate("/"), 2600);
     return () => clearTimeout(timer);
   }, [navigate]);
 
@@ -54,7 +54,7 @@ const RedirectPage: React.FC = () => {
 
           <div className="flex flex-col items-center gap-3">
             <Link
-              to="/home"
+              to="/"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-secondary-500 to-cyan-400 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-secondary-400/30 transition hover:-translate-y-[1px] hover:shadow-cyan-400/40"
             >
               <Home size={16} />

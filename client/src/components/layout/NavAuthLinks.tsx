@@ -21,7 +21,7 @@ const NavAuthLinks: React.FC<NavAuthLinksProps> = ({
         >
           {t("navbar.myAccount")}
         </Link>
-        <Link to="/home">
+        <Link to="/">
           <button
             onClick={onLogout}
             className="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/20"
