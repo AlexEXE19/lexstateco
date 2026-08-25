@@ -45,7 +45,8 @@ const Notification = sequelize.define(
 );
 
 Notification.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+    const values = this.get();
+
 
   values.ownerId = values.owner_id;
   delete values.owner_id;

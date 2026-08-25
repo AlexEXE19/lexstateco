@@ -57,7 +57,8 @@ const Property = sequelize.define(
 
 // Overwriting function - used for parsing from "snake case" to "camel case"
 Property.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+   const values = this.get();
+
 
   values.imageRefs = values.image_refs;
   delete values.image_refs;

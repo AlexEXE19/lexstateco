@@ -40,7 +40,8 @@ const User = sequelize.define(
 
 // Overwriting function - used for parsing from "snake case" to "camel case"
 User.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+    const values = this.get();
+
 
   values.firstName = values.first_name;
   delete values.first_name;

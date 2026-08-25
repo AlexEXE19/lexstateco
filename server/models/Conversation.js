@@ -44,7 +44,7 @@ const Conversation = sequelize.define(
 );
 
 Conversation.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = this.get();
 
   values.propertyId = values.property_id;
   delete values.property_id;

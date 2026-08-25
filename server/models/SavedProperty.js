@@ -34,7 +34,8 @@ const SavedProperty = sequelize.define(
 
 // Overwriting function - used for parsing from "snake case" to "camel case"
 SavedProperty.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+    const values = this.get();
+
 
   values.userId = values.user_id;
   delete values.user_id;

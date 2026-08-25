@@ -41,7 +41,8 @@ const TourRequest = sequelize.define(
 
 // Ensure camelCase fields on responses
 TourRequest.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+    const values = this.get();
+
 
   values.propertyId = values.property_id;
   delete values.property_id;
