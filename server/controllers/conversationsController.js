@@ -63,7 +63,7 @@ const startConversation = async (req, res) => {
       return res.status(404).json({ message: "Conversation not found" });
     }
 
-    if (!conversation && !content) {
+    if (!content) {
       return res
         .status(400)
         .json({ message: "Content required to start chat" });
