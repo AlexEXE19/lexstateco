@@ -15,6 +15,7 @@ import PropertiesPage from "./pages/PropertiesPage";
 import RedirectPage from "./pages/RedirectPage";
 import GetStartedPage from "./pages/GetStartedPage";
 import FeedbackModal from "./components/modals/FeedbackModal";
+import PropertyDetailsModal from "./components/modals/PropertyDetailsModal";
 import { RootState } from "./state/store";
 import { closeFeedbackModal } from "./state/feedback/feedbackSlice";
 import { dismissFeedbackPrompt } from "./hooks/useFeedbackPrompt";
@@ -42,6 +43,7 @@ const AppShell: React.FC = () => {
     <div className={isPropertiesPage ? "flex h-screen flex-col overflow-hidden" : undefined}>
       <Navbar />
       <FeedbackModal isOpen={isFeedbackOpen} onClose={handleCloseFeedback} />
+      <PropertyDetailsModal />
       <div className={isPropertiesPage ? "min-h-0 flex-1" : undefined}>
         <Routes>
           <Route path="/" element={<HomePage />} />

@@ -3,6 +3,7 @@ import userReducer from "./user/userSlice";
 import tabReducer from "./tab/tabSlice";
 import langReducer from "./lang/langSlice";
 import feedbackReducer from "./feedback/feedbackSlice";
+import propertyModalReducer from "./propertyModal/propertyModalSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     tab: tabReducer,
     lang: langReducer,
     feedback: feedbackReducer,
+    propertyModal: propertyModalReducer,
   },
 });
 

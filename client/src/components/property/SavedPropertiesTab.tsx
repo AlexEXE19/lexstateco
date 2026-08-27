@@ -1,8 +1,9 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HousePlus } from "lucide-react";
 import PropertyGrid from "./PropertyGrid";
 import { RootState } from "../../state/store";
+import { openPropertyModal } from "../../state/propertyModal/propertyModalSlice";
 import { useSavedProperties } from "../../hooks/property/useSavedProperties";
 import { useTranslation } from "../../utils/i18n";
 
@@ -11,6 +12,7 @@ const SavedPropertiesTab: React.FC = () => {
   const userId = useSelector((state: RootState) => state.user.id);
   const { properties } = useSavedProperties(userId);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   if (!properties || properties.length === 0) {
     return (
@@ -43,7 +45,11 @@ const SavedPropertiesTab: React.FC = () => {
         </Link>
       </div>
 
-      <PropertyGrid properties={properties} saved />
+      <PropertyGrid
+        properties={properties}
+        saved
+        onSelect={(property) => dispatch(openPropertyModal(property))}
+      />
     </div>
   );
 };

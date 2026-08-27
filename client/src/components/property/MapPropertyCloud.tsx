@@ -1,14 +1,12 @@
-import { useState } from "react";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { ChevronRight, X } from "lucide-react";
 import { Property, User } from "../../types/types";
 import { useTranslation } from "../../utils/i18n";
 import { useTourRequest } from "../../hooks/property/useTourRequest";
 import { useConversationCompose } from "../../hooks/property/useConversationCompose";
-import { useSellerInfo } from "../../hooks/property/useSellerInfo";
-import PropertyImageGallery from "./PropertyImageGallery";
+import { openPropertyModal } from "../../state/propertyModal/propertyModalSlice";
 import TourRequestPanel from "./TourRequestPanel";
 import MessageComposer from "./MessageComposer";
-import PropertyStatsGrid from "./PropertyStatsGrid";
 
 interface MapPropertyCloudProps {
   property: Property;
@@ -22,10 +20,12 @@ const priceLabel = (price: number) =>
   );
 
 // Floats over the map, visually anchored to the single pin the map shows -
-// small by default (just enough to identify the property and act on it),
-// expandable for the full gallery/stats/description. The map always
-// recenters on the selected property (see Map's Recenter helper), so a
-// fixed position here reliably reads as "pointing at the pin" without
+// deliberately small (just enough to identify the property and act on it).
+// The full gallery/stats/description live in the global PropertyDetailsModal
+// instead of expanding in place here, since that content is too tall to
+// reliably fit above the pin without running under the navbar. The map
+// always recenters on the selected property (see Map's Recenter helper),
+// so a fixed position here reliably reads as "pointing at the pin" without
 // having to track Leaflet's own pixel coordinates.
 const MapPropertyCloud: React.FC<MapPropertyCloudProps> = ({
   property,
@@ -33,8 +33,7 @@ const MapPropertyCloud: React.FC<MapPropertyCloudProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState(false);
-  const { sellerName, sellerPhone } = useSellerInfo(property.sellerId);
+  const dispatch = useDispatch();
   const {
     requestDate,
     setRequestDate,
@@ -66,7 +65,7 @@ const MapPropertyCloud: React.FC<MapPropertyCloudProps> = ({
           the card grows upward from there and the tail tip sits right on
           that point - precise anchoring instead of an eyeballed offset. */}
       <div className="pointer-events-auto absolute left-1/2 top-1/2 w-[90%] max-w-sm -translate-x-1/2 -translate-y-full pb-3">
-        <div className="max-h-[42vh] overflow-y-auto rounded-2xl bg-background-surface shadow-2xl ring-1 ring-white/10">
+        <div className="max-h-[45vh] overflow-y-auto rounded-2xl bg-background-surface shadow-2xl ring-1 ring-white/10">
           <div className="flex items-start gap-3 p-3">
             <img
               src={thumbnail}
@@ -118,35 +117,12 @@ const MapPropertyCloud: React.FC<MapPropertyCloudProps> = ({
           </div>
 
           <button
-            onClick={() => setExpanded((v) => !v)}
+            onClick={() => dispatch(openPropertyModal(property))}
             className="flex w-full items-center justify-center gap-1 border-t border-white/10 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/5 hover:text-white"
           >
-            {expanded ? (
-              <>
-                {t("properties.cloud.less")}
-                <ChevronUp size={14} />
-              </>
-            ) : (
-              <>
-                {t("properties.cloud.more")}
-                <ChevronDown size={14} />
-              </>
-            )}
+            {t("properties.cloud.more")}
+            <ChevronRight size={14} />
           </button>
-
-          {expanded && (
-            <div className="space-y-4 border-t border-white/10 p-4">
-              <PropertyImageGallery property={property} />
-              <PropertyStatsGrid
-                property={property}
-                sellerName={sellerName}
-                sellerPhone={sellerPhone}
-              />
-              <div className="rounded-2xl bg-white/5 p-4 text-sm text-slate-200 ring-1 ring-white/10">
-                {property.description}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="mx-auto h-3 w-3 -translate-y-1 rotate-45 border-b border-r border-white/10 bg-background-surface" />
