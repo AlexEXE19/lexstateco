@@ -1,8 +1,17 @@
+import { Phone } from "lucide-react";
 import { Property } from "../../types/types";
 import { useTranslation } from "../../utils/i18n";
 
-const PropertyStatsGrid: React.FC<{ property: Property }> = ({
+interface PropertyStatsGridProps {
+  property: Property;
+  sellerName: string;
+  sellerPhone: string;
+}
+
+const PropertyStatsGrid: React.FC<PropertyStatsGridProps> = ({
   property,
+  sellerName,
+  sellerPhone,
 }) => {
   const { t } = useTranslation();
 
@@ -56,8 +65,14 @@ const PropertyStatsGrid: React.FC<{ property: Property }> = ({
           {t("properties.label.seller")}
         </p>
         <p className="text-lg font-semibold text-white">
-          ID #{property.sellerId}
+          {sellerName || t("properties.listedBy.agent")}
         </p>
+        {sellerPhone && (
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-200">
+            <Phone size={14} />
+            {sellerPhone}
+          </p>
+        )}
         <p className="text-xs text-slate-400">
           {t("properties.seller.hint")}
         </p>

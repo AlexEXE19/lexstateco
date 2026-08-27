@@ -2,6 +2,7 @@ import { Property, User } from "../../types/types";
 import { useTranslation } from "../../utils/i18n";
 import { useTourRequest } from "../../hooks/property/useTourRequest";
 import { useConversationCompose } from "../../hooks/property/useConversationCompose";
+import { useSellerInfo } from "../../hooks/property/useSellerInfo";
 import PropertyImageGallery from "./PropertyImageGallery";
 import TourRequestPanel from "./TourRequestPanel";
 import MessageComposer from "./MessageComposer";
@@ -19,6 +20,7 @@ const PropertyDetailPanel: React.FC<PropertyDetailPanelProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+  const { sellerName, sellerPhone } = useSellerInfo(property.sellerId);
   const {
     requestDate,
     setRequestDate,
@@ -55,25 +57,25 @@ const PropertyDetailPanel: React.FC<PropertyDetailPanelProps> = ({
 
       <PropertyImageGallery property={property} />
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h3 className="text-2xl font-semibold text-white">
-            {property.title}
-          </h3>
-          <p className="text-sm text-slate-200">{property.location}</p>
-        </div>
+      <div>
+        <h3 className="text-2xl font-semibold text-white">
+          {property.title}
+        </h3>
+        <p className="text-sm text-slate-200">{property.location}</p>
+      </div>
 
-        <div className="flex flex-col gap-2 sm:items-end">
-          <TourRequestPanel
-            requestDate={requestDate}
-            setRequestDate={setRequestDate}
-            requestTime={requestTime}
-            setRequestTime={setRequestTime}
-            requestStatus={requestStatus}
-            isPending={isPending}
-            isCanceled={isCanceled}
-            onRequestTour={handleRequestTour}
-          />
+      <div className="flex flex-wrap items-start gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+        <TourRequestPanel
+          requestDate={requestDate}
+          setRequestDate={setRequestDate}
+          requestTime={requestTime}
+          setRequestTime={setRequestTime}
+          requestStatus={requestStatus}
+          isPending={isPending}
+          isCanceled={isCanceled}
+          onRequestTour={handleRequestTour}
+        />
+        <div className="w-full border-t border-white/10 pt-3">
           <MessageComposer
             showCompose={showMessageCompose}
             messageText={messageText}
@@ -86,7 +88,11 @@ const PropertyDetailPanel: React.FC<PropertyDetailPanelProps> = ({
         </div>
       </div>
 
-      <PropertyStatsGrid property={property} />
+      <PropertyStatsGrid
+        property={property}
+        sellerName={sellerName}
+        sellerPhone={sellerPhone}
+      />
 
       <div className="rounded-2xl bg-white/5 p-4 text-sm text-slate-200 ring-1 ring-white/10">
         {property.description}

@@ -127,7 +127,7 @@ const translations: Translations = {
     "properties.size.hint": "Usable living area",
     "properties.neighborhood.hint": "Local vibe and nearby spots",
     "properties.zip.hint": "Delivery + school zone",
-    "properties.seller.hint": "Direct contact shared after you request",
+    "properties.seller.hint": "Reach out directly or request a tour below",
     "properties.empty":
       "No properties match your filters yet. Try widening your search.",
     "properties.errorAuth":
@@ -379,7 +379,7 @@ const translations: Translations = {
     "properties.size.hint": "Suprafață utilă",
     "properties.neighborhood.hint": "Atmosferă locală și puncte apropiate",
     "properties.zip.hint": "Zonă de livrare + școală",
-    "properties.seller.hint": "Datele de contact apar după solicitare",
+    "properties.seller.hint": "Contactează direct sau solicită un tur mai jos",
     "properties.empty":
       "Nicio proprietate nu corespunde filtrelor. Lărgește căutarea.",
     "properties.errorAuth":
