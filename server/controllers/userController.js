@@ -17,31 +17,21 @@ const toSafeUser = (user) => {
 
 // Get all users (used by MyAudienceTab)
 const getAllUsers = async (_req, res) => {
-  try {
-    const users = await User.findAll();
-    res.json(users.map(toSafeUser));
-  } catch (err) {
-    console.error("Error getting users: ", err);
-    res.status(500).json({ message: "Internal server error" });
-  }
+  const users = await User.findAll();
+  res.json(users.map(toSafeUser));
 };
 
 // Get user by ID
 const getUserById = async (req, res) => {
   const { id } = req.params;
 
-  try {
-    const user = await User.findByPk(id);
+  const user = await User.findByPk(id);
 
-    if (!user) {
-      return res.status(404).json({ message: "No user found with this ID" });
-    }
-
-    res.json(toSafeUser(user));
-  } catch (err) {
-    console.error("Error getting the user: ", err);
-    res.status(500).json({ message: "Internal server error" });
+  if (!user) {
+    return res.status(404).json({ message: "No user found with this ID" });
   }
+
+  res.json(toSafeUser(user));
 };
 
 // Get user by email (query param)
@@ -52,58 +42,48 @@ const getUserByEmail = async (req, res) => {
     return res.status(400).json({ message: "Email query param is required" });
   }
 
-  try {
-    const user = await User.findOne({ where: { email } });
+  const user = await User.findOne({ where: { email } });
 
-    if (!user) {
-      return res
-        .status(404)
-        .json({ message: "There are no users with this email" });
-    }
-
-    res.json({ message: "Got the user successfully", user: toSafeUser(user) });
-  } catch (err) {
-    console.error("Error getting the user: ", err);
-    res.status(500).json({ message: "Internal server error" });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ message: "There are no users with this email" });
   }
+
+  res.json({ message: "Got the user successfully", user: toSafeUser(user) });
 };
 
 // Authenticate user
 const authenticateUser = async (req, res) => {
   const { email, password } = req.body;
 
-  try {
-    const user = await User.findOne({ where: { email } });
+  const user = await User.findOne({ where: { email } });
 
-    if (!user) {
-      return res
-        .status(404)
-        .json({ message: "There are no users with these credentials" });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-    const safeUser = toSafeUser(user);
-
-    const token = signUserToken({
-      id: safeUser.id,
-      firstName: safeUser.firstName,
-      lastName: safeUser.lastName,
-      email: safeUser.email,
-      phone: safeUser.phone,
-    });
-
-    res.json({
-      message: "Got the user's credentials successfully",
-      user: safeUser,
-      token,
-    });
-  } catch (err) {
-    console.error("Error getting the user's credentials: ", err);
-    res.status(500).json({ message: "Internal server error" });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ message: "There are no users with these credentials" });
   }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
+  const safeUser = toSafeUser(user);
+
+  const token = signUserToken({
+    id: safeUser.id,
+    firstName: safeUser.firstName,
+    lastName: safeUser.lastName,
+    email: safeUser.email,
+    phone: safeUser.phone,
+  });
+
+  res.json({
+    message: "Got the user's credentials successfully",
+    user: safeUser,
+    token,
+  });
 };
 
 // Register user
@@ -155,31 +135,21 @@ const updateUserPassword = async (req, res) => {
       .json({ message: "currentPassword and newPassword are required" });
   }
 
-  try {
-    const user = await User.findByPk(req.user.id);
+  const user = await User.findByPk(req.user.id);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const isCurrentValid = await bcrypt.compare(
-      currentPassword,
-      user.password,
-    );
-    if (!isCurrentValid) {
-      return res
-        .status(401)
-        .json({ message: "Current password is incorrect" });
-    }
-
-    user.password = await bcrypt.hash(newPassword, 10);
-    await user.save();
-
-    res.json({ message: "User's password updated successfully" });
-  } catch (err) {
-    console.error("Error updating user password: ", err);
-    res.status(500).json({ message: "Database error" });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
   }
+
+  const isCurrentValid = await bcrypt.compare(currentPassword, user.password);
+  if (!isCurrentValid) {
+    return res.status(401).json({ message: "Current password is incorrect" });
+  }
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  await user.save();
+
+  res.json({ message: "User's password updated successfully" });
 };
 
 module.exports = {

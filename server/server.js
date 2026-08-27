@@ -13,6 +13,7 @@ const tourRequestRoutes = require("./routes/tourRequests");
 const notificationRoutes = require("./routes/notifications");
 const conversationRoutes = require("./routes/conversations");
 const statsRoutes = require("./routes/stats");
+const errorHandler = require("./middlewares/errorHandler");
 
 app.use(cors());
 
@@ -44,6 +45,10 @@ app.use("/stats/", statsRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome to the Property and User Management API");
 });
+
+// Must be registered after every other app.use()/route - Express only
+// routes a request here once something calls next(err).
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

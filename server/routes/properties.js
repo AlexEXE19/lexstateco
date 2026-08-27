@@ -15,6 +15,7 @@ const {
   uploadPropertyImages,
 } = require("../controllers/propertyController");
 const { requireAuth } = require("../middlewares/auth");
+const catchAsync = require("../middlewares/catchAsync");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -40,34 +41,34 @@ const upload = multer({
 
 // Browsing is public - anyone can view listings without logging in.
 // Route to get all properties
-router.get("/", getAllProperties);
+router.get("/", catchAsync(getAllProperties));
 
 // Route to get properties  ID
-router.get("/:id", getPropertyById);
+router.get("/:id", catchAsync(getPropertyById));
 
 // Route to get properties by seller ID
-router.get("/seller-id/:sellerId/", getPropertyBySellerId);
+router.get("/seller-id/:sellerId/", catchAsync(getPropertyBySellerId));
 
 // Route to get properties by location
-router.get("/location/:location/", getPropertiesByLocation);
+router.get("/location/:location/", catchAsync(getPropertiesByLocation));
 
 // Creating, editing, deleting, and uploading images requires being
 // authenticated (and, inside the controllers, being the property's owner).
 // Route to create a new property
-router.post("/", requireAuth, createProperty);
+router.post("/", requireAuth, catchAsync(createProperty));
 
 // Route to edit a property by ID
-router.put("/:propertyId/", requireAuth, editProperty);
+router.put("/:propertyId/", requireAuth, catchAsync(editProperty));
 
 // Route to delete a property by ID
-router.delete("/:propertyId", requireAuth, deleteProperty);
+router.delete("/:propertyId", requireAuth, catchAsync(deleteProperty));
 
 // Route to upload images for a property (max 8 images)
 router.post(
   "/:propertyId/images",
   requireAuth,
   upload.array("images", 8),
-  uploadPropertyImages,
+  catchAsync(uploadPropertyImages),
 );
 
 module.exports = router;

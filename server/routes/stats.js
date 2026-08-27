@@ -5,8 +5,9 @@ const {
   getStats,
   postFeedback,
 } = require("../controllers/statsController");
+const catchAsync = require("../middlewares/catchAsync");
 
-router.get("/", getStats)
-router.post("/feedback", postFeedback)
+router.get("/", catchAsync(getStats))
+router.post("/feedback", catchAsync(postFeedback))
 
 module.exports = router;

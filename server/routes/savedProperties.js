@@ -8,19 +8,20 @@ const {
   unsaveProperty,
 } = require("../controllers/savedPropertiesController");
 const { requireAuth } = require("../middlewares/auth");
+const catchAsync = require("../middlewares/catchAsync");
 
 router.use(requireAuth);
 
 // Get all saved properties by user ID
-router.get("/:userId", getSavedPropertiesByUserId);
+router.get("/:userId", catchAsync(getSavedPropertiesByUserId));
 
 // Check if a property is saved by the current user
-router.post("/check", checkIfPropertyIsSaved);
+router.post("/check", catchAsync(checkIfPropertyIsSaved));
 
 // Save a property for a user
-router.post("/", saveProperty);
+router.post("/", catchAsync(saveProperty));
 
 // Unsave a property for a user
-router.delete("/", unsaveProperty);
+router.delete("/", catchAsync(unsaveProperty));
 
 module.exports = router;

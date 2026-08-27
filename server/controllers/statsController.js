@@ -10,21 +10,16 @@ const average = () =>
 
 // Stats endpoint: user count, property count, average rating
 const getStats = async (req, res) => {
-  try {
-    const [users, properties] = await Promise.all([
-      User.count(),
-      Property.count(),
-    ]);
-    res.json({
-      users,
-      properties,
-      rating: average(),
-      totalRatings: ratings.length,
-    });
-  } catch (error) {
-    console.error("Failed to load stats", error);
-    res.status(500).json({ error: "Failed to load stats" });
-  }
+  const [users, properties] = await Promise.all([
+    User.count(),
+    Property.count(),
+  ]);
+  res.json({
+    users,
+    properties,
+    rating: average(),
+    totalRatings: ratings.length,
+  });
 };
 
 // Feedback endpoint: accept rating 1-5, update average

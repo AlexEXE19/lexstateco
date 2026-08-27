@@ -15,6 +15,9 @@ const ensureParticipant = (conversation, userId) => {
   );
 };
 
+// Best-effort: a failed notification insert shouldn't fail the message
+// send itself, so this stays local and swallows its own errors instead of
+// going through the global handler.
 const notifyMessage = async ({ conversation, senderId, content }) => {
   try {
     const recipientId =
@@ -37,129 +40,107 @@ const notifyMessage = async ({ conversation, senderId, content }) => {
 };
 
 const startConversation = async (req, res) => {
-  try {
-    const { propertyId, content } = req.body;
-    const senderId = req.user.id;
+  const { propertyId, content } = req.body;
+  const senderId = req.user.id;
 
-    if (!propertyId) {
-      return res.status(400).json({ message: "propertyId is required" });
-    }
+  if (!propertyId) {
+    return res.status(400).json({ message: "propertyId is required" });
+  }
 
-    const property = await Property.findByPk(propertyId);
-    if (!property) {
-      return res.status(404).json({ message: "Property not found" });
-    }
+  const property = await Property.findByPk(propertyId);
+  if (!property) {
+    return res.status(404).json({ message: "Property not found" });
+  }
 
-    if (Number(property.seller_id) === Number(senderId)) {
-      return res.status(400).json({ message: "Owner cannot start chat" });
-    }
+  if (Number(property.seller_id) === Number(senderId)) {
+    return res.status(400).json({ message: "Owner cannot start chat" });
+  }
 
-    let conversation = await Conversation.findOne({
-      where: { property_id: propertyId, buyer_id: senderId },
+  let conversation = await Conversation.findOne({
+    where: { property_id: propertyId, buyer_id: senderId },
+    include: [{ model: Property }],
+  });
+
+  if (!conversation && !content) {
+    return res.status(404).json({ message: "Conversation not found" });
+  }
+
+  if (!content) {
+    return res.status(400).json({ message: "Content required to start chat" });
+  }
+
+  if (!conversation) {
+    conversation = await Conversation.create({
+      property_id: propertyId,
+      buyer_id: senderId,
+      seller_id: property.seller_id,
+    });
+    conversation = await Conversation.findByPk(conversation.id, {
       include: [{ model: Property }],
     });
-
-    if (!conversation && !content) {
-      return res.status(404).json({ message: "Conversation not found" });
-    }
-
-    if (!content) {
-      return res
-        .status(400)
-        .json({ message: "Content required to start chat" });
-    }
-
-    if (!conversation) {
-      conversation = await Conversation.create({
-        property_id: propertyId,
-        buyer_id: senderId,
-        seller_id: property.seller_id,
-      });
-      conversation = await Conversation.findByPk(conversation.id, {
-        include: [{ model: Property }],
-      });
-    }
-
-    let message = null;
-    if (content) {
-      message = await Message.create({
-        conversation_id: conversation.id,
-        sender_id: senderId,
-        content,
-      });
-      await notifyMessage({ conversation, senderId, content });
-    }
-
-    return res.status(201).json({ conversation, message, created: true });
-  } catch (err) {
-    console.error("Error starting conversation", err);
-    return res.status(500).json({ message: "Internal server error" });
   }
+
+  let message = null;
+  if (content) {
+    message = await Message.create({
+      conversation_id: conversation.id,
+      sender_id: senderId,
+      content,
+    });
+    await notifyMessage({ conversation, senderId, content });
+  }
+
+  return res.status(201).json({ conversation, message, created: true });
 };
 
 const getConversationsByUser = async (req, res) => {
   const { userId } = req.params;
   if (!assertSelf(req, res, userId)) return;
 
-  try {
-    const conversations = await Conversation.findAll({
-      where: {
-        [require("sequelize").Op.or]: [
-          { buyer_id: userId },
-          { seller_id: userId },
-        ],
-      },
-      include: [{ model: Property }],
-      order: [["updated_at", "DESC"]],
-    });
+  const conversations = await Conversation.findAll({
+    where: {
+      [require("sequelize").Op.or]: [
+        { buyer_id: userId },
+        { seller_id: userId },
+      ],
+    },
+    include: [{ model: Property }],
+    order: [["updated_at", "DESC"]],
+  });
 
-    return res.json(conversations);
-  } catch (err) {
-    console.error("Error fetching conversations", err);
-    return res.status(500).json({ message: "Internal server error" });
-  }
+  return res.json(conversations);
 };
 
 const getConversationForProperty = async (req, res) => {
   const { propertyId, userId } = req.params;
   if (!assertSelf(req, res, userId)) return;
 
-  try {
-    const conversation = await Conversation.findOne({
-      where: { property_id: propertyId, buyer_id: userId },
-      include: [{ model: Property }],
-    });
+  const conversation = await Conversation.findOne({
+    where: { property_id: propertyId, buyer_id: userId },
+    include: [{ model: Property }],
+  });
 
-    if (!conversation) {
-      return res.status(404).json({ message: "Conversation not found" });
-    }
-
-    return res.json(conversation);
-  } catch (err) {
-    console.error("Error fetching conversation", err);
-    return res.status(500).json({ message: "Internal server error" });
+  if (!conversation) {
+    return res.status(404).json({ message: "Conversation not found" });
   }
+
+  return res.json(conversation);
 };
 
 const getMessagesForConversation = async (req, res) => {
   const { conversationId } = req.params;
 
-  try {
-    const conversation = await Conversation.findByPk(conversationId);
-    if (!ensureParticipant(conversation, req.user.id)) {
-      return res.status(403).json({ message: "Not allowed" });
-    }
-
-    const messages = await Message.findAll({
-      where: { conversation_id: conversationId },
-      order: [["created_at", "ASC"]],
-    });
-
-    return res.json(messages);
-  } catch (err) {
-    console.error("Error fetching messages", err);
-    return res.status(500).json({ message: "Internal server error" });
+  const conversation = await Conversation.findByPk(conversationId);
+  if (!ensureParticipant(conversation, req.user.id)) {
+    return res.status(403).json({ message: "Not allowed" });
   }
+
+  const messages = await Message.findAll({
+    where: { conversation_id: conversationId },
+    order: [["created_at", "ASC"]],
+  });
+
+  return res.json(messages);
 };
 
 const postMessage = async (req, res) => {
@@ -171,30 +152,25 @@ const postMessage = async (req, res) => {
     return res.status(400).json({ message: "content is required" });
   }
 
-  try {
-    const conversation = await Conversation.findByPk(conversationId);
-    if (!ensureParticipant(conversation, senderId)) {
-      return res.status(403).json({ message: "Not allowed" });
-    }
-
-    const message = await Message.create({
-      conversation_id: conversationId,
-      sender_id: senderId,
-      content,
-    });
-
-    await Conversation.update(
-      { updated_at: new Date() },
-      { where: { id: conversationId } },
-    );
-
-    await notifyMessage({ conversation, senderId, content });
-
-    return res.status(201).json(message);
-  } catch (err) {
-    console.error("Error posting message", err);
-    return res.status(500).json({ message: "Internal server error" });
+  const conversation = await Conversation.findByPk(conversationId);
+  if (!ensureParticipant(conversation, senderId)) {
+    return res.status(403).json({ message: "Not allowed" });
   }
+
+  const message = await Message.create({
+    conversation_id: conversationId,
+    sender_id: senderId,
+    content,
+  });
+
+  await Conversation.update(
+    { updated_at: new Date() },
+    { where: { id: conversationId } },
+  );
+
+  await notifyMessage({ conversation, senderId, content });
+
+  return res.status(201).json(message);
 };
 
 module.exports = {
