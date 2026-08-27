@@ -30,6 +30,7 @@ const Navbar: React.FC = () => {
 
   const handleClick = () => {
     dispatch(logOutUser());
+    navigate("/");
   };
 
   useEffect(() => {

@@ -25,7 +25,7 @@ const LanguageMenu: React.FC<LanguageMenuProps> = ({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={onToggle}
-        className="flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/15"
+        className="flex h-10 items-center gap-2 rounded-xl bg-white/10 px-3 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/15"
       >
         <span className="text-base">{languageFlag}</span>
         <span>{languageLabel}</span>
