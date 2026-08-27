@@ -1,5 +1,11 @@
-import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  PropertyFilterFormFields,
+  propertyFilterSchema,
+} from "../../types/schemas/FormSchemas";
 import { Filter } from "../../types/types";
 import { useTranslation } from "../../utils/i18n";
 
@@ -11,14 +17,37 @@ const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
   onSubmit,
 }) => {
   const { t } = useTranslation();
-  const [location, setLocation] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [neighborhood, setNeighborhood] = useState("");
+  const [searchParams] = useSearchParams();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit({ location, minPrice, maxPrice, neighborhood });
+  // HomeHero's search box lands here as /properties?location=..., so the
+  // form (and the results underneath it) should start already reflecting
+  // whatever the visitor searched for on the home page, not an empty form
+  // they then have to resubmit.
+  const initialValues: PropertyFilterFormFields = {
+    location: searchParams.get("location") ?? "",
+    neighborhood: searchParams.get("neighborhood") ?? "",
+    minPrice: searchParams.get("minPrice") ?? "",
+    maxPrice: searchParams.get("maxPrice") ?? "",
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<PropertyFilterFormFields>({
+    resolver: zodResolver(propertyFilterSchema),
+    defaultValues: initialValues,
+  });
+
+  const submitFilters: SubmitHandler<PropertyFilterFormFields> = async (
+    data,
+  ) => {
+    onSubmit({
+      location: data.location ?? "",
+      neighborhood: data.neighborhood ?? "",
+      minPrice: data.minPrice ?? "",
+      maxPrice: data.maxPrice ?? "",
+    });
   };
 
   return (
@@ -37,38 +66,41 @@ const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
       </div>
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(submitFilters)}
         className="grid gap-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 backdrop-blur md:grid-cols-2 lg:grid-cols-5"
       >
         <label className="flex flex-col gap-2 text-sm text-slate-200">
           {t("properties.filter.min")}
           <input
+            {...register("minPrice")}
             type="number"
             placeholder={t("properties.filter.placeholder.min")}
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
             className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
+          {errors.minPrice && (
+            <p className="text-xs text-red-400">{errors.minPrice.message}</p>
+          )}
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-slate-200">
           {t("properties.filter.max")}
           <input
+            {...register("maxPrice")}
             type="number"
             placeholder={t("properties.filter.placeholder.max")}
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
             className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
+          {errors.maxPrice && (
+            <p className="text-xs text-red-400">{errors.maxPrice.message}</p>
+          )}
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-slate-200">
           {t("properties.filter.location")}
           <input
+            {...register("location")}
             type="text"
             placeholder={t("properties.filter.placeholder.location")}
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
             className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </label>
@@ -76,10 +108,9 @@ const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
         <label className="flex flex-col gap-2 text-sm text-slate-200">
           {t("properties.filter.neighborhood")}
           <input
+            {...register("neighborhood")}
             type="text"
             placeholder={t("properties.filter.placeholder.neighborhood")}
-            value={neighborhood}
-            onChange={(e) => setNeighborhood(e.target.value)}
             className="rounded-2xl bg-white/5 px-4 py-3 text-white ring-1 ring-white/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </label>
@@ -87,7 +118,8 @@ const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
         <div className="flex items-end">
           <button
             type="submit"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400"
+            disabled={isSubmitting}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400 disabled:opacity-50"
           >
             <Search size={16} />
             {t("properties.filter.apply")}
