@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./user/userSlice";
 import tabReducer from "./tab/tabSlice";
 import langReducer from "./lang/langSlice";
+import feedbackReducer from "./feedback/feedbackSlice";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     tab: tabReducer,
     lang: langReducer,
+    feedback: feedbackReducer,
   },
 });
 

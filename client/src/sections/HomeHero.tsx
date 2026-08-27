@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, Sparkles, type LucideIcon } from "lucide-react";
 import { useLocationSuggestions } from "../hooks/property/useLocationSuggestions";
 import { useTranslation } from "../utils/i18n";
+import axios from "axios";
+import baseURL from "../config/baseUrl";
 
 export interface FeatureHighlight {
   title: string;
   desc: string;
   icon: LucideIcon;
+}
+
+export interface Stats {
+  userCount: number;
+  propertyCount: number;
+  averageRating: number;
 }
 
 const HomeHero: React.FC = () => {
@@ -19,11 +27,50 @@ const HomeHero: React.FC = () => {
 
   const { t } = useTranslation();
 
+  const [statsValues, setStatsValues] = useState<Stats>({
+    userCount: 10000,
+    propertyCount: 1000,
+    averageRating: 5,
+  });
+
+  // Helper function to format big numbers (e.g., 12500 -> "12.5k" or "10k")
+  const formatNumber = (num: number) => {
+    if (num >= 1000) {
+      return (num / 1000).toFixed(num % 1000 !== 0 ? 1 : 0) + "k";
+    }
+    return num.toString();
+  };
+
   const stats = [
-    { label: t("home.hero.stat.active"), value: "1.2k+" },
-    { label: t("home.hero.stat.response"), value: "< 24h" },
-    { label: t("home.hero.stat.rating"), value: "4.9 / 5" },
+    {
+      label: "Satisfied customers",
+      value: formatNumber(statsValues.userCount),
+    },
+    {
+      label: "Properties listed",
+      value: formatNumber(statsValues.propertyCount),
+    },
+    {
+      label: "Average rating",
+      value: Number(statsValues.averageRating).toFixed(1),
+    },
   ];
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await axios.get<Stats>(`${baseURL}/stats/summary`);
+
+        if (res.data) {
+          setStatsValues(res.data);
+        }
+      } catch (err) {
+        console.error("Error fetching stats", err);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   return (
     <section className="relative overflow-hidden">
@@ -77,7 +124,11 @@ const HomeHero: React.FC = () => {
             </div>
 
             <Link
-              to="/properties"
+              to={
+                query?.trim()
+                  ? `/properties?location=${encodeURIComponent(query)}`
+                  : "/properties"
+              }
               className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-secondary-500 to-cyan-400 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-secondary-400/30 transition hover:-translate-y-[1px] hover:shadow-cyan-400/40"
             >
               {t("home.hero.browse")}

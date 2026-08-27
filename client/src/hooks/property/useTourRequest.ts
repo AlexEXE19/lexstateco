@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import baseURL from "../../config/baseUrl";
 import { Property, TourRequest, User } from "../../types/types";
+import { useFeedbackPrompt } from "../useFeedbackPrompt";
 
 export type RequestStatus = "idle" | "loading" | "success" | "error";
 
@@ -14,6 +15,7 @@ export const useTourRequest = (
   currentUser: User,
 ) => {
   const navigate = useNavigate();
+  const { promptForFeedback } = useFeedbackPrompt();
   const [tourRequest, setTourRequest] = useState<TourRequest | null>(null);
   const [requestDate, setRequestDate] = useState<string>(
     new Date().toISOString().slice(0, 10),
@@ -86,6 +88,7 @@ export const useTourRequest = (
       });
       setTourRequest(res.data.tourRequest);
       setRequestStatus("success");
+      promptForFeedback();
     } catch (error) {
       console.error("Error creating tour request:", error);
       setRequestStatus("error");

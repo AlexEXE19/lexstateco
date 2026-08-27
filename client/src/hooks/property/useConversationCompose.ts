@@ -5,6 +5,7 @@ import axios from "axios";
 import baseURL from "../../config/baseUrl";
 import { Property, User } from "../../types/types";
 import { setTab } from "../../state/tab/tabSlice";
+import { useFeedbackPrompt } from "../useFeedbackPrompt";
 
 export type MessageStatus = "idle" | "loading" | "error";
 
@@ -17,6 +18,7 @@ export const useConversationCompose = (
 ) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { promptForFeedback } = useFeedbackPrompt();
   const [showMessageCompose, setShowMessageCompose] = useState(false);
   const [messageText, setMessageText] = useState("");
   const [messageStatus, setMessageStatus] = useState<MessageStatus>("idle");
@@ -67,6 +69,7 @@ export const useConversationCompose = (
       setShowMessageCompose(false);
       setMessageText("");
       goToConversation(res.data.conversation.id);
+      promptForFeedback();
     } catch (err) {
       console.error("Error starting conversation", err);
       setMessageStatus("error");

@@ -5,6 +5,7 @@ import axios from "axios";
 import { RootState } from "../../state/store";
 import baseURL from "../../config/baseUrl";
 import { PropertyListingFormFields } from "../../types/schemas/FormSchemas";
+import { useFeedbackPrompt } from "../useFeedbackPrompt";
 
 interface StatusModalState {
   open: boolean;
@@ -24,11 +25,13 @@ export const useCreatePropertyForm = () => {
 
   const userId = useSelector((state: RootState) => state.user.id);
   const navigate = useNavigate();
+  const { promptForFeedback } = useFeedbackPrompt();
 
   const closeStatusModal = () => {
     setStatusModal((prev) => ({ ...prev, open: false }));
     if (statusModal.goToAccount) {
       navigate("/account");
+      promptForFeedback();
     }
   };
 
