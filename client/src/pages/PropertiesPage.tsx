@@ -14,6 +14,7 @@ const PropertiesPage: React.FC = () => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(
     null,
   );
+  const [curatedLocation, setCuratedLocation] = useState<string>();
 
   const currentUser = useSelector((state: RootState) => state.user);
   const { t } = useTranslation();
@@ -26,12 +27,24 @@ const PropertiesPage: React.FC = () => {
     setSelectedProperty(null);
   };
 
+  const handleExploreCurated = (location: string) => {
+    applyFilters({ location, neighborhood: "", minPrice: "", maxPrice: "" });
+    setCuratedLocation(location);
+    setSelectedProperty(null);
+    document
+      .getElementById("properties-results")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div className="min-h-screen bg-background text-white">
       <section className="bg-gradient-to-br from-background via-background-surface to-primary-900/80 px-6 py-14">
         <div className="mx-auto max-w-6xl space-y-8">
-          <PropertyFilterForm onSubmit={handleFilterSubmit} />
-          <CuratedIdeas />
+          <PropertyFilterForm
+            onSubmit={handleFilterSubmit}
+            presetLocation={curatedLocation}
+          />
+          <CuratedIdeas onExplore={handleExploreCurated} />
         </div>
       </section>
 

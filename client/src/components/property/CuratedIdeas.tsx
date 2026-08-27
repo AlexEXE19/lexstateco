@@ -1,28 +1,35 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import baseURL from "../../config/baseUrl";
 import { useTranslation } from "../../utils/i18n";
 
-const CuratedIdeas: React.FC = () => {
+interface CuratedPick {
+  tag: string;
+  location: string;
+}
+
+interface CuratedIdeasProps {
+  onExplore: (location: string) => void;
+}
+
+const CuratedIdeas: React.FC<CuratedIdeasProps> = ({ onExplore }) => {
   const { t } = useTranslation();
+  const [picks, setPicks] = useState<CuratedPick[]>([]);
 
-  const curatedIdeas = [
-    {
-      title: t("home.curated.idea1.title"),
-      meta: t("home.curated.idea1.meta"),
-    },
-    {
-      title: t("home.curated.idea2.title"),
-      meta: t("home.curated.idea2.meta"),
-    },
-    {
-      title: t("home.curated.idea3.title"),
-      meta: t("home.curated.idea3.meta"),
-    },
-  ];
+  useEffect(() => {
+    const fetchPicks = async () => {
+      try {
+        const res = await axios.get<CuratedPick[]>(`${baseURL}/curated/today`);
+        setPicks(res.data);
+      } catch (err) {
+        console.error("Error fetching curated picks:", err);
+      }
+    };
 
-  const scrollToResults = () => {
-    document
-      .getElementById("properties-results")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+    fetchPicks();
+  }, []);
+
+  if (picks.length === 0) return null;
 
   return (
     <div className="rounded-2xl bg-gradient-to-br from-secondary-500 to-cyan-400 p-[1px]">
@@ -35,18 +42,18 @@ const CuratedIdeas: React.FC = () => {
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {curatedIdeas.map((idea) => (
+          {picks.map((pick) => (
             <div
-              key={idea.title}
+              key={pick.tag}
               className="flex items-start justify-between gap-3 rounded-xl bg-background-surface/60 px-4 py-3 ring-1 ring-white/10"
             >
               <div>
-                <p className="font-semibold text-white">{idea.title}</p>
-                <p className="text-sm text-slate-200">{idea.meta}</p>
+                <p className="font-semibold text-white">{pick.tag}</p>
+                <p className="text-sm text-slate-200">{pick.location}</p>
               </div>
               <button
                 className="shrink-0 text-xs font-semibold text-secondary-200"
-                onClick={scrollToResults}
+                onClick={() => onExplore(pick.location)}
               >
                 {t("home.hero.curatedExplore")}
               </button>

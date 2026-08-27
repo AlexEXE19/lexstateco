@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -11,10 +12,15 @@ import { useTranslation } from "../../utils/i18n";
 
 interface PropertyFilterFormProps {
   onSubmit: (filters: Filter) => void;
+  // Set when a "Curated for today" pick is clicked, so the location input
+  // visibly reflects what CuratedIdeas already asked PropertiesPage to
+  // filter by, instead of the results changing under an unchanged form.
+  presetLocation?: string;
 }
 
 const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
   onSubmit,
+  presetLocation,
 }) => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
@@ -33,11 +39,18 @@ const PropertyFilterForm: React.FC<PropertyFilterFormProps> = ({
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<PropertyFilterFormFields>({
     resolver: zodResolver(propertyFilterSchema),
     defaultValues: initialValues,
   });
+
+  useEffect(() => {
+    if (presetLocation) {
+      setValue("location", presetLocation);
+    }
+  }, [presetLocation, setValue]);
 
   const submitFilters: SubmitHandler<PropertyFilterFormFields> = async (
     data,
