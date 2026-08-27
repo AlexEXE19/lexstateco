@@ -1,28 +1,10 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Lock, Mail } from "lucide-react";
-import { useAuth } from "../hooks/useAuth";
+import { Lock } from "lucide-react";
 import { useTranslation } from "../utils/i18n";
+import LoginForm from "../components/forms/LoginForm";
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-
   const { t } = useTranslation();
-
-  const { login } = useAuth();
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const errorMessage = await login({ email, password });
-
-    if (errorMessage) {
-      alert(errorMessage);
-      setEmail("");
-      setPassword("");
-    }
-  };
 
   return (
     <div className="grid min-h-screen grid-cols-1 bg-background text-white md:grid-cols-[1fr_0.9fr]">
@@ -65,46 +47,7 @@ const LoginPage: React.FC = () => {
             </h2>
             <p className="text-sm text-slate-300">{t("auth.login.desc")}</p>
           </div>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
-              {t("auth.login.email")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Mail size={16} className="text-primary-200" />
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-            </label>
-
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
-              {t("auth.login.password")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Lock size={16} className="text-primary-200" />
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-            </label>
-
-            <button
-              className="w-full rounded-2xl bg-primary-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400"
-              type="submit"
-            >
-              {t("auth.login.submit")}
-            </button>
-          </form>
-
+          <LoginForm />
           <p className="mt-6 text-center text-sm text-slate-300">
             {t("auth.login.noAccount")}{" "}
             <Link

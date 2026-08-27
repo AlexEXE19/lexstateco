@@ -31,6 +31,15 @@ export const useAuth = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const capitalizeFirstLetter = (payload: RegisterPayload) => {
+    payload.firstName =
+      payload.firstName.charAt(0).toUpperCase() +
+      (payload.firstName.length > 1 ? payload.firstName.slice(1) : "");
+    payload.lastName =
+      payload.lastName.charAt(0).toUpperCase() +
+      (payload.lastName.length > 1 ? payload.lastName.slice(1) : "");
+  };
+
   const login = async ({
     email,
     password,
@@ -76,12 +85,12 @@ export const useAuth = () => {
     }
   };
 
-  const register = async (
-    payload: RegisterPayload,
-  ): Promise<string | null> => {
+  const register = async (payload: RegisterPayload): Promise<string | null> => {
     setLoading(true);
     setError(null);
     try {
+      capitalizeFirstLetter(payload);
+
       const response = await axios.post(`${baseURL}/auth/register`, payload);
 
       if (

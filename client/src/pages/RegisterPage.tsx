@@ -1,39 +1,9 @@
-import { useState } from "react";
-import { Lock, Mail, Phone, User } from "lucide-react";
-import { useAuth } from "../hooks/useAuth";
+import { User } from "lucide-react";
 import { useTranslation } from "../utils/i18n";
+import RegisterForm from "../components/forms/RegisterForm";
 
 const RegisterPage: React.FC = () => {
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-
   const { t } = useTranslation();
-
-  const { register } = useAuth();
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const errorMessage = await register({
-      firstName,
-      lastName,
-      email,
-      password,
-      phone,
-    });
-
-    if (errorMessage) {
-      alert(errorMessage);
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPassword("");
-      setPhone("");
-    }
-  };
 
   return (
     <div className="grid min-h-screen grid-cols-1 bg-background text-white md:grid-cols-[0.95fr_1fr]">
@@ -49,91 +19,7 @@ const RegisterPage: React.FC = () => {
             <p className="text-sm text-slate-300">{t("auth.register.desc")}</p>
           </div>
 
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
-                {t("auth.register.firstName")}
-                <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                  <User size={16} className="text-primary-200" />
-                  <input
-                    type="text"
-                    placeholder="Jane"
-                    className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                  />
-                </div>
-              </label>
-
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
-                {t("auth.register.lastName")}
-                <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                  <User size={16} className="text-primary-200" />
-                  <input
-                    type="text"
-                    placeholder="Doe"
-                    className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                  />
-                </div>
-              </label>
-            </div>
-
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
-              {t("auth.register.email")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Mail size={16} className="text-primary-200" />
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-            </label>
-
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
-              {t("auth.register.password")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Lock size={16} className="text-primary-200" />
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-            </label>
-
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
-              {t("auth.register.phone")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Phone size={16} className="text-primary-200" />
-                <input
-                  type="text"
-                  placeholder="(555) 123-9876"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                />
-              </div>
-            </label>
-
-            <button
-              className="w-full rounded-2xl bg-primary-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400"
-              type="submit"
-            >
-              {t("auth.register.submit")}
-            </button>
-          </form>
+          <RegisterForm />
         </div>
       </div>
 
