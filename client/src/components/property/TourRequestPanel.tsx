@@ -13,7 +13,7 @@ interface TourRequestPanelProps {
 }
 
 // Renders as a fragment (no wrapping element) since it shares a flex column
-// with MessageComposer inside PropertyDetailPanel.
+// with MessageComposer inside MapPropertyCloud.
 const TourRequestPanel: React.FC<TourRequestPanelProps> = ({
   requestDate,
   setRequestDate,

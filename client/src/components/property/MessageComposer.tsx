@@ -12,7 +12,7 @@ interface MessageComposerProps {
 }
 
 // Renders as a fragment (no wrapping element) since it shares a flex column
-// with TourRequestPanel inside PropertyDetailPanel.
+// with TourRequestPanel inside MapPropertyCloud.
 const MessageComposer: React.FC<MessageComposerProps> = ({
   showCompose,
   messageText,
