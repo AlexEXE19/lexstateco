@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { RootState } from "../../state/store";
 import baseURL from "../../config/baseUrl";
+import { PropertyListingFormFields } from "../../types/schemas/FormSchemas";
 
 interface StatusModalState {
   open: boolean;
@@ -13,13 +14,6 @@ interface StatusModalState {
 }
 
 export const useCreatePropertyForm = () => {
-  const [title, setTitle] = useState<string>("");
-  const [price, setPrice] = useState<number | "">("");
-  const [locationInput, setLocationInput] = useState<string>("");
-  const [neighborhood, setNeighborhood] = useState<string>("");
-  const [zipCode, setZipCode] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [size, setSize] = useState<number | "">("");
   const [files, setFiles] = useState<File[]>([]);
   const [statusModal, setStatusModal] = useState<StatusModalState>({
     open: false,
@@ -38,21 +32,7 @@ export const useCreatePropertyForm = () => {
     }
   };
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const propertyData = {
-      title,
-      price: Number(price),
-      location: locationInput,
-      neighborhood,
-      zipCode,
-      description,
-      size: Number(size),
-      imageRefs: [],
-      sellerId: userId,
-    };
-
+  const submit = async (data: PropertyListingFormFields): Promise<boolean> => {
     if (files.length > 8) {
       setStatusModal({
         open: true,
@@ -60,8 +40,14 @@ export const useCreatePropertyForm = () => {
         body: "You can upload up to 8 images per listing.",
         goToAccount: false,
       });
-      return;
+      return false;
     }
+
+    const propertyData = {
+      ...data,
+      imageRefs: [],
+      sellerId: userId,
+    };
 
     try {
       const response = await axios.post(
@@ -81,13 +67,6 @@ export const useCreatePropertyForm = () => {
           );
         }
 
-        setTitle("");
-        setPrice("");
-        setLocationInput("");
-        setNeighborhood("");
-        setZipCode("");
-        setDescription("");
-        setSize("");
         setFiles([]);
         setStatusModal({
           open: true,
@@ -95,7 +74,9 @@ export const useCreatePropertyForm = () => {
           body: "Your property is live. You can review or edit it from your account dashboard.",
           goToAccount: true,
         });
+        return true;
       }
+      return false;
     } catch (error) {
       console.error("Error listing the property:", error);
       setStatusModal({
@@ -104,24 +85,11 @@ export const useCreatePropertyForm = () => {
         body: "An error occurred while listing the property. Please try again.",
         goToAccount: false,
       });
+      return false;
     }
   };
 
   return {
-    title,
-    setTitle,
-    price,
-    setPrice,
-    locationInput,
-    setLocationInput,
-    neighborhood,
-    setNeighborhood,
-    zipCode,
-    setZipCode,
-    description,
-    setDescription,
-    size,
-    setSize,
     files,
     setFiles,
     statusModal,
