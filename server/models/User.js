@@ -30,24 +30,34 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    feedback_rating: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      validate: {
+        min: 1,
+        max: 5,
+      },
+    },
   },
   {
     timestamps: false,
     underscored: true,
     tableName: "users",
-  }
+  },
 );
 
 // Overwriting function - used for parsing from "snake case" to "camel case"
 User.prototype.toJSON = function () {
-    const values = this.get();
-
+  const values = this.get();
 
   values.firstName = values.first_name;
   delete values.first_name;
 
   values.lastName = values.last_name;
   delete values.last_name;
+
+  values.feedbackRating = values.feedback_rating;
+  delete values.feedback_rating;
 
   return values;
 };

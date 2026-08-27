@@ -6,6 +6,7 @@ const {
   getUserById,
   getUserByEmail,
   updateUserPassword,
+  updateUserFeedbackRating,
 } = require("../controllers/userController");
 const { requireAuth } = require("../middlewares/auth");
 const catchAsync = require("../middlewares/catchAsync");
@@ -22,5 +23,12 @@ router.get("/email/search", catchAsync(getUserByEmail));
 
 // Update the authenticated user's own password (requires the current one)
 router.put("/change-password", requireAuth, catchAsync(updateUserPassword));
+
+// Update the authenticated user's feedback rating (or set it from null)
+router.put(
+  "/:id/give-feedback",
+  requireAuth,
+  catchAsync(updateUserFeedbackRating),
+);
 
 module.exports = router;

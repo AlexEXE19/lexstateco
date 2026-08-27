@@ -90,37 +90,30 @@ const authenticateUser = async (req, res) => {
 const createUser = async (req, res) => {
   const { firstName, lastName, email, password, phone } = req.body;
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      password: hashedPassword,
-      phone,
-    });
-    const safeUser = toSafeUser(user);
+  const user = await User.create({
+    first_name: firstName,
+    last_name: lastName,
+    email,
+    password: hashedPassword,
+    phone,
+  });
+  const safeUser = toSafeUser(user);
 
-    const token = signUserToken({
-      id: safeUser.id,
-      firstName: safeUser.firstName,
-      lastName: safeUser.lastName,
-      email: safeUser.email,
-      phone: safeUser.phone,
-    });
+  const token = signUserToken({
+    id: safeUser.id,
+    firstName: safeUser.firstName,
+    lastName: safeUser.lastName,
+    email: safeUser.email,
+    phone: safeUser.phone,
+  });
 
-    res.status(201).json({
-      message: "User created successfully",
-      user: safeUser,
-      token,
-    });
-  } catch (err) {
-    console.error("Error creating user: ", err);
-    res
-      .status(500)
-      .json({ message: "An error occurred while adding the user." });
-  }
+  res.status(201).json({
+    message: "User created successfully",
+    user: safeUser,
+    token,
+  });
 };
 
 // Update the authenticated user's own password. Requires the current
@@ -152,6 +145,24 @@ const updateUserPassword = async (req, res) => {
   res.json({ message: "User's password updated successfully" });
 };
 
+const updateUserFeedbackRating = async (req, res) => {
+  const { id } = req.params;
+  const { rating } = req.body;
+
+  const user = await User.findByPk(id);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.feedback_rating = rating;
+
+  await user.save();
+
+  res.status(200).json({
+    message: "Feedback rating updated successfully",
+  });
+};
 module.exports = {
   getAllUsers,
   getUserById,
@@ -159,4 +170,5 @@ module.exports = {
   authenticateUser,
   createUser,
   updateUserPassword,
+  updateUserFeedbackRating,
 };

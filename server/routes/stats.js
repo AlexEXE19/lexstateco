@@ -1,13 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  getStats,
-  postFeedback,
-} = require("../controllers/statsController");
+const { getStats, postFeedback } = require("../controllers/statsController");
 const catchAsync = require("../middlewares/catchAsync");
 
-router.get("/", catchAsync(getStats))
-router.post("/feedback", catchAsync(postFeedback))
+// Get user and property counts and average feedback rating
+router.get("/summary", catchAsync(getStats));
 
 module.exports = router;
