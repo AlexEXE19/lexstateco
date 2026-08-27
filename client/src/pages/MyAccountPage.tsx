@@ -90,7 +90,7 @@ const MyAccountPage: React.FC = () => {
             My account
           </p>
           <h1 className="text-3xl font-semibold md:text-4xl">
-            Welcome back{currentUser.firstName ? `, ${currentUser.firstName}` : ""}.
+            Welcome back, {currentUser.firstName} {currentUser.lastName}.
           </h1>
           <p className="max-w-2xl text-slate-200">
             Manage your saved homes, your listings, and your audience in one

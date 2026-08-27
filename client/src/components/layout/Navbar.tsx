@@ -95,12 +95,12 @@ const Navbar: React.FC = () => {
         </Link>
 
         <div className="flex items-center gap-3">
-          <Link
+          {/* <Link
             to="/get-started"
             className="rounded-xl px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/10"
           >
             {t("navbar.getStarted")}
-          </Link>
+          </Link> */}
 
           {userId !== "-1" && (
             <NotificationsMenu
