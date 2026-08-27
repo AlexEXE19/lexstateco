@@ -1,4 +1,10 @@
-const { TourRequest, Property, Notification, User } = require("../models");
+const {
+  TourRequest,
+  Property,
+  Notification,
+  User,
+  Conversation,
+} = require("../models");
 const { assertSelf } = require("../middlewares/auth");
 
 // Best-effort: a failed notification insert shouldn't fail the tour
@@ -46,6 +52,14 @@ const createTourRequest = async (req, res) => {
     requester_id: requesterId,
     requested_at: requestedAt,
     status: status || "pending",
+  });
+
+  // A tour request implies you're going to want to talk to the seller, so
+  // start (or reuse) the conversation for this property right away instead
+  // of making the requester separately click "Message owner" too.
+  await Conversation.findOrCreate({
+    where: { property_id: propertyId, buyer_id: requesterId },
+    defaults: { seller_id: property.seller_id },
   });
 
   const withProperty = await TourRequest.findByPk(tourRequest.id, {

@@ -12,9 +12,17 @@ jest.mock("../../models", () => ({
   Notification: {
     create: jest.fn(),
   },
+  Conversation: {
+    findOrCreate: jest.fn(),
+  },
 }));
 
-const { TourRequest, Property, Notification } = require("../../models");
+const {
+  TourRequest,
+  Property,
+  Notification,
+  Conversation,
+} = require("../../models");
 const {
   createTourRequest,
   updateTourRequestStatus,
@@ -91,6 +99,10 @@ describe("tourRequestController", () => {
       expect(Notification.create).toHaveBeenCalledWith(
         expect.objectContaining({ owner_id: 2, type: "incoming_request" }),
       );
+      expect(Conversation.findOrCreate).toHaveBeenCalledWith({
+        where: { property_id: 10, buyer_id: 3 },
+        defaults: { seller_id: 2 },
+      });
       expect(res.status).toHaveBeenCalledWith(201);
     });
 
