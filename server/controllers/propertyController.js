@@ -1,10 +1,33 @@
 const fs = require("fs");
 const path = require("path");
+const { Op } = require("sequelize");
 const Property = require("../models/Property"); // Import the Sequelize model
 
-// Get all properties
+// Get all properties, optionally filtered by any combination of the same
+// fields PropertyFilterForm exposes on the client: location, neighborhood
+// (substring match), and minPrice/maxPrice (range on price). Every param is
+// optional - with none given, `where` stays empty and this behaves exactly
+// like fetching everything.
 const getAllProperties = async (req, res) => {
-  const properties = await Property.findAll();
+  const { location, neighborhood, minPrice, maxPrice } = req.query;
+
+  const where = {};
+
+  if (location) {
+    where.location = { [Op.like]: `%${location}%` };
+  }
+
+  if (neighborhood) {
+    where.neighborhood = { [Op.like]: `%${neighborhood}%` };
+  }
+
+  if (minPrice || maxPrice) {
+    where.price = {};
+    if (minPrice) where.price[Op.gte] = minPrice;
+    if (maxPrice) where.price[Op.lte] = maxPrice;
+  }
+
+  const properties = await Property.findAll({ where });
   res.status(200).json(properties);
 };
 // Get a property by its ID
