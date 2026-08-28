@@ -77,7 +77,6 @@ const translations: Translations = {
     "requests.title": "Tour requests you sent",
     "requests.loading": "Loading your tour requests...",
     "requests.empty": "You haven't requested any tours yet.",
-    "requests.select": "Select a request to see details.",
     "requests.cancel": "Cancel request",
     "requests.canceling": "Canceling...",
 
@@ -332,7 +331,6 @@ const translations: Translations = {
     "requests.title": "Cererile de tur trimise",
     "requests.loading": "Se încarcă cererile de tur...",
     "requests.empty": "Nu ai cereri de tur încă.",
-    "requests.select": "Selectează o cerere pentru detalii.",
     "requests.cancel": "Anulează cererea",
     "requests.canceling": "Se anulează...",
 

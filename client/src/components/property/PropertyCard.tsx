@@ -9,13 +9,15 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
-import { Property } from "../../types/types";
+import { Property, TourRequest } from "../../types/types";
 import { usePropertyCardData } from "../../hooks/property/usePropertyCardData";
 import PropertyCardSkeleton from "./PropertyCardSkeleton";
 import DeletePropertyModal from "./DeletePropertyModal";
 import EditPropertyModal from "./EditPropertyModal";
 import { useTranslation } from "../../utils/i18n";
+import { statusColors } from "../../utils/tourRequestStatus";
 
 // Property card holds the information about a property
 const PropertyCard: React.FC<{
@@ -23,7 +25,20 @@ const PropertyCard: React.FC<{
   saved: boolean;
   selected?: boolean;
   onSelect?: (property: Property) => void;
-}> = ({ property, saved, selected = false, onSelect }) => {
+  // Only set by MyRequestsTab, so a request's own card can show its status
+  // and be canceled directly, without opening the full details modal.
+  requestStatus?: TourRequest["status"];
+  onCancelRequest?: () => void;
+  cancelingRequest?: boolean;
+}> = ({
+  property,
+  saved,
+  selected = false,
+  onSelect,
+  requestStatus,
+  onCancelRequest,
+  cancelingRequest = false,
+}) => {
   const { t } = useTranslation();
   const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
 
@@ -67,6 +82,13 @@ const PropertyCard: React.FC<{
           alt={property.title}
           className="h-44 w-full object-cover"
         />
+        {requestStatus && (
+          <div
+            className={`absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-semibold capitalize ring-1 backdrop-blur ${statusColors[requestStatus]}`}
+          >
+            {requestStatus}
+          </div>
+        )}
         {imageCount > 1 && (
           <>
             <button
@@ -188,6 +210,24 @@ const PropertyCard: React.FC<{
           >
             <Trash2 size={14} />
             {t("properties.actions.delete")}
+          </button>
+        </div>
+      )}
+
+      {requestStatus === "pending" && onCancelRequest && (
+        <div className="mt-4">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onCancelRequest();
+            }}
+            disabled={cancelingRequest}
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-red-400/50 bg-white/5 px-4 py-2 text-sm font-semibold text-red-50 shadow-lg shadow-black/20 transition hover:-translate-y-[1px] hover:bg-red-500/20 hover:border-red-400 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            <X size={14} />
+            {cancelingRequest
+              ? t("requests.canceling")
+              : t("requests.cancel")}
           </button>
         </div>
       )}

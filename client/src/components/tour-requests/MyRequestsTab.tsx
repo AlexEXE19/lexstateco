@@ -1,29 +1,21 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../state/store";
+import { openPropertyModal } from "../../state/propertyModal/propertyModalSlice";
 import baseURL from "../../config/baseUrl";
-import TourRequestListItem from "./TourRequestListItem";
-import MyRequestDetailPanel from "./MyRequestDetailPanel";
+import PropertyCard from "../property/PropertyCard";
 import { useTourRequestList } from "../../hooks/tour-requests/useTourRequestList";
 import { useTranslation } from "../../utils/i18n";
 
 const MyRequestsTab: React.FC = () => {
   const userId = useSelector((state: RootState) => state.user.id);
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const {
-    requests,
-    loading,
-    selectedRequestId,
-    setSelectedRequestId,
-    selectedRequest,
-    selectedProperty,
-    heroImage,
-    updatingId,
-    updateRequestStatus,
-  } = useTourRequestList(
-    `${baseURL}/tour-requests/requester/${userId}`,
-    Boolean(userId && userId !== "-1"),
-  );
+  const { requests, loading, updatingId, updateRequestStatus } =
+    useTourRequestList(
+      `${baseURL}/tour-requests/requester/${userId}`,
+      Boolean(userId && userId !== "-1"),
+    );
 
   return (
     <div className="space-y-6">
@@ -51,50 +43,26 @@ const MyRequestsTab: React.FC = () => {
       )}
 
       {!loading && requests.length > 0 && (
-        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="space-y-4 overflow-y-auto pr-1 lg:max-h-[70vh]">
-            {requests.map((request) => (
-              <TourRequestListItem
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {requests
+            .filter((request) => request.Property)
+            .map((request) => (
+              <PropertyCard
                 key={request.id}
-                request={request}
-                active={selectedRequestId === request.id}
-                onSelect={() => setSelectedRequestId(request.id)}
-                actions={
-                  request.status === "pending" && (
-                    <div className="pt-1">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateRequestStatus(request.id, "canceled");
-                        }}
-                        disabled={updatingId === request.id}
-                        className="rounded-lg bg-rose-500/90 px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-rose-500/30 transition hover:-translate-y-[1px] hover:bg-rose-500 disabled:opacity-70"
-                      >
-                        {updatingId === request.id
-                          ? t("requests.canceling")
-                          : t("requests.cancel")}
-                      </button>
-                    </div>
-                  )
+                property={request.Property as NonNullable<
+                  typeof request.Property
+                >}
+                saved={false}
+                requestStatus={request.status}
+                cancelingRequest={updatingId === request.id}
+                onCancelRequest={
+                  request.status === "pending"
+                    ? () => updateRequestStatus(request.id, "canceled")
+                    : undefined
                 }
+                onSelect={(property) => dispatch(openPropertyModal(property))}
               />
             ))}
-          </div>
-
-          <div className="space-y-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-            {selectedRequest && selectedProperty ? (
-              <MyRequestDetailPanel
-                request={selectedRequest}
-                property={selectedProperty}
-                heroImage={heroImage}
-              />
-            ) : (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-                {t("requests.select")}
-              </div>
-            )}
-          </div>
         </div>
       )}
     </div>
