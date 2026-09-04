@@ -1,6 +1,6 @@
 ## LexEstateCo
 
-A full-stack real-estate marketplace — agents list properties, buyers browse/filter/save them, and both sides can message each other and book tours. React + Vite on the frontend, Express + Sequelize (Postgres) on the backend. Started as a way to properly learn how a full app fits together end to end, so some corners are more polished than others.
+A full-stack real-estate marketplace — agents/owners list properties, buyers browse/filter/save them, and both sides can message each other and book tours. React + Vite on the frontend, Express + Sequelize (Postgres) on the backend. Started as a way to properly learn how a full app fits together end to end, so some corners are more polished than others.
 
 ### What's actually in here
 
@@ -85,16 +85,16 @@ The integration suite exists because mocks will happily accept a query with the 
 
 ### API surface (quick reference)
 
-| Resource | Routes | Auth |
-|---|---|---|
-| Auth | `POST /auth/login`, `POST /auth/register` | public |
-| Users | `GET /users/`, `GET /users/:id`, `GET /users/email/search`, `PUT /users/change-password` | change-password only |
-| Properties | `GET /properties/`, `GET /properties/:id`, `GET /properties/agent-id/:agentId`, `GET /properties/location/:location`, `POST /properties/`, `PUT /properties/:propertyId`, `DELETE /properties/:propertyId`, `POST /properties/:propertyId/images` | reads public, writes require auth + ownership |
-| Saved properties | `GET /saved-properties/:userId`, `POST /saved-properties/check`, `POST /saved-properties/`, `DELETE /saved-properties/` | auth required |
-| Tour requests | `POST /tour-requests/`, `GET /tour-requests/requester/:requesterId`, `GET /tour-requests/agent/:agentId`, `GET /tour-requests/requester/:requesterId/property/:propertyId`, `PUT /tour-requests/:id/status` | auth required |
-| Conversations | `POST /conversations/start`, `GET /conversations/user/:userId`, `GET /conversations/property/:propertyId/user/:userId`, `GET /conversations/:conversationId/messages/:userId`, `POST /conversations/:conversationId/messages` | auth required |
-| Notifications | `GET /notifications/:ownerId`, `DELETE /notifications/:ownerId`, `DELETE /notifications/:ownerId/:notificationId` | auth required |
-| Stats | `GET /stats/`, `POST /stats/feedback` | public |
+| Resource         | Routes                                                                                                                                                                                                                                            | Auth                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Auth             | `POST /auth/login`, `POST /auth/register`                                                                                                                                                                                                         | public                                        |
+| Users            | `GET /users/`, `GET /users/:id`, `GET /users/email/search`, `PUT /users/change-password`                                                                                                                                                          | change-password only                          |
+| Properties       | `GET /properties/`, `GET /properties/:id`, `GET /properties/agent-id/:agentId`, `GET /properties/location/:location`, `POST /properties/`, `PUT /properties/:propertyId`, `DELETE /properties/:propertyId`, `POST /properties/:propertyId/images` | reads public, writes require auth + ownership |
+| Saved properties | `GET /saved-properties/:userId`, `POST /saved-properties/check`, `POST /saved-properties/`, `DELETE /saved-properties/`                                                                                                                           | auth required                                 |
+| Tour requests    | `POST /tour-requests/`, `GET /tour-requests/requester/:requesterId`, `GET /tour-requests/agent/:agentId`, `GET /tour-requests/requester/:requesterId/property/:propertyId`, `PUT /tour-requests/:id/status`                                       | auth required                                 |
+| Conversations    | `POST /conversations/start`, `GET /conversations/user/:userId`, `GET /conversations/property/:propertyId/user/:userId`, `GET /conversations/:conversationId/messages/:userId`, `POST /conversations/:conversationId/messages`                     | auth required                                 |
+| Notifications    | `GET /notifications/:ownerId`, `DELETE /notifications/:ownerId`, `DELETE /notifications/:ownerId/:notificationId`                                                                                                                                 | auth required                                 |
+| Stats            | `GET /stats/`, `POST /stats/feedback`                                                                                                                                                                                                             | public                                        |
 
 "Auth required" means a valid bearer token; most of these also check that the token's user actually owns the thing they're trying to touch (can't edit someone else's listing just because you're logged in).
 
