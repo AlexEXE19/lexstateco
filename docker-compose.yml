@@ -1,19 +1,18 @@
 services:
   db:
-    image: mysql:8.0
+    image: postgres:16
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-change_me}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-lexstate}
-      MYSQL_USER: ${MYSQL_USER:-lexuser}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-lexstate}
+      POSTGRES_USER: ${POSTGRES_USER:-lexuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - backend
     ports:
-      - "3306:3306"
+      - "5432:5432"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-change_me}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lexuser} -d ${POSTGRES_DB:-lexstate}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -25,10 +24,10 @@ services:
       NODE_ENV: production
       PORT: 5000
       DB_HOST: db
-      DB_PORT: 3306
-      DB_USER: ${MYSQL_USER:-lexuser}
-      DB_PASSWORD: ${MYSQL_PASSWORD:-change_me}
-      DB_NAME: ${MYSQL_DATABASE:-lexstate}
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-lexuser}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
+      DB_NAME: ${POSTGRES_DB:-lexstate}
       JWT_SECRET: ${JWT_SECRET:-replace_me}
     depends_on:
       db:
@@ -56,7 +55,7 @@ services:
     restart: on-failure
 
 volumes:
-  mysql_data:
+  postgres_data:
 
 networks:
   backend:
