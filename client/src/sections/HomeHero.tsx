@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Sparkles, type LucideIcon } from "lucide-react";
-import { useLocationSuggestions } from "../hooks/property/useLocationSuggestions";
-import { useTranslation } from "../utils/i18n";
+import { useSelector } from "react-redux";
 import axios from "axios";
+import { Search, Sparkles, type LucideIcon } from "lucide-react";
+
 import baseURL from "../config/baseUrl";
+import { RootState } from "../state/store";
+import { useLocationSuggestions } from "../hooks/property/useLocationSuggestions";
+import { buildQuery } from "../utils/buildQuery";
+import { useTranslation } from "../utils/i18n";
 
 export interface FeatureHighlight {
   title: string;
@@ -19,11 +23,20 @@ export interface Stats {
 }
 
 const HomeHero: React.FC = () => {
-  const [searchedLocation, setSearchedLocation] = useState<string>();
-  const [query, setQuery] = useState<string>();
+  const clientMeta = useSelector((state: RootState) => state.client);
+
+  const [searchedLocation, setSearchedLocation] = useState<string>("");
+  const [clientCountryCode, setClientCountryCode] = useState<string>("ro");
   const [suggestions, setSuggestions] = useState<any[]>();
 
-  useLocationSuggestions(query, setSuggestions);
+  // Get suggestions based on client country location together with user's search query
+  const stringQuery = buildQuery({
+    q: searchedLocation,
+    countrycodes: clientCountryCode,
+    featuretype: "settlement",
+  });
+  const toggle = searchedLocation.length > 0;
+  useLocationSuggestions(stringQuery, setSuggestions, toggle);
 
   const { t } = useTranslation();
 
@@ -72,6 +85,12 @@ const HomeHero: React.FC = () => {
     fetchStats();
   }, []);
 
+  useEffect(() => {
+    if (clientMeta?.countryName) {
+      setClientCountryCode(clientMeta.countryCode.toLocaleLowerCase());
+    }
+  }, [clientMeta?.countryName]);
+
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
@@ -103,30 +122,44 @@ const HomeHero: React.FC = () => {
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="flex flex-1 items-center gap-3 rounded-xl bg-white/10 px-4 py-3 ring-1 ring-white/15">
               <Search size={18} className="text-primary-200" />
-              <div className="min-w-0 flex-1">
+              <div className="relative">
                 <input
                   type="text"
                   value={searchedLocation ?? ""}
                   onChange={(e) => {
                     setSearchedLocation(e.target.value);
-                    setQuery(e.target.value);
                   }}
-                  list="city-suggestions"
                   placeholder={t("home.hero.inputPlaceholder")}
                   className="w-full bg-transparent text-base text-white placeholder:text-slate-300 focus:outline-none"
                 />
-                <datalist id="city-suggestions">
-                  {suggestions?.map((s, index) => (
-                    <option key={index} value={s} />
-                  ))}
-                </datalist>
+                {suggestions && suggestions.length > 0 && (
+                  <ul className="absolute left-0 right-0 top-full mt-2 z-50 max-h-60 overflow-y-auto rounded-xl bg-slate-900/95 border border-white/10 shadow-xl backdrop-blur divide-y divide-white/5">
+                    {suggestions.map((s, index) => (
+                      <li
+                        key={index}
+                        onClick={() => {
+                          setSearchedLocation(s.city);
+                          setSuggestions([]);
+                        }}
+                        className="px-4 py-3 cursor-pointer text-left transition-colors hover:bg-white/10"
+                      >
+                        <div className="font-semibold text-white">{s.city}</div>
+                        <div className="text-xs text-slate-400 mt-0.5 truncate">
+                          {[s.city, s.county, s.country]
+                            .filter(Boolean)
+                            .join(", ")}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
 
             <Link
               to={
-                query?.trim()
-                  ? `/properties?location=${encodeURIComponent(query)}`
+                searchedLocation?.trim()
+                  ? `/properties?location=${encodeURIComponent(searchedLocation)}`
                   : "/properties"
               }
               className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-secondary-500 to-cyan-400 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-secondary-400/30 transition hover:-translate-y-[1px] hover:shadow-cyan-400/40"
