@@ -20,7 +20,7 @@ const AudienceRequestDetailPanel: React.FC<
 
   return (
     <>
-      <div className="overflow-hidden rounded-2xl ring-1 ring-white/10">
+      <div className="overflow-hidden border border-line">
         <img
           src={heroImage}
           alt={property.title}
@@ -30,34 +30,34 @@ const AudienceRequestDetailPanel: React.FC<
 
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-2xl font-semibold text-white">
+          <h3 className="font-display text-2xl text-ink">
             {property.title}
           </h3>
-          <p className="text-sm text-slate-300">{property.location}</p>
+          <p className="mt-1 text-sm text-ink-muted">{property.location}</p>
         </div>
         <span
           className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ${
-            statusColors[request.status] || "bg-white/10 text-white"
+            statusColors[request.status] || "border-line text-ink-muted"
           }`}
         >
           {request.status}
         </span>
       </div>
 
-      <div className="rounded-2xl bg-white/5 p-4 text-sm text-slate-200 ring-1 ring-white/10">
-        <div className="mb-3 flex flex-wrap gap-2 text-xs text-slate-300">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
+      <div className="border border-line p-4 text-sm text-ink-muted">
+        <div className="mb-3 flex flex-wrap gap-2 text-xs text-ink-muted">
+          <span className="inline-flex items-center gap-2 rounded border border-line px-2.5 py-1">
             <CalendarClock size={14} />
             {formatDateTime(request.requestedAt)}
           </span>
           {request.requester && (
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
+            <span className="inline-flex items-center gap-2 rounded border border-line px-2.5 py-1">
               <Mail size={14} />
               {request.requester.email}
             </span>
           )}
           {request.requester && (
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
+            <span className="inline-flex items-center gap-2 rounded border border-line px-2.5 py-1">
               <Phone size={14} />
               {request.requester.phone}
             </span>
@@ -66,50 +66,50 @@ const AudienceRequestDetailPanel: React.FC<
         {property.description}
       </div>
 
-      <div className="grid gap-3 text-sm text-slate-200 sm:grid-cols-2">
-        <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-          <p className="text-xs uppercase text-slate-400">
+      <dl className="grid grid-cols-1 border-t border-line sm:grid-cols-2">
+        <div className="border-b border-line py-4 sm:odd:pr-6 sm:even:border-l sm:even:pl-6">
+          <p className="eyebrow">
             {t("audience.price")}
           </p>
-          <p className="text-lg font-semibold text-white">
+          <p className="mt-1.5 font-display text-lg text-ink">
             {new Intl.NumberFormat("en-US", {
               style: "currency",
               currency: "USD",
             }).format(property.price)}
           </p>
         </div>
-        <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-          <p className="text-xs uppercase text-slate-400">
+        <div className="border-b border-line py-4 sm:odd:pr-6 sm:even:border-l sm:even:pl-6">
+          <p className="eyebrow">
             {t("audience.size")}
           </p>
-          <p className="text-lg font-semibold text-white">
+          <p className="mt-1.5 font-display text-lg text-ink">
             {property.size} sq ft
           </p>
         </div>
-        <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-          <p className="text-xs uppercase text-slate-400">
+        <div className="border-b border-line py-4 sm:odd:pr-6 sm:even:border-l sm:even:pl-6">
+          <p className="eyebrow">
             {t("audience.neighborhood")}
           </p>
-          <p className="text-lg font-semibold text-white">
+          <p className="mt-1.5 font-display text-lg text-ink">
             {property.neighborhood}
           </p>
         </div>
-        <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-          <p className="text-xs uppercase text-slate-400">
+        <div className="border-b border-line py-4 sm:odd:pr-6 sm:even:border-l sm:even:pl-6">
+          <p className="eyebrow">
             {t("audience.zip")}
           </p>
-          <p className="text-lg font-semibold text-white">
+          <p className="mt-1.5 font-display text-lg text-ink">
             {property.zipCode}
           </p>
         </div>
-      </div>
+      </dl>
 
-      <div className="rounded-2xl bg-background-surface/70 p-4 ring-1 ring-white/10">
-        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+      <div className="border border-line p-4">
+        <div className="eyebrow mb-3 flex items-center gap-2">
           <MapPin size={14} />
           <span>{t("audience.map")}</span>
         </div>
-        <div className="h-64 overflow-hidden rounded-xl bg-background-surface/90 ring-1 ring-white/10">
+        <div className="h-64 overflow-hidden border border-line">
           <Map
             location={property.location}
             label={property.title}
@@ -123,14 +123,14 @@ const AudienceRequestDetailPanel: React.FC<
           <button
             onClick={onAccept}
             disabled={updating}
-            className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:-translate-y-[1px] hover:bg-emerald-400 disabled:opacity-70"
+            className="btn-primary"
           >
             {updating ? t("audience.updating") : t("audience.accept")}
           </button>
           <button
             onClick={onReject}
             disabled={updating}
-            className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-rose-500/30 transition hover:-translate-y-[1px] hover:bg-rose-400 disabled:opacity-70"
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-rose-200 bg-rose-50 px-5 py-2.5 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-100 disabled:opacity-50"
           >
             {updating ? t("audience.updating") : t("audience.reject")}
           </button>

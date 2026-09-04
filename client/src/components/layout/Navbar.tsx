@@ -54,32 +54,39 @@ const Navbar: React.FC = () => {
   const handleNotificationClick = async () => {};
 
   return (
-    <nav className="sticky z-10 top-0  w-full bg-gradient-to-r from-background via-background-surface to-primary-900/90 text-white shadow-2xl shadow-black/20 backdrop-blur-md">
-      <div className="flex items-center justify-between gap-4 mx-5 px-5 py-4">
-        <Link to="/" className="flex items-center gap-3 text-white">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-lg font-black tracking-tight ring-1 ring-white/15">
-            LE
+    <nav className="sticky top-0 z-30 w-full border-b border-line bg-canvas/95 backdrop-blur-sm">
+      <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-8 px-6 lg:px-10">
+        <Link to="/" className="flex items-baseline gap-2.5">
+          <span className="font-display text-xl leading-none tracking-tight text-ink">
+            LexEstate
           </span>
-          <div className="flex flex-col leading-tight">
-            <span className="text-lg font-semibold">LexEstateCo</span>
-            <span className="text-xs text-slate-200">
-              {t("navbar.brandTag")}
-            </span>
-          </div>
+          <span className="hidden text-[11px] uppercase tracking-label text-ink-subtle sm:inline">
+            {t("navbar.brandTag")}
+          </span>
         </Link>
 
-        <NavLink
-          to="/properties"
-          className={({ isActive }) =>
-            `text-sm font-medium transition ${
-              isActive ? "text-white" : "text-slate-300 hover:text-white"
-            }`
-          }
-        >
-          {t("nav.properties") || "Properties"}
-        </NavLink>
+        <div className="hidden items-center gap-7 md:flex">
+          <NavLink
+            to="/properties"
+            className={({ isActive }) =>
+              `border-b-2 pb-0.5 text-sm transition-colors ${
+                isActive
+                  ? "border-primary-700 text-ink"
+                  : "border-transparent text-ink-muted hover:text-ink"
+              }`
+            }
+          >
+            {t("nav.properties")}
+          </NavLink>
+          <NavLink
+            to="/profile/manage?activeTab=list"
+            className="border-b-2 border-transparent pb-0.5 text-sm text-ink-muted transition-colors hover:text-ink"
+          >
+            {t("account.tabs.list")}
+          </NavLink>
+        </div>
 
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-1">
           {userId !== "-1" && (
             <NotificationsMenu
               notifications={notifications}
@@ -92,15 +99,22 @@ const Navbar: React.FC = () => {
 
           <NavAuthLinks isLoggedIn={userId !== "-1"} onLogout={handleClick} />
 
-          {/* Side panel toggle */}
-          <button
-            className="h-10 rounded-xl px-4 text-sm font-semibold text-white  transition hover:bg-white/10"
-            onClick={() => {
-              dispatch(toggle());
-            }}
-          >
-            {isPanelOpen ? <PanelRightOpen /> : <PanelRightClose />}
-          </button>
+          {userId !== "-1" && (
+            <button
+              type="button"
+              aria-label={t("navbar.myAccount")}
+              className="flex h-9 w-9 items-center justify-center rounded-md text-ink-muted transition-colors hover:bg-background-elevated hover:text-ink"
+              onClick={() => {
+                dispatch(toggle());
+              }}
+            >
+              {isPanelOpen ? (
+                <PanelRightClose size={18} />
+              ) : (
+                <PanelRightOpen size={18} />
+              )}
+            </button>
+          )}
         </div>
       </div>
     </nav>

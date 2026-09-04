@@ -1,6 +1,11 @@
+import { Heart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 import PropertyGrid from "./PropertyGrid";
+import TabHeader from "../common/TabHeader";
+import EmptyState from "../common/EmptyState";
+
 import { RootState } from "../../state/store";
 import { openPropertyModal } from "../../state/propertyModal/propertyModalSlice";
 import { useSavedProperties } from "../../hooks/property/useSavedProperties";
@@ -13,23 +18,34 @@ const SavedPropertiesTab: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  return !properties || properties.length === 0 ? (
-    <Link
-      to="/properties"
-      className="block rounded-2xl border border-white/10 bg-white/5 p-8 text-slate-200 transition hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl cursor-pointer"
-    >
-      {t("saved.cta")}
-    </Link>
-  ) : (
+  const hasProperties = properties && properties.length > 0;
+
+  return (
     <div className="space-y-6">
-      <PropertyGrid
-        properties={properties}
-        isSaved={() => true}
-        onSelect={(property) => {
-          dispatch(openPropertyModal(property));
-          navigate(`/properties/${property.id}`);
-        }}
+      <TabHeader
+        icon={Heart}
+        eyebrow={t("account.tabs.saved")}
+        title={t("saved.title")}
+        description={hasProperties ? t("saved.subtitle") : undefined}
       />
+
+      {hasProperties ? (
+        <PropertyGrid
+          properties={properties}
+          isSaved={() => true}
+          onSelect={(property) => {
+            dispatch(openPropertyModal(property));
+            navigate(`/properties/${property.id}`);
+          }}
+        />
+      ) : (
+        <EmptyState
+          icon={Heart}
+          title={t("saved.cta")}
+          actionLabel={t("saved.browse")}
+          actionTo="/properties"
+        />
+      )}
     </div>
   );
 };

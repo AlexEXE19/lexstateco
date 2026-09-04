@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Property } from "../../types/types";
+
 import baseURL from "../../config/baseUrl";
+import { Property } from "../../schemas/Property";
 
 const PropertyImageGallery: React.FC<{ property: Property }> = ({
   property,
@@ -17,44 +18,54 @@ const PropertyImageGallery: React.FC<{ property: Property }> = ({
     ? `${baseURL.replace(/\/$/, "")}/${property.imageRefs[activeIndex % imageCount]}`
     : "/default_house.jpg";
 
+  const alt = `${property.location.neighborhood}, ${property.location.city}`;
+
   return (
-    <div className="overflow-hidden rounded-2xl bg-background-surface/80 ring-1 ring-white/10">
-      <div className="relative h-64 w-full">
-        <img
-          src={currentImage}
-          alt={property.title}
-          className="h-full w-full object-cover"
-        />
+    <div>
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-background-muted">
+        <img src={currentImage} alt={alt} className="h-full w-full object-cover" />
+
         {imageCount > 1 && (
           <>
             <button
+              aria-label="Previous photo"
               onClick={() =>
                 setActiveIndex((i) => (i - 1 + imageCount) % imageCount)
               }
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white"
+              className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md bg-background-surface/90 text-ink transition-colors hover:bg-background-surface"
             >
               <ChevronLeft size={18} />
             </button>
             <button
+              aria-label="Next photo"
               onClick={() => setActiveIndex((i) => (i + 1) % imageCount)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white"
+              className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md bg-background-surface/90 text-ink transition-colors hover:bg-background-surface"
             >
               <ChevronRight size={18} />
             </button>
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2">
-              {property.imageRefs.slice(0, 8).map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveIndex(idx)}
-                  className={`h-2 w-2 rounded-full ${
-                    idx === activeIndex ? "bg-white" : "bg-white/50"
-                  }`}
-                />
-              ))}
-            </div>
           </>
         )}
       </div>
+
+      {imageCount > 1 && (
+        <div className="mt-2 flex gap-2 overflow-x-auto">
+          {property.imageRefs.slice(0, 8).map((ref, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActiveIndex(idx)}
+              className={`h-16 w-24 shrink-0 overflow-hidden border transition-colors ${
+                idx === activeIndex ? "border-ink" : "border-line"
+              }`}
+            >
+              <img
+                src={`${baseURL.replace(/\/$/, "")}/${ref}`}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

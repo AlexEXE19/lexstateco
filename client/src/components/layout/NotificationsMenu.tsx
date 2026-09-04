@@ -24,61 +24,58 @@ const NotificationsMenu: React.FC<NotificationsMenuProps> = ({
         type="button"
         aria-label="Notifications"
         onClick={onToggle}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full text-white  transition hover:bg-white/15"
+        className="relative flex h-9 w-9 items-center justify-center rounded-md text-ink-muted transition-colors hover:bg-background-elevated hover:text-ink"
       >
-        <Bell />
+        <Bell size={18} />
         {notificationCount > 0 && (
-          <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1.5 text-[11px] font-bold leading-none shadow-lg shadow-rose-500/30">
-            {notificationCount}
-          </span>
+          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-secondary-500 ring-2 ring-canvas" />
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 overflow-hidden rounded-2xl bg-background-surface/95 text-sm text-white shadow-2xl shadow-black/30 ring-1 ring-white/15 backdrop-blur">
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <span className="text-xs uppercase tracking-[0.08em] text-slate-200">
-              Notifications
-            </span>
-            <button
-              type="button"
-              onClick={onClear}
-              className="text-xs font-semibold text-slate-200 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={notificationCount === 0}
-            >
-              Clear
-            </button>
-          </div>
-
-          {notificationCount === 0 ? (
-            <div className="px-4 py-6 text-center text-slate-300">
-              You're all caught up — no notifications.
+        <>
+          <div className="fixed inset-0 z-10" onClick={onToggle} />
+          <div className="absolute right-0 z-20 mt-2 w-80 overflow-hidden rounded-lg border border-line bg-background-surface shadow-panel">
+            <div className="flex items-center justify-between border-b border-line px-4 py-3">
+              <span className="eyebrow">Notifications</span>
+              <button
+                type="button"
+                onClick={onClear}
+                className="text-xs font-medium text-ink-muted transition-colors hover:text-ink disabled:opacity-40"
+                disabled={notificationCount === 0}
+              >
+                Clear
+              </button>
             </div>
-          ) : (
-            <ul className="max-h-72 divide-y divide-white/5 overflow-auto">
-              {notifications.map((notification: Notification) => (
-                <button
-                  key={notification.id}
-                  onClick={() => onNotificationClick(notification)}
-                  className="flex w-full gap-3 px-4 py-3 text-left transition hover:bg-white/5"
-                >
-                  <div className="mt-1 h-2.5 w-2.5 rounded-full bg-primary-400" />
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm font-semibold">
-                      {notification.title}
-                    </span>
-                    <p className="text-xs text-slate-200">
-                      {notification.description}
-                    </p>
-                    <span className="text-[11px] uppercase tracking-[0.08em] text-slate-400">
-                      {/* TO DO UPDATE WITH NEW SCHEMA */}
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </ul>
-          )}
-        </div>
+
+            {notificationCount === 0 ? (
+              <p className="px-4 py-8 text-center text-sm text-ink-subtle">
+                You're all caught up.
+              </p>
+            ) : (
+              <ul className="max-h-80 divide-y divide-line overflow-auto">
+                {notifications.map((notification: Notification) => (
+                  <li key={notification.id}>
+                    <button
+                      onClick={() => onNotificationClick(notification)}
+                      className="flex w-full gap-3 px-4 py-3 text-left transition-colors hover:bg-background-elevated"
+                    >
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500" />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-ink">
+                          {notification.title}
+                        </span>
+                        <span className="mt-0.5 block text-xs leading-relaxed text-ink-muted">
+                          {notification.description}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

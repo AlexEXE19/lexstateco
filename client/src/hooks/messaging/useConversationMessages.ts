@@ -7,7 +7,7 @@ import { ChatMessage } from "../../types/types";
 // loading its messages and sending new ones. `onMessageSent` lets the
 // caller refresh the conversation list (e.g. to bump ordering) after a send.
 export const useConversationMessages = (
-  conversationId: number | null,
+  conversationId: string | null,
   userId: string,
   onMessageSent?: () => void,
 ) => {

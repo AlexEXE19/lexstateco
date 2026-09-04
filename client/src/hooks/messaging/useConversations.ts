@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import baseURL from "../../config/baseUrl";
-import { Conversation } from "../../types/types";
 import { setConversationId } from "../../state/tab/tabSlice";
+import { Conversation } from "../../schemas/Converstation";
 
 // Owns the conversation list: loading it, keeping it in sync with whichever
 // conversation was opened elsewhere in the app (via activeConversationId),

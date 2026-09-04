@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import baseURL from "../../config/baseUrl";
-import { Property, TourRequest } from "../../types/types";
+import { TourRequest } from "../../schemas/TourRequest";
+import { Property } from "../../schemas/Property";
 
 // Shared by MyRequestsTab (requester's own tour requests) and MyAudienceTab
 // (incoming tour requests for a seller): both fetch a list keyed by user id,
@@ -38,6 +39,8 @@ export const useTourRequestList = (fetchUrl: string, enabled: boolean) => {
     () => requests.find((req) => req.id === selectedRequestId) || null,
     [requests, selectedRequestId],
   );
+
+  // TO DO UPDATE TO NEW SCHEMA
 
   const selectedProperty: Property | undefined = selectedRequest?.Property;
   const heroImage = selectedProperty?.imageRefs?.[0]

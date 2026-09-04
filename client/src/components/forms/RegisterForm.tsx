@@ -1,9 +1,9 @@
-import { Lock, Mail, Phone, User } from "lucide-react";
-import { useAuth } from "../../hooks/useAuth";
-import { useTranslation } from "../../utils/i18n";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { RegisterFormFields, registerSchema } from "../../schemas/FormSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import { useAuth } from "../../hooks/useAuth";
+import { RegisterFormFields, registerSchema } from "../../schemas/FormSchemas";
+import { useTranslation } from "../../utils/i18n";
 
 const RegisterForm: React.FC = () => {
   const { t } = useTranslation();
@@ -20,96 +20,107 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {authError && <p className="error mb-4 text-red-400">{authError}</p>}
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-2 text-sm text-slate-200">
-          {t("auth.register.firstName")}
-          <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-            <User size={16} className="text-primary-200" />
-            <input
-              {...register("firstName")}
-              type="text"
-              placeholder="Jane"
-              className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-            />
-          </div>
-          {errors.firstName && (
-            <p className="text-xs text-red-400">{errors.firstName.message}</p>
-          )}
-        </label>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      {authError && (
+        <p className="border-l-2 border-rose-500 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+          {authError}
+        </p>
+      )}
 
-        <label className="flex flex-col gap-2 text-sm text-slate-200">
-          {t("auth.register.lastName")}
-          <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-            <User size={16} className="text-primary-200" />
-            <input
-              {...register("lastName")}
-              type="text"
-              placeholder="Doe"
-              className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-            />
-          </div>
-          {errors.lastName && (
-            <p className="text-xs text-red-400">{errors.lastName.message}</p>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label className="field-label" htmlFor="register-first">
+            {t("auth.register.firstName")}
+          </label>
+          <input
+            id="register-first"
+            {...register("firstName")}
+            type="text"
+            placeholder="Jane"
+            className="field"
+          />
+          {errors.firstName && (
+            <p className="mt-1.5 text-xs text-rose-600">
+              {errors.firstName.message}
+            </p>
           )}
-        </label>
+        </div>
+
+        <div>
+          <label className="field-label" htmlFor="register-last">
+            {t("auth.register.lastName")}
+          </label>
+          <input
+            id="register-last"
+            {...register("lastName")}
+            type="text"
+            placeholder="Doe"
+            className="field"
+          />
+          {errors.lastName && (
+            <p className="mt-1.5 text-xs text-rose-600">
+              {errors.lastName.message}
+            </p>
+          )}
+        </div>
       </div>
 
-      <label className="flex flex-col gap-2 text-sm text-slate-200">
-        {t("auth.register.email")}
-        <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-          <Mail size={16} className="text-primary-200" />
-          <input
-            {...register("email")}
-            type="email"
-            placeholder="you@example.com"
-            className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-          />
-        </div>
+      <div>
+        <label className="field-label" htmlFor="register-email">
+          {t("auth.register.email")}
+        </label>
+        <input
+          id="register-email"
+          {...register("email")}
+          type="email"
+          placeholder="you@example.com"
+          className="field"
+        />
         {errors.email && (
-          <p className="text-xs text-red-400">{errors.email.message}</p>
+          <p className="mt-1.5 text-xs text-rose-600">{errors.email.message}</p>
         )}
-      </label>
+      </div>
 
-      <label className="flex flex-col gap-2 text-sm text-slate-200">
-        {t("auth.register.password")}
-        <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-          <Lock size={16} className="text-primary-200" />
-          <input
-            {...register("password")}
-            type="password"
-            placeholder="••••••••"
-            className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-          />
-        </div>
+      <div>
+        <label className="field-label" htmlFor="register-password">
+          {t("auth.register.password")}
+        </label>
+        <input
+          id="register-password"
+          {...register("password")}
+          type="password"
+          placeholder="••••••••"
+          className="field"
+        />
         {errors.password && (
-          <p className="text-xs text-red-400">{errors.password.message}</p>
+          <p className="mt-1.5 text-xs text-rose-600">
+            {errors.password.message}
+          </p>
         )}
-      </label>
+      </div>
 
-      <label className="flex flex-col gap-2 text-sm text-slate-200">
-        {t("auth.register.phone")}
-        <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-          <Phone size={16} className="text-primary-200" />
-          <input
-            {...register("phone")}
-            type="text"
-            placeholder="(555) 123-9876"
-            className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-          />
-        </div>
+      <div>
+        <label className="field-label" htmlFor="register-phone">
+          {t("auth.register.phone")}
+        </label>
+        <input
+          id="register-phone"
+          {...register("phone")}
+          type="text"
+          placeholder="(555) 123-9876"
+          className="field"
+        />
         {errors.phone && (
-          <p className="text-xs text-red-400">{errors.phone.message}</p>
+          <p className="mt-1.5 text-xs text-rose-600">{errors.phone.message}</p>
         )}
-      </label>
+      </div>
 
       <button
-        className="w-full rounded-2xl bg-primary-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400 disabled:opacity-50"
+        className="btn-primary w-full"
         type="submit"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Registering..." : t("auth.register.submit")}
+        {isSubmitting ? "Creating account…" : t("auth.register.submit")}
       </button>
     </form>
   );

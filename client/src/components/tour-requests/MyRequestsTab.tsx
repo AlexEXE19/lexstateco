@@ -1,8 +1,14 @@
+import { ClipboardList } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+
+import PropertyGrid from "../property/PropertyGrid";
+import TabHeader from "../common/TabHeader";
+import EmptyState from "../common/EmptyState";
+import LoadingState from "../common/LoadingState";
+
 import { RootState } from "../../state/store";
 import { openPropertyModal } from "../../state/propertyModal/propertyModalSlice";
 import baseURL from "../../config/baseUrl";
-import PropertyCard from "../property/PropertyCard";
 import { useTourRequestList } from "../../hooks/tour-requests/useTourRequestList";
 import { useTranslation } from "../../utils/i18n";
 
@@ -17,53 +23,48 @@ const MyRequestsTab: React.FC = () => {
       Boolean(userId && userId !== "-1"),
     );
 
+  const requestsWithProperty = requests.filter((request) => request.Property);
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-            My requests
-          </p>
-          <h2 className="text-2xl font-semibold text-white">
-            {t("requests.title")}
-          </h2>
-        </div>
-      </div>
+      <TabHeader
+        icon={ClipboardList}
+        eyebrow={t("account.tabs.requests")}
+        title={t("requests.title")}
+        description={
+          !loading && requestsWithProperty.length > 0
+            ? t("requests.subtitle")
+            : undefined
+        }
+      />
 
-      {loading && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-          {t("requests.loading")}
-        </div>
+      {loading && <LoadingState label={t("requests.loading")} />}
+
+      {!loading && requestsWithProperty.length === 0 && (
+        <EmptyState icon={ClipboardList} title={t("requests.empty")} />
       )}
 
-      {!loading && requests.length === 0 && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-          {t("requests.empty")}
-        </div>
-      )}
-
-      {!loading && requests.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {requests
-            .filter((request) => request.Property)
-            .map((request) => (
-              <PropertyCard
-                key={request.id}
-                property={request.Property as NonNullable<
-                  typeof request.Property
-                >}
-                saved={false}
-                requestStatus={request.status}
-                cancelingRequest={updatingId === request.id}
-                onCancelRequest={
-                  request.status === "pending"
-                    ? () => updateRequestStatus(request.id, "canceled")
-                    : undefined
-                }
-                onSelect={(property) => dispatch(openPropertyModal(property))}
-              />
-            ))}
-        </div>
+      {!loading && requestsWithProperty.length > 0 && (
+        <PropertyGrid
+          properties={requestsWithProperty.map(
+            (request) => request.Property!,
+          )}
+          isSaved={() => false}
+          onSelect={(property) => dispatch(openPropertyModal(property))}
+          getRequestProps={(property) => {
+            const request = requestsWithProperty.find(
+              (r) => r.Property!.id === property.id,
+            )!;
+            return {
+              requestStatus: request.status,
+              cancelingRequest: updatingId === request.id,
+              onCancelRequest:
+                request.status === "pending"
+                  ? () => updateRequestStatus(request.id, "canceled")
+                  : undefined,
+            };
+          }}
+        />
       )}
     </div>
   );

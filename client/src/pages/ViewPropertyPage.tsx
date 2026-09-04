@@ -1,22 +1,27 @@
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
-import MessageComposer from "../components/property/MessageComposer";
+import PropertyImageGallery from "../components/property/PropertyImageGallery";
 import PropertyStatsGrid from "../components/property/PropertyStatsGrid";
-import Map from "../components/common/Map";
-import { useTranslation } from "../utils/i18n";
-import { useSellerInfo } from "../hooks/property/useSellerInfo";
+import TourRequestPanel from "../components/property/TourRequestPanel";
+import MessageComposer from "../components/property/MessageComposer";
+import Map, { Coords } from "../components/common/Map";
+
 import { RootState } from "../state/store";
+import { useLocationApi } from "../hooks/property/useLocationApi";
+import { buildQuery } from "../utils/buildQuery";
+import { humanizeEnumValue } from "../utils/humanize";
+import { useSellerInfo } from "../hooks/property/useSellerInfo";
 import { useTourRequest } from "../hooks/property/useTourRequest";
 import { useConversationCompose } from "../hooks/property/useConversationCompose";
-import PropertyImageGallery from "../components/property/PropertyImageGallery";
-import TourRequestPanel from "../components/property/TourRequestPanel";
+import { useTranslation } from "../utils/i18n";
 
 const statusDotColor: Record<string, string> = {
-  available: "bg-emerald-400",
-  pending: "bg-amber-400",
-  sold: "bg-slate-500",
+  available: "bg-primary-600",
+  pending: "bg-secondary-500",
+  sold: "bg-ink-subtle",
 };
 
 const ViewPropertyPage: React.FC = () => {
@@ -32,6 +37,37 @@ const ViewPropertyPage: React.FC = () => {
   const { t } = useTranslation();
 
   const { sellerName, sellerPhone } = useSellerInfo(property?.agentId ?? -1);
+
+  // Properties don't store coordinates, so the map pin is geocoded from the
+  // address. useLocationApi currently returns null (geocoding is switched
+  // off), in which case the map section simply doesn't render rather than
+  // pinning somewhere misleading.
+  const { getCoordinatesByQuery } = useLocationApi();
+  const [mapCoords, setMapCoords] = useState<Coords | null>(null);
+  const addressQuery = property
+    ? [
+        property.location.address,
+        property.location.city,
+        property.location.country,
+      ]
+        .filter(Boolean)
+        .join(", ")
+    : "";
+
+  useEffect(() => {
+    let active = true;
+    if (!addressQuery) return;
+
+    (async () => {
+      const found = await getCoordinatesByQuery(buildQuery({ q: addressQuery }));
+      if (active) setMapCoords(found);
+    })();
+
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressQuery]);
   const {
     requestDate,
     setRequestDate,
@@ -62,117 +98,115 @@ const ViewPropertyPage: React.FC = () => {
     maximumFractionDigits: 0,
   }).format(property.price);
 
+  const facts = [
+    { value: property.bedrooms, label: t("properties.bedrooms") },
+    { value: property.bathrooms, label: t("properties.bathrooms") },
+    { value: property.size, label: t("properties.size.unit") },
+  ];
+
   return (
-    <div className="min-h-screen bg-background px-4 py-10">
-      <div className="mx-auto max-w-4xl">
+    <div className="bg-canvas">
+      <div className="mx-auto max-w-[1400px] px-6 py-8 lg:px-10">
         <button
-          className="mb-4 inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
-          onClick={() => {
-            navigate(-1);
-          }}
+          className="btn-quiet -ml-3 mb-6"
+          onClick={() => navigate(-1)}
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={15} />
           {t("properties.back")}
         </button>
 
-        <div className="overflow-hidden rounded-2xl bg-background-surface ring-1 ring-white/10">
-          <PropertyImageGallery property={property} />
+        <PropertyImageGallery property={property} />
 
-          <div className="px-8 py-6">
-            {/* Title + price */}
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <div className="mb-1.5 flex items-center gap-2 text-sm text-slate-400">
-                  <span
-                    className={`h-1.5 w-1.5 rounded-full ${statusDotColor[property.status] ?? "bg-slate-500"}`}
-                  />
-                  <span>{property.status}</span>
-                  <span className="text-slate-600">·</span>
-                  <span>{property.type}</span>
-                </div>
-                <h1 className="font-serif text-3xl leading-snug text-white">
-                  {[property.location.address, property.location.neighborhood]
-                    .filter(Boolean)
-                    .join(", ")}
-                </h1>
-                <p className="mt-1 text-sm text-slate-400">
-                  {[property.location.city, property.location.country]
-                    .filter(Boolean)
-                    .join(", ")}
-                </p>
-              </div>
-              <div className="whitespace-nowrap font-serif text-3xl text-white">
-                {priceLabel}
-              </div>
+        <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div>
+            <div className="flex items-center gap-2 text-sm text-ink-muted">
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  statusDotColor[property.status] ?? "bg-ink-subtle"
+                }`}
+              />
+              <span className="capitalize">{property.status}</span>
+              <span className="text-line-strong">·</span>
+              <span className="capitalize">{property.type}</span>
             </div>
 
-            {/* Stats — spec-sheet style, hairline-separated */}
-            <div className="mt-6 flex divide-x divide-white/10 border-y border-white/10">
-              <div className="flex-1 py-3 pr-4">
-                <div className="text-xl font-semibold text-white">
-                  {property.bedrooms}
+            <h1 className="mt-3 font-display text-display-sm text-ink">
+              {[property.location.address, property.location.neighborhood]
+                .filter(Boolean)
+                .join(", ")}
+            </h1>
+            <p className="mt-2 text-ink-muted">
+              {[property.location.city, property.location.country]
+                .filter(Boolean)
+                .join(", ")}
+            </p>
+
+            <div className="mt-8 flex divide-x divide-line border-y border-line">
+              {facts.map((fact) => (
+                <div key={fact.label} className="flex-1 py-4 pl-5 first:pl-0">
+                  <div className="font-display text-2xl leading-none text-ink">
+                    {fact.value}
+                  </div>
+                  <div className="mt-1.5 text-sm text-ink-muted">
+                    {fact.label}
+                  </div>
                 </div>
-                <div className="text-sm text-slate-400">
-                  {t("properties.bedrooms")}
-                </div>
-              </div>
-              <div className="flex-1 py-3 px-4">
-                <div className="text-xl font-semibold text-white">
-                  {property.bathrooms}
-                </div>
-                <div className="text-sm text-slate-400">
-                  {t("properties.bathrooms")}
-                </div>
-              </div>
-              <div className="flex-1 py-3 pl-4">
-                <div className="text-xl font-semibold text-white">
-                  {property.size}
-                </div>
-                <div className="text-sm text-slate-400">
-                  {t("properties.size.unit")}
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* Description */}
-            <p className="mt-6 max-w-[70ch] text-[15px] leading-relaxed text-slate-300">
+            <p className="mt-8 max-w-[68ch] leading-relaxed text-ink-muted">
               {property.description}
             </p>
 
-            {/* Amenities */}
             {property.amenities.length > 0 && (
-              <div className="mt-6 border-t border-white/10 pt-5">
-                <p className="mb-3 text-sm font-medium text-slate-300">
-                  {t("properties.amenities")}
-                </p>
-                <ul className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
+              <div className="mt-10 border-t border-line pt-8">
+                <p className="eyebrow">{t("listing.label.amenities")}</p>
+                <ul className="mt-4 grid grid-cols-2 gap-x-8 gap-y-2.5 sm:grid-cols-3">
                   {property.amenities.map((amenity) => (
                     <li
                       key={amenity}
-                      className="flex items-center gap-2 text-sm capitalize text-slate-300"
+                      className="flex items-center gap-2.5 text-sm text-ink-muted"
                     >
-                      <span className="h-1 w-1 shrink-0 rounded-full bg-slate-500" />
-                      {amenity}
+                      <span className="h-1 w-1 shrink-0 rounded-full bg-primary-500" />
+                      {humanizeEnumValue(amenity)}
                     </li>
                   ))}
                 </ul>
               </div>
             )}
 
-            {/* Tour / message */}
-            {!isOwner && (
-              <div className="mt-6 rounded-xl bg-primary-500/10 p-5 ring-1 ring-primary-400/20">
-                <TourRequestPanel
-                  requestDate={requestDate}
-                  setRequestDate={setRequestDate}
-                  requestTime={requestTime}
-                  setRequestTime={setRequestTime}
-                  requestStatus={requestStatus}
-                  isPending={isPending}
-                  isCanceled={isCanceled}
-                  onRequestTour={handleRequestTour}
-                />
-                <div className="mt-3 border-t border-white/10 pt-3">
+            {mapCoords && (
+              <div className="mt-10 border-t border-line pt-8">
+                <p className="eyebrow mb-5">{t("properties.map")}</p>
+                <div className="relative h-[420px] w-full overflow-hidden border border-line">
+                  <Map coords={mapCoords} label={addressQuery} readOnly />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <aside className="lg:sticky lg:top-24 lg:self-start">
+            <div className="border border-line bg-background-surface p-6">
+              <p className="font-display text-3xl leading-none text-ink">
+                {priceLabel}
+              </p>
+              <p className="mt-2 text-xs text-ink-subtle">
+                {t("properties.price.includesFees")}
+              </p>
+
+              {!isOwner && (
+                <div className="mt-6 space-y-4 border-t border-line pt-6">
+                  <TourRequestPanel
+                    requestDate={requestDate}
+                    setRequestDate={setRequestDate}
+                    requestTime={requestTime}
+                    setRequestTime={setRequestTime}
+                    requestStatus={requestStatus}
+                    isPending={isPending}
+                    isCanceled={isCanceled}
+                    onRequestTour={handleRequestTour}
+                  />
+
                   <MessageComposer
                     showCompose={showMessageCompose}
                     messageText={messageText}
@@ -183,26 +217,17 @@ const ViewPropertyPage: React.FC = () => {
                     onCancel={() => setShowMessageCompose(false)}
                   />
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
-            <div className="mt-6 border-t border-white/10 pt-5">
+            <div className="mt-6">
               <PropertyStatsGrid
                 property={property}
                 sellerName={sellerName}
                 sellerPhone={sellerPhone}
               />
             </div>
-
-            <div className="relative mt-6 h-[500px] w-full overflow-hidden rounded-lg bg-white">
-              <Map
-                coords={{ lat: 43.2, lng: 32.2 }}
-                label="Harta misto"
-                onClose={() => {}}
-                setAddress={() => {}}
-              />
-            </div>
-          </div>
+          </aside>
         </div>
       </div>
     </div>

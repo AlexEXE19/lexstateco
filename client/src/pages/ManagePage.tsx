@@ -29,9 +29,8 @@ const ManagePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-white">
-      {/* Body section */}
-      <section className="px-8 py-8">
+    <div className="bg-canvas">
+      <section className="mx-auto max-w-[1400px] px-6 py-10 lg:px-10 lg:py-12">
         {searchParams.get("activeTab") === "saved" && <SavedPropertiesTab />}
         {searchParams.get("activeTab") === "myProperties" && (
           <UserPropertiesTab />

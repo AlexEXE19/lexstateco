@@ -1,9 +1,9 @@
-import { Lock, Mail } from "lucide-react";
-import { useAuth } from "../../hooks/useAuth";
-import { useTranslation } from "../../utils/i18n";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { LoginFormFields, loginSchema } from "../../schemas/FormSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import { useAuth } from "../../hooks/useAuth";
+import { LoginFormFields, loginSchema } from "../../schemas/FormSchemas";
+import { useTranslation } from "../../utils/i18n";
 
 const LoginForm: React.FC = () => {
   const { t } = useTranslation();
@@ -21,42 +21,49 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {authError && <p className="error">{authError}</p>}
-      <label className="flex flex-col gap-2 text-sm text-slate-200">
-        {t("auth.login.email")}
-        <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-          <Mail size={16} className="text-primary-200" />
-          <input
-            {...register("email")}
-            type="email"
-            placeholder="you@example.com"
-            className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-          />
-          {errors.email && <p>{errors.email.message}</p>}
-        </div>
-      </label>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      {authError && (
+        <p className="border-l-2 border-rose-500 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+          {authError}
+        </p>
+      )}
 
-      <label className="flex flex-col gap-2 text-sm text-slate-200">
-        {t("auth.login.password")}
-        <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-          <Lock size={16} className="text-primary-200" />
-          <input
-            type="password"
-            placeholder="••••••••"
-            className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
-            {...register("password")}
-          />
-          {errors.password && <p>{errors.password.message}</p>}
-        </div>
-      </label>
+      <div>
+        <label className="field-label" htmlFor="login-email">
+          {t("auth.login.email")}
+        </label>
+        <input
+          id="login-email"
+          {...register("email")}
+          type="email"
+          placeholder="you@example.com"
+          className="field"
+        />
+        {errors.email && (
+          <p className="mt-1.5 text-xs text-rose-600">{errors.email.message}</p>
+        )}
+      </div>
 
-      <button
-        className="w-full rounded-2xl bg-primary-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400"
-        type="submit"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? "Logging in..." : t("auth.login.submit")}
+      <div>
+        <label className="field-label" htmlFor="login-password">
+          {t("auth.login.password")}
+        </label>
+        <input
+          id="login-password"
+          {...register("password")}
+          type="password"
+          placeholder="••••••••"
+          className="field"
+        />
+        {errors.password && (
+          <p className="mt-1.5 text-xs text-rose-600">
+            {errors.password.message}
+          </p>
+        )}
+      </div>
+
+      <button className="btn-primary w-full" type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Signing in…" : t("auth.login.submit")}
       </button>
     </form>
   );

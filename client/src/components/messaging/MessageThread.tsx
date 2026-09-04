@@ -30,10 +30,10 @@ const MessageThread: React.FC<MessageThreadProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="flex h-[50vh] flex-col gap-3 overflow-hidden rounded-2xl bg-background-surface/70 p-4 ring-1 ring-white/10">
+    <div className="flex h-[55vh] flex-col gap-4 overflow-hidden border border-line bg-background-surface p-4">
       <div className="flex-1 space-y-2 overflow-y-auto pr-1">
         {loading && (
-          <div className="text-sm text-slate-300">{t("audience.loading")}</div>
+          <div className="text-sm text-ink-subtle">{t("audience.loading")}</div>
         )}
         {!loading &&
           messages.map((msg) => {
@@ -44,14 +44,14 @@ const MessageThread: React.FC<MessageThreadProps> = ({
                 className={`flex ${mine ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm shadow ${
+                  className={`max-w-[75%] rounded-lg px-3.5 py-2.5 text-sm ${
                     mine
-                      ? "bg-primary-600 text-white shadow-primary-500/30"
-                      : "bg-white/10 text-white shadow-black/20"
+                      ? "bg-primary-800 text-white"
+                      : "bg-background-elevated text-ink"
                   }`}
                 >
                   <p>{msg.content}</p>
-                  <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-slate-300">
+                  <p className={`mt-1.5 text-[10px] uppercase tracking-label ${mine ? "text-primary-200" : "text-ink-subtle"}`}>
                     {formatTime(msg.createdAt)}
                   </p>
                 </div>
@@ -67,11 +67,11 @@ const MessageThread: React.FC<MessageThreadProps> = ({
           placeholder={t("account.messages.inputPlaceholder")}
           value={messageText}
           onChange={(e) => setMessageText(e.target.value)}
-          className="flex-1 rounded-xl bg-white/10 px-3 py-2 text-sm text-white ring-1 ring-white/15 focus:outline-none focus:ring-2 focus:ring-primary-400"
+          className="field flex-1"
         />
         <button
           onClick={onSend}
-          className="rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400"
+          className="btn-primary"
         >
           {t("account.messages.send")}
         </button>

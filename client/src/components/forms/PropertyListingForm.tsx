@@ -31,14 +31,8 @@ import { useCreatePropertyForm } from "../../hooks/property/useCreatePropertyFor
 import { useLocationSuggestions } from "../../hooks/property/useLocationSuggestions";
 import { buildQuery } from "../../utils/buildQuery";
 import { FALLBACK_COORDS, getUserLocation } from "../../utils/getUserLocation";
+import { humanizeEnumValue } from "../../utils/humanize";
 import { useTranslation } from "../../utils/i18n";
-
-// "swimmingPool" -> "Swimming Pool" - lets the enum value lists double as
-// display labels instead of maintaining a parallel label map.
-const humanizeEnumValue = (value: string) =>
-  value
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/^./, (char) => char.toUpperCase());
 
 type StepFieldName = Path<PropertyListingFormInput>;
 
@@ -179,52 +173,49 @@ const PropertyListingForm: React.FC = () => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid gap-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 backdrop-blur"
+        className="grid gap-6 border border-line bg-background-surface p-7"
       >
         {/* Step indicator */}
-        <div className="mb-2 flex items-center gap-2">
+        <div className="flex items-center gap-3 border-b border-line pb-6">
           {STEPS.map((s, idx) => (
-            <div key={s.key} className="flex flex-1 items-center gap-2">
+            <div key={s.key} className="flex flex-1 items-center gap-3">
               <div
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs transition-colors ${
                   idx === step
-                    ? "bg-primary-500 text-white"
+                    ? "bg-primary-800 text-white"
                     : idx < step
-                      ? "bg-primary-500/40 text-white"
-                      : "bg-white/10 text-slate-300"
+                      ? "bg-primary-100 text-primary-800"
+                      : "border border-line text-ink-subtle"
                 }`}
               >
                 {idx + 1}
               </div>
               <span
-                className={`hidden text-xs sm:block ${
-                  idx === step ? "text-white" : "text-slate-400"
+                className={`hidden whitespace-nowrap text-xs sm:block ${
+                  idx === step ? "font-medium text-ink" : "text-ink-subtle"
                 }`}
               >
                 {t(s.labelKey)}
               </span>
               {idx < STEPS.length - 1 && (
-                <div className="h-px flex-1 bg-white/10" />
+                <div className="h-px flex-1 bg-line" />
               )}
             </div>
           ))}
         </div>
-        <p className="text-xs text-slate-400">
-          {t("listing.step.label")} {step + 1} / {STEPS.length}
-        </p>
 
         {step === 0 && (
           <div className="grid gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.country")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Globe2 size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <Globe2 size={16} className="shrink-0 text-ink-subtle" />
                 <div className="relative">
                   <input
                     {...register("location.country")}
                     type="text"
                     placeholder="United States"
-                    className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                    className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                     autoComplete="off"
                     onBlur={() => {
                       setTimeout(() => setCountrySuggestions([]), 200);
@@ -233,7 +224,7 @@ const PropertyListingForm: React.FC = () => {
                   {countrySuggestions &&
                     countrySuggestions &&
                     countrySuggestions.length > 0 && (
-                      <ul className="absolute left-0 right-0 top-full mt-2 z-50 max-h-60 overflow-y-auto rounded-xl bg-slate-900/95 border border-white/10 shadow-xl backdrop-blur divide-y divide-white/5">
+                      <ul className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-60 divide-y divide-line overflow-y-auto rounded-md border border-line bg-background-surface shadow-panel">
                         {countrySuggestions.map((s, index) => (
                           <li
                             key={index}
@@ -244,9 +235,9 @@ const PropertyListingForm: React.FC = () => {
                               });
                               setCountrySuggestions([]);
                             }}
-                            className="px-4 py-3 cursor-pointer text-left transition-colors hover:bg-white/10"
+                            className="cursor-pointer px-4 py-2.5 text-left transition-colors hover:bg-background-elevated"
                           >
-                            <div className="font-semibold text-white">
+                            <div className="text-sm text-ink">
                               {s.country}
                             </div>
                           </li>
@@ -256,22 +247,22 @@ const PropertyListingForm: React.FC = () => {
                 </div>
               </div>
               {errors.location?.country && (
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-rose-600">
                   {errors.location.country.message}
                 </p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.city")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <MapPin size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <MapPin size={16} className="shrink-0 text-ink-subtle" />
                 <div className="relative w-full ">
                   <input
                     {...register("location.city")}
                     type="text"
                     placeholder="Austin"
-                    className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                    className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                     list="city-suggestions"
                     autoComplete="off"
                     onBlur={() => {
@@ -281,7 +272,7 @@ const PropertyListingForm: React.FC = () => {
                   {citySuggestionsToggle &&
                     citySuggestions &&
                     citySuggestions.length > 0 && (
-                      <ul className="absolute left-0 right-0 top-full mt-2 z-50 max-h-60 overflow-y-auto rounded-xl bg-slate-900/95 border border-white/10 shadow-xl backdrop-blur divide-y divide-white/5">
+                      <ul className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-60 divide-y divide-line overflow-y-auto rounded-md border border-line bg-background-surface shadow-panel">
                         {citySuggestions.map((s, index) => (
                           <li
                             key={index}
@@ -292,12 +283,12 @@ const PropertyListingForm: React.FC = () => {
                               });
                               setCitySuggestions([]);
                             }}
-                            className="px-4 py-3 cursor-pointer text-left transition-colors hover:bg-white/10"
+                            className="cursor-pointer px-4 py-2.5 text-left transition-colors hover:bg-background-elevated"
                           >
-                            <div className="font-semibold text-white">
+                            <div className="text-sm text-ink">
                               {s.city}
                             </div>
-                            <div className="text-xs text-slate-400 mt-0.5 truncate">
+                            <div className="mt-0.5 truncate text-xs text-ink-subtle">
                               {[s.city, s.county, s.country]
                                 .filter(Boolean)
                                 .join(", ")}
@@ -309,61 +300,61 @@ const PropertyListingForm: React.FC = () => {
                 </div>
               </div>
               {errors.location?.city && (
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-rose-600">
                   {errors.location.city.message}
                 </p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.neighborhood")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <MapPin size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <MapPin size={16} className="shrink-0 text-ink-subtle" />
                 <input
                   {...register("location.neighborhood")}
                   type="text"
                   placeholder="East Austin"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                 />
               </div>
               {errors.location?.neighborhood && (
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-rose-600">
                   {errors.location.neighborhood.message}
                 </p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.address")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <MapPin size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <MapPin size={16} className="shrink-0 text-ink-subtle" />
                 <input
                   {...register("location.address")}
                   type="text"
                   placeholder="123 Main St"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                 />
               </div>
               {errors.location?.address && (
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-rose-600">
                   {errors.location.address.message}
                 </p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.zip")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Tag size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <Tag size={16} className="shrink-0 text-ink-subtle" />
                 <input
                   {...register("location.zipCode")}
                   type="text"
                   placeholder="73301"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                 />
               </div>
               {errors.location?.zipCode && (
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-rose-600">
                   {errors.location.zipCode.message}
                 </p>
               )}
@@ -385,9 +376,9 @@ const PropertyListingForm: React.FC = () => {
                   setPinCoords(coords);
                   setIsMapModalOpen(true);
                 }}
-                className="border border-dashed border-slate-700 bg-slate-900/50 hover:bg-slate-800/50 cursor-pointer rounded-xl p-6 flex flex-col items-center justify-center text-center transition-all group h-full min-h-[140px]"
+                className="group flex h-full min-h-[150px] cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-line-strong p-6 text-center transition-colors hover:border-ink-subtle hover:bg-background-elevated"
               >
-                <div className="w-10 h-10 rounded-full bg-blue-600/20 text-blue-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-primary-700">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -408,10 +399,10 @@ const PropertyListingForm: React.FC = () => {
                     />
                   </svg>
                 </div>
-                <p className="text-sm font-medium text-slate-200">
+                <p className="text-sm font-medium text-ink">
                   Pin exact location on map
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="mt-1 text-xs text-ink-subtle">
                   Click to open map and drop a pin
                 </p>
               </div>
@@ -421,82 +412,82 @@ const PropertyListingForm: React.FC = () => {
 
         {step === 1 && (
           <div className="grid gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.price")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Tag size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <Tag size={16} className="shrink-0 text-ink-subtle" />
                 <input
                   {...register("price")}
                   type="number"
                   placeholder="450000"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                 />
               </div>
               {errors.price && (
-                <p className="text-xs text-red-400">{errors.price.message}</p>
+                <p className="text-xs text-rose-600">{errors.price.message}</p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.size")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Ruler size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <Ruler size={16} className="shrink-0 text-ink-subtle" />
                 <input
                   {...register("size")}
                   type="number"
                   placeholder="1800"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                 />
               </div>
               {errors.size && (
-                <p className="text-xs text-red-400">{errors.size.message}</p>
+                <p className="text-xs text-rose-600">{errors.size.message}</p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.bedrooms")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <BedDouble size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <BedDouble size={16} className="shrink-0 text-ink-subtle" />
                 <input
                   {...register("bedrooms")}
                   type="number"
                   placeholder="3"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                 />
               </div>
               {errors.bedrooms && (
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-rose-600">
                   {errors.bedrooms.message}
                 </p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.bathrooms")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Bath size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <Bath size={16} className="shrink-0 text-ink-subtle" />
                 <input
                   {...register("bathrooms")}
                   type="number"
                   placeholder="2"
-                  className="w-full bg-transparent text-white placeholder:text-slate-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                 />
               </div>
               {errors.bathrooms && (
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-rose-600">
                   {errors.bathrooms.message}
                 </p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.type")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Building2 size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <Building2 size={16} className="shrink-0 text-ink-subtle" />
                 <select
                   {...register("type")}
                   defaultValue=""
-                  className="w-full bg-transparent text-white focus:outline-none [&>option]:bg-background-surface"
+                  className="w-full bg-transparent text-sm text-ink focus:outline-none"
                 >
                   <option value="" disabled>
                     {t("listing.label.type")}
@@ -509,17 +500,17 @@ const PropertyListingForm: React.FC = () => {
                 </select>
               </div>
               {errors.type && (
-                <p className="text-xs text-red-400">{errors.type.message}</p>
+                <p className="text-xs text-rose-600">{errors.type.message}</p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.status")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Sparkles size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <Sparkles size={16} className="shrink-0 text-ink-subtle" />
                 <select
                   {...register("status")}
-                  className="w-full bg-transparent text-white focus:outline-none [&>option]:bg-background-surface"
+                  className="w-full bg-transparent text-sm text-ink focus:outline-none"
                 >
                   {PROPERTY_STATUS_VALUES.map((value) => (
                     <option key={value} value={value}>
@@ -529,21 +520,21 @@ const PropertyListingForm: React.FC = () => {
                 </select>
               </div>
               {errors.status && (
-                <p className="text-xs text-red-400">{errors.status.message}</p>
+                <p className="text-xs text-rose-600">{errors.status.message}</p>
               )}
             </label>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200 md:col-span-2">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted md:col-span-2">
               {t("listing.label.description")}
-              <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
+              <div className="rounded-md border border-line bg-background-surface focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
                 <textarea
                   {...register("description")}
                   placeholder="Describe the highlights, light, layout, and nearby spots."
-                  className="h-28 w-full resize-none rounded-2xl bg-transparent px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
+                  className="h-32 w-full resize-none bg-transparent px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
                 />
               </div>
               {errors.description && (
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-rose-600">
                   {errors.description.message}
                 </p>
               )}
@@ -553,40 +544,40 @@ const PropertyListingForm: React.FC = () => {
 
         {step === 2 && (
           <div className="grid gap-4">
-            <div className="flex flex-col gap-2 text-sm text-slate-200">
+            <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.amenities")}
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {AMENITY_VALUES.map((value) => (
                   <label
                     key={value}
-                    className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-xs text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
+                    className="flex cursor-pointer items-center gap-2.5 rounded-md border border-line px-3 py-2 text-xs text-ink-muted transition-colors hover:border-ink-subtle hover:text-ink"
                   >
                     <input
                       {...register("amenities")}
                       type="checkbox"
                       value={value}
-                      className="accent-primary-500"
+                      className="accent-primary-700"
                     />
                     {humanizeEnumValue(value)}
                   </label>
                 ))}
               </div>
               {errors.amenities && (
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-rose-600">
                   {errors.amenities.message as string}
                 </p>
               )}
             </div>
 
-            <label className="flex flex-col gap-2 text-sm text-slate-200">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
               {t("listing.label.upload")}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10 focus-within:ring-2 focus-within:ring-primary-400">
-                <Upload size={16} className="text-primary-200" />
+              <div className="flex items-center gap-2.5 rounded-md border border-line bg-background-surface px-3.5 py-2.5 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500/30">
+                <Upload size={16} className="shrink-0 text-ink-subtle" />
                 <input
                   type="file"
                   accept="image/*"
                   multiple
-                  className="w-full text-white"
+                  className="w-full text-sm text-ink-muted file:mr-3 file:rounded file:border file:border-line file:bg-background-elevated file:px-3 file:py-1.5 file:text-sm file:text-ink"
                   onChange={(e) => {
                     const incoming = Array.from(e.target.files || []);
                     if (incoming.length > 8) {
@@ -598,7 +589,7 @@ const PropertyListingForm: React.FC = () => {
                   }}
                 />
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-ink-subtle">
                 Images will be stored under uploads/property/&lt;propertyId&gt;/
                 on the server.
               </p>
@@ -606,12 +597,12 @@ const PropertyListingForm: React.FC = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-between gap-3 pt-2">
+        <div className="flex items-center justify-between gap-3 border-t border-line pt-6">
           <button
             type="button"
             onClick={goBack}
             disabled={step === 0}
-            className="inline-flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+            className="btn-secondary disabled:opacity-40"
           >
             <ChevronLeft size={16} />
             {t("listing.step.back")}
@@ -621,7 +612,7 @@ const PropertyListingForm: React.FC = () => {
             type="button"
             onClick={handlePrimaryAction}
             disabled={isSubmitting}
-            className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-primary-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400 disabled:opacity-50"
+            className="btn-primary min-w-[10rem]"
           >
             {isLastStep ? (
               isSubmitting ? (

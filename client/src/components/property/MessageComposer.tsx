@@ -11,8 +11,8 @@ interface MessageComposerProps {
   onCancel: () => void;
 }
 
-// Renders as a fragment (no wrapping element) since it shares a flex column
-// with TourRequestPanel inside MapPropertyCloud.
+// Renders as a fragment (no wrapping element) so it can share a column
+// with TourRequestPanel in the detail page sidebar.
 const MessageComposer: React.FC<MessageComposerProps> = ({
   showCompose,
   messageText,
@@ -28,27 +28,27 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
     <>
       <button
         onClick={onMessageClick}
-        className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/20"
+        className="btn-secondary w-full"
       >
         {t("account.messages.messageOwner")}
       </button>
       {showCompose && (
-        <div className="mt-3 space-y-2 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
+        <div className="mt-3 space-y-3 border border-line p-4">
+          <p className="eyebrow">
             {t("account.messages.firstMessage")}
           </p>
           <textarea
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             rows={3}
-            className="w-full rounded-xl bg-background-surface/60 px-3 py-2 text-sm text-white ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-primary-400"
+            className="field resize-none"
             placeholder={t("account.messages.inputPlaceholder")}
           />
           <div className="flex items-center gap-2">
             <button
               onClick={onSend}
               disabled={messageStatus === "loading"}
-              className="rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition hover:-translate-y-[1px] hover:bg-primary-400 disabled:opacity-70"
+              className="btn-primary py-2"
             >
               {messageStatus === "loading"
                 ? t("properties.sending")
@@ -56,13 +56,13 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
             </button>
             <button
               onClick={onCancel}
-              className="text-sm text-slate-200 underline"
+              className="btn-quiet"
             >
               {t("common.cancel") ?? "Cancel"}
             </button>
           </div>
           {messageStatus === "error" && (
-            <p className="text-xs text-rose-300">
+            <p className="text-xs text-rose-600">
               {t("properties.errorAuth")}
             </p>
           )}

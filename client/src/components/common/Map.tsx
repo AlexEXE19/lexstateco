@@ -14,10 +14,13 @@ import { buildQuery } from "../../utils/buildQuery";
 
 export interface MapProps {
   coords: Coords;
-  setAddress: (param: any) => void;
+  setAddress?: (param: any) => void;
   label?: string;
   zoom?: number;
-  onClose: () => void;
+  onClose?: () => void;
+  // Detail pages just want to show where a listing is - no search box, no
+  // draggable pin, no confirm/cancel controls.
+  readOnly?: boolean;
 }
 
 export interface Coords {
@@ -63,10 +66,14 @@ function MapSearchFlyTo({ searchCoords }: { searchCoords: Coords | null }) {
 const Map: React.FC<MapProps> = ({
   coords,
   setAddress,
+  label: labelProp = "",
   zoom = 13,
   onClose,
+  readOnly = false,
 }) => {
-  const [label, setLabel] = useState("");
+  // In picker mode the label tracks the pin (reverse geocoded); in
+  // read-only mode it's just whatever the caller passed in.
+  const [label, setLabel] = useState(labelProp);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentCoords, setCurrentCoords] = useState<Coords>(coords);
   const { getAddressByCoordinates, getCoordinatesByQuery } = useLocationApi();
@@ -74,7 +81,7 @@ const Map: React.FC<MapProps> = ({
   const handleClick = async (e: any) => {
     e.stopPropagation();
     const address = await getAddressByCoordinates(currentCoords);
-    setAddress(address);
+    setAddress?.(address);
   };
 
   const eventHandlers = {
@@ -98,6 +105,7 @@ const Map: React.FC<MapProps> = ({
   };
 
   useEffect(() => {
+    if (readOnly) return;
     const timer = setTimeout(async () => {
       try {
         const address = await getAddressByCoordinates(currentCoords);
@@ -112,42 +120,43 @@ const Map: React.FC<MapProps> = ({
 
   return (
     <div className="relative h-full w-full">
-      <form
-        onSubmit={handleSearch}
-        className="absolute top-[10px] left-[50px] z-[1000] flex gap-2"
-      >
-        <input
-          type="text"
-          placeholder="Search location..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="px-3 py-2 rounded border border-gray-300 shadow-[0_2px_6px_rgba(0,0,0,0.3)] bg-white outline-none w-[250px]"
-        />
-        <button
-          type="submit"
-          className="px-3 py-2 bg-blue-600 text-white rounded cursor-pointer shadow-[0_2px_6px_rgba(0,0,0,0.3)]"
-        >
-          Search
-        </button>
-      </form>
+      {!readOnly && (
+        <>
+          <form
+            onSubmit={handleSearch}
+            className="absolute left-[60px] top-3 z-[1000] flex gap-2"
+          >
+            <input
+              type="text"
+              placeholder="Search location…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-[260px] rounded-md border border-line bg-background-surface px-3 py-2 text-sm text-ink shadow-card outline-none placeholder:text-ink-subtle"
+            />
+            <button type="submit" className="btn-primary py-2 shadow-card">
+              Search
+            </button>
+          </form>
 
-      <div className="absolute bottom-5 right-5 z-[1000] flex gap-2.5">
-        <button
-          onClick={async (e) => {
-            await handleClick(e);
-            onClose();
-          }}
-          className="bg-blue-600 text-white px-4 py-2.5 rounded cursor-pointer shadow-[0_2px_6px_rgba(0,0,0,0.3)] font-bold"
-        >
-          Select Location
-        </button>
-        <button
-          onClick={onClose}
-          className="bg-gray-600 text-white px-4 py-2.5 rounded cursor-pointer shadow-[0_2px_6px_rgba(0,0,0,0.3)] font-bold"
-        >
-          Cancel
-        </button>
-      </div>
+          <div className="absolute bottom-5 right-5 z-[1000] flex gap-2">
+            <button
+              onClick={onClose}
+              className="btn-secondary py-2 shadow-card"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async (e) => {
+                await handleClick(e);
+                onClose?.();
+              }}
+              className="btn-primary py-2 shadow-card"
+            >
+              Select location
+            </button>
+          </div>
+        </>
+      )}
 
       <MapContainer
         center={[currentCoords.lat, currentCoords.lng]}
@@ -160,13 +169,15 @@ const Map: React.FC<MapProps> = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MapSearchFlyTo searchCoords={currentCoords} />
-        <LocationClickPicker
-          onLocationSelect={(lat, lng) => setCurrentCoords({ lat, lng })}
-        />
+        {!readOnly && (
+          <LocationClickPicker
+            onLocationSelect={(lat, lng) => setCurrentCoords({ lat, lng })}
+          />
+        )}
 
         <Marker
-          draggable={true}
-          eventHandlers={eventHandlers}
+          draggable={!readOnly}
+          eventHandlers={readOnly ? undefined : eventHandlers}
           position={[currentCoords.lat, currentCoords.lng]}
         >
           <Popup autoClose={false} closeOnClick={false} closeButton={false}>

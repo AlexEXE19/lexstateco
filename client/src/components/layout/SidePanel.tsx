@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Heart,
@@ -9,12 +9,15 @@ import {
   Users,
   MessageSquare,
   LogOut,
-  PanelRightOpen,
-  PanelRightClose,
+  X,
 } from "lucide-react";
+
 import { RootState } from "../../state/store";
 import { toggle } from "../../state/sidePanel/sidePanelSlice";
+import { logOutUser } from "../../state/user/userSlice";
 import { useTranslation } from "../../utils/i18n";
+
+const MANAGE_PATH = "/profile/manage";
 
 const SidePanel: React.FC = () => {
   const isPanelOpen = useSelector((state: RootState) => state.sidePanel.isOpen);
@@ -23,22 +26,22 @@ const SidePanel: React.FC = () => {
   const { t } = useTranslation();
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const activeTab =
+    location.pathname === MANAGE_PATH
+      ? new URLSearchParams(location.search).get("activeTab")
+      : null;
+
   const navGroups = useMemo(
     () => [
       {
         title: t("account.group.buyer"),
         items: [
-          {
-            key: "saved",
-            label: t("account.tabs.saved"),
-            icon: Heart,
-            path: "/saved",
-          },
+          { key: "saved", label: t("account.tabs.saved"), icon: Heart },
           {
             key: "requests",
             label: t("account.tabs.requests"),
             icon: ClipboardList,
-            path: "/requests",
           },
         ],
       },
@@ -49,19 +52,12 @@ const SidePanel: React.FC = () => {
             key: "myProperties",
             label: t("account.tabs.myProperties"),
             icon: Building2,
-            path: "/my-properties",
           },
-          {
-            key: "list",
-            label: t("account.tabs.list"),
-            icon: Home,
-            path: "/list-property",
-          },
+          { key: "list", label: t("account.tabs.list"), icon: Home },
           {
             key: "audience",
             label: t("account.tabs.audience"),
             icon: Users,
-            path: "/audience",
           },
         ],
       },
@@ -72,7 +68,6 @@ const SidePanel: React.FC = () => {
             key: "messages",
             label: t("account.tabs.messages"),
             icon: MessageSquare,
-            path: "/messages",
           },
         ],
       },
@@ -80,37 +75,71 @@ const SidePanel: React.FC = () => {
     [t],
   );
 
+  const close = () => dispatch(toggle());
+
+  const handleLogout = () => {
+    dispatch(logOutUser());
+    close();
+    navigate("/");
+  };
+
   return (
     <>
-      {isPanelOpen && (
-        <div className="fixed z-20 right-0 top-0 h-full bg-slate-900 p-6 shadow-xl ring-1 ring-white/10 transition-all duration-200">
-          {/* Side panel toggle */}
+      <div
+        className={`fixed inset-0 z-30 bg-ink/25 transition-opacity duration-200 ${
+          isPanelOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={close}
+        aria-hidden="true"
+      />
+
+      <aside
+        className={`fixed right-0 top-0 z-40 flex h-full w-full max-w-[19rem] transform flex-col border-l border-line bg-background-surface transition-transform duration-300 ease-out ${
+          isPanelOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+        aria-hidden={!isPanelOpen}
+      >
+        <div className="flex items-center justify-between border-b border-line px-5 py-4">
+          <span className="eyebrow">{t("navbar.myAccount")}</span>
           <button
-            className="h-10 rounded-xl px-4 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/10"
-            onClick={() => {
-              dispatch(toggle());
-            }}
+            type="button"
+            aria-label="Close menu"
+            onClick={close}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-background-elevated hover:text-ink"
           >
-            {isPanelOpen ? <PanelRightOpen /> : <PanelRightClose />}
+            <X size={16} />
           </button>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-3 py-5">
           {navGroups.map((group) => (
-            <div key={group.title} className="mb-3 last:mb-0">
-              <p className="px-3 py-1 text-[15px] font-bold uppercase tracking-wider text-slate-400">
+            <div key={group.title} className="mb-7 last:mb-0">
+              <p className="px-3 pb-2 text-[11px] uppercase tracking-label text-ink-subtle">
                 {group.title}
               </p>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {group.items.map((item) => {
                   const Icon = item.icon;
+                  const isActive = item.key === activeTab;
                   return (
                     <button
                       type="button"
                       key={item.key}
                       onClick={() => {
-                        navigate(`/profile/manage?activeTab=${item.key}`);
+                        navigate(`${MANAGE_PATH}?activeTab=${item.key}`);
                       }}
-                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-slate-300 transition hover:bg-white/5 hover:text-white"
+                      className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                        isActive
+                          ? "bg-primary-50 font-medium text-primary-800"
+                          : "text-ink-muted hover:bg-background-elevated hover:text-ink"
+                      }`}
                     >
-                      <Icon size={24} className="text-slate-400" />
+                      <Icon
+                        size={17}
+                        className={
+                          isActive ? "text-primary-700" : "text-ink-subtle"
+                        }
+                      />
                       <span>{item.label}</span>
                     </button>
                   );
@@ -118,21 +147,19 @@ const SidePanel: React.FC = () => {
               </div>
             </div>
           ))}
+        </nav>
 
-          <div className="mt-2 border-t border-white/10 pt-2">
-            <button
-              type="button"
-              onClick={() => {}}
-              className="w-full rounded-lg px-3 py-2 text-left text-sm text-red-400 transition hover:bg-white/5 hover:text-red-300"
-            >
-              <div className="flex items-center gap-3">
-                <LogOut size={16} />
-                <div> {t("navbar.logout") || "Logout"}</div>
-              </div>
-            </button>
-          </div>
+        <div className="border-t border-line p-3">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-secondary-600 transition-colors hover:bg-secondary-50"
+          >
+            <LogOut size={16} />
+            {t("navbar.logout")}
+          </button>
         </div>
-      )}
+      </aside>
     </>
   );
 };

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Search, Sparkles, type LucideIcon } from "lucide-react";
+import { Search, type LucideIcon } from "lucide-react";
 
 import baseURL from "../config/baseUrl";
 import { RootState } from "../state/store";
@@ -24,12 +24,14 @@ export interface Stats {
 
 const HomeHero: React.FC = () => {
   const clientMeta = useSelector((state: RootState) => state.client);
+  const navigate = useNavigate();
 
   const [searchedLocation, setSearchedLocation] = useState<string>("");
   const [clientCountryCode, setClientCountryCode] = useState<string>("ro");
   const [suggestions, setSuggestions] = useState<any[]>();
 
-  // Get suggestions based on client country location together with user's search query
+  // Suggestions are scoped to the visitor's own country so a search for
+  // "Springfield" surfaces the one they probably mean.
   const stringQuery = buildQuery({
     q: searchedLocation,
     countrycodes: clientCountryCode,
@@ -46,7 +48,6 @@ const HomeHero: React.FC = () => {
     averageRating: 5,
   });
 
-  // Helper function to format big numbers (e.g., 12500 -> "12.5k" or "10k")
   const formatNumber = (num: number) => {
     if (num >= 1000) {
       return (num / 1000).toFixed(num % 1000 !== 0 ? 1 : 0) + "k";
@@ -55,28 +56,16 @@ const HomeHero: React.FC = () => {
   };
 
   const stats = [
-    {
-      label: "Satisfied customers",
-      value: formatNumber(statsValues.userCount),
-    },
-    {
-      label: "Properties listed",
-      value: formatNumber(statsValues.propertyCount),
-    },
-    {
-      label: "Average rating",
-      value: Number(statsValues.averageRating).toFixed(1),
-    },
+    { label: "Members", value: formatNumber(statsValues.userCount) },
+    { label: "Listings", value: formatNumber(statsValues.propertyCount) },
+    { label: "Rating", value: Number(statsValues.averageRating).toFixed(1) },
   ];
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const res = await axios.get<Stats>(`${baseURL}/stats/summary`);
-
-        if (res.data) {
-          setStatsValues(res.data);
-        }
+        if (res.data) setStatsValues(res.data);
       } catch (err) {
         console.error("Error fetching stats", err);
       }
@@ -91,94 +80,104 @@ const HomeHero: React.FC = () => {
     }
   }, [clientMeta?.countryName]);
 
+  const submitSearch = (location?: string) => {
+    const query = (location ?? searchedLocation).trim();
+    navigate(query ? `/properties?location=${encodeURIComponent(query)}` : "/properties");
+  };
+
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[url('/homepage.jpg')] bg-cover bg-[center_top_15%] opacity-100" />
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-surface/85 to-secondary-900/70" />
-        <div className="absolute -left-16 -top-20 h-72 w-72 rounded-full bg-secondary-400/30 blur-[120px]" />
-        <div className="absolute bottom-10 right-4 h-64 w-64 rounded-full bg-cyan-300/25 blur-[110px]" />
-      </div>
+    <section className="border-b border-line">
+      <div className="grid items-stretch lg:grid-cols-2">
+        <div className="flex flex-col justify-center px-6 py-16 lg:items-end lg:py-24 lg:pl-10 lg:pr-16">
+          <div className="w-full lg:max-w-[620px]">
+          <p className="eyebrow">{t("home.hero.tag")}</p>
 
-      <div className="relative mx-auto max-w-3xl space-y-6 px-6 py-24 md:py-32">
-        <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm text-slate-200 backdrop-blur">
-          <Sparkles size={16} />
-          <span>{t("home.hero.tag")}</span>
-        </div>
-
-        <div className="space-y-3">
-          <h1 className="text-4xl font-semibold leading-tight text-white md:text-5xl">
+          <h1 className="mt-5 max-w-xl font-display text-display-sm text-ink sm:text-display-md">
             {t("home.hero.title")}
           </h1>
-          <p className="text-lg text-slate-200 md:text-xl">
+
+          <p className="mt-5 max-w-md text-base leading-relaxed text-ink-muted">
             {t("home.hero.subtitle")}
           </p>
-        </div>
 
-        <div className="rounded-2xl bg-white/10 p-4 shadow-2xl ring-1 ring-white/10 backdrop-blur">
-          <label className="text-sm uppercase tracking-wide text-slate-200">
-            {t("home.hero.inputLabel")}
-          </label>
-          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex flex-1 items-center gap-3 rounded-xl bg-white/10 px-4 py-3 ring-1 ring-white/15">
-              <Search size={18} className="text-primary-200" />
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchedLocation ?? ""}
-                  onChange={(e) => {
-                    setSearchedLocation(e.target.value);
-                  }}
-                  placeholder={t("home.hero.inputPlaceholder")}
-                  className="w-full bg-transparent text-base text-white placeholder:text-slate-300 focus:outline-none"
+          <div className="relative mt-9 max-w-lg">
+            <label className="field-label" htmlFor="hero-search">
+              {t("home.hero.inputLabel")}
+            </label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search
+                  size={17}
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-subtle"
                 />
+                <input
+                  id="hero-search"
+                  type="text"
+                  value={searchedLocation}
+                  onChange={(e) => setSearchedLocation(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") submitSearch();
+                  }}
+                  autoComplete="off"
+                  placeholder={t("home.hero.inputPlaceholder")}
+                  className="field pl-10"
+                />
+
                 {suggestions && suggestions.length > 0 && (
-                  <ul className="absolute left-0 right-0 top-full mt-2 z-50 max-h-60 overflow-y-auto rounded-xl bg-slate-900/95 border border-white/10 shadow-xl backdrop-blur divide-y divide-white/5">
+                  <ul className="absolute inset-x-0 top-full z-20 mt-1.5 max-h-64 overflow-y-auto rounded-md border border-line bg-background-surface shadow-panel">
                     {suggestions.map((s, index) => (
-                      <li
-                        key={index}
-                        onClick={() => {
-                          setSearchedLocation(s.city);
-                          setSuggestions([]);
-                        }}
-                        className="px-4 py-3 cursor-pointer text-left transition-colors hover:bg-white/10"
-                      >
-                        <div className="font-semibold text-white">{s.city}</div>
-                        <div className="text-xs text-slate-400 mt-0.5 truncate">
-                          {[s.city, s.county, s.country]
-                            .filter(Boolean)
-                            .join(", ")}
-                        </div>
+                      <li key={index}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSearchedLocation(s.city);
+                            setSuggestions([]);
+                            submitSearch(s.city);
+                          }}
+                          className="block w-full border-b border-line px-4 py-2.5 text-left transition-colors last:border-b-0 hover:bg-background-elevated"
+                        >
+                          <span className="block text-sm text-ink">{s.city}</span>
+                          <span className="mt-0.5 block truncate text-xs text-ink-subtle">
+                            {[s.city, s.county, s.country].filter(Boolean).join(", ")}
+                          </span>
+                        </button>
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
-            </div>
 
-            <Link
-              to={
-                searchedLocation?.trim()
-                  ? `/properties?location=${encodeURIComponent(searchedLocation)}`
-                  : "/properties"
-              }
-              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-secondary-500 to-cyan-400 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-secondary-400/30 transition hover:-translate-y-[1px] hover:shadow-cyan-400/40"
-            >
-              {t("home.hero.browse")}
-            </Link>
+              <button
+                type="button"
+                onClick={() => submitSearch()}
+                className="btn-primary shrink-0"
+              >
+                {t("home.hero.browse")}
+              </button>
+            </div>
+          </div>
+
+            <dl className="mt-12 flex max-w-lg divide-x divide-line border-y border-line">
+              {stats.map((stat) => (
+                <div key={stat.label} className="flex-1 py-5 pl-5 first:pl-0">
+                  <dt className="text-[11px] uppercase tracking-label text-ink-subtle">
+                    {stat.label}
+                  </dt>
+                  <dd className="mt-1.5 font-display text-2xl leading-none text-ink">
+                    {stat.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="rounded-2xl bg-white/5 p-4 text-white ring-1 ring-white/10"
-            >
-              <div className="text-2xl font-semibold">{stat.value}</div>
-              <div className="text-sm text-slate-200">{stat.label}</div>
-            </div>
-          ))}
+        <div className="relative min-h-[18rem] lg:min-h-[34rem]">
+          <img
+            src="/homepage.jpg"
+            alt="An agent showing a listed home to buyers"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         </div>
       </div>
     </section>

@@ -31,30 +31,30 @@ const DeletePropertyModal: React.FC<DeletePropertyModalProps> = ({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background-surface/40 px-4 py-8 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4 py-8"
       onClick={(e) => {
         if (e.target === e.currentTarget) onCancel();
       }}
     >
-      <div className="w-full max-w-lg overflow-hidden rounded-3xl bg-gradient-to-br from-white via-rose-50 to-amber-50 shadow-2xl ring-1 ring-slate-100">
-        <div className="flex items-center gap-3 border-b border-slate-200/70 px-6 py-4 bg-white/70 backdrop-blur">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
+      <div className="w-full max-w-lg rounded-lg border border-line bg-background-surface shadow-panel">
+        <div className="flex items-center gap-3 border-b border-line px-6 py-5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-rose-50 text-rose-600">
             <Trash2 size={20} />
           </div>
-          <div className="flex items-center gap-2 text-rose-800">
+          <div className="flex items-center gap-2">
             <Sparkles size={16} />
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-rose-700">
+              <p className="eyebrow">
                 Delete property
               </p>
-              <h2 className="text-lg font-semibold text-slate-900">
+              <h2 className="mt-1 font-display text-lg text-ink">
                 This cannot be undone
               </h2>
             </div>
           </div>
         </div>
 
-        <div className="space-y-4 p-6 text-slate-700">
+        <div className="space-y-4 p-6 text-ink-muted">
           <p>
             Are you sure you want to permanently remove "{property.title}"
             from your listings? Any associated images will remain on disk but
@@ -65,14 +65,14 @@ const DeletePropertyModal: React.FC<DeletePropertyModalProps> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-[1px] hover:bg-white"
+              className="btn-secondary"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleDeleteClick}
-              className="inline-flex items-center gap-2 rounded-2xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-rose-400/40 transition hover:-translate-y-[1px] hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-rose-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={loading}
             >
               {loading && <Loader2 size={16} className="animate-spin" />}
