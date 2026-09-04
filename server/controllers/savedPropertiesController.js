@@ -7,8 +7,8 @@ const getSavedPropertiesByUserId = async (req, res) => {
   if (!assertSelf(req, res, userId)) return;
 
   const saved = await SavedProperty.findAll({
-    where: { user_id: userId },
-    attributes: ["property_id"],
+    where: { userId },
+    attributes: ["propertyId"],
   });
 
   res.json(saved);
@@ -20,7 +20,7 @@ const checkIfPropertyIsSaved = async (req, res) => {
   const userId = req.user.id;
 
   const count = await SavedProperty.count({
-    where: { user_id: userId, property_id: propertyId },
+    where: { userId, propertyId },
   });
 
   res.json({ count });
@@ -28,16 +28,15 @@ const checkIfPropertyIsSaved = async (req, res) => {
 
 // Save a property into the user account
 const saveProperty = async (req, res) => {
-  const { propertyId } = req.body;
-  const userId = req.user.id;
+  const { userId, propertyId } = req.body;
 
   if (!userId || !propertyId) {
     return res.status(400).json({ message: "Missing userId or propertyId" });
   }
 
   const result = await SavedProperty.create({
-    user_id: userId,
-    property_id: propertyId,
+    userId,
+    propertyId,
   });
 
   res.json({ message: "Property saved successfully", result });
@@ -45,11 +44,10 @@ const saveProperty = async (req, res) => {
 
 // Unsave a property from the user account
 const unsaveProperty = async (req, res) => {
-  const { propertyId } = req.body;
-  const userId = req.user.id;
+  const { userId, propertyId } = req.body;
 
   await SavedProperty.destroy({
-    where: { user_id: userId, property_id: propertyId },
+    where: { userId, propertyId },
   });
 
   res.json({ message: "Property unsaved successfully" });
