@@ -1,5 +1,5 @@
 // Separate from jest.config.js on purpose: these tests spin up a real,
-// throwaway MySQL container (see test/globalSetup.js) instead of mocking
+// throwaway Postgres container (see test/globalSetup.js) instead of mocking
 // Sequelize, so they're slower and need Docker. Run them explicitly with
 // `npm run test:integration`, not as part of the default `npm test`.
 module.exports = {

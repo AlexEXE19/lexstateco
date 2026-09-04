@@ -21,24 +21,32 @@ const mockRes = () => {
   return res;
 };
 
+const testLocation = {
+  country: "USA",
+  city: "Springfield",
+  neighborhood: "Downtown",
+  address: "1 Main St",
+  zipCode: "62701",
+};
+
 describe("propertyController", () => {
   afterEach(() => jest.clearAllMocks());
 
   describe("createProperty", () => {
-    it("takes the seller id from the authenticated user, not the request body", async () => {
-      Property.create.mockResolvedValue({ id: 1, title: "Loft" });
+    it("takes the agent id from the authenticated user, not the request body", async () => {
+      Property.create.mockResolvedValue({ id: 1 });
 
       const req = {
         user: { id: 2 },
         body: {
-          title: "Loft",
           price: "250000",
-          location: "Springfield",
-          neighborhood: "Downtown",
-          zipCode: "62701",
+          location: testLocation,
           description: "Nice loft",
           size: "850",
-          sellerId: 999, // should be ignored
+          type: "apartment",
+          bedrooms: 2,
+          bathrooms: 1,
+          agentId: 999, // should be ignored
         },
       };
       const res = mockRes();
@@ -47,9 +55,9 @@ describe("propertyController", () => {
 
       expect(Property.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          zip_code: "62701",
-          seller_id: 2,
-          image_refs: [],
+          location: testLocation,
+          agentId: 2,
+          imageRefs: [],
         }),
       );
       expect(res.status).toHaveBeenCalledWith(201);
@@ -69,7 +77,7 @@ describe("propertyController", () => {
     });
 
     it("returns the property when found", async () => {
-      const property = { id: 1, title: "Loft" };
+      const property = { id: 1, size: "850" };
       Property.findOne.mockResolvedValue(property);
 
       const req = { params: { id: "1" } };
@@ -97,17 +105,17 @@ describe("propertyController", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("returns 403 when the requester isn't the property's seller", async () => {
+    it("returns 403 when the requester isn't the property's agent", async () => {
       Property.findByPk.mockResolvedValue({
         id: 1,
-        seller_id: 2,
+        agentId: 2,
         update: jest.fn(),
       });
 
       const req = {
         params: { propertyId: "1" },
         user: { id: 999 },
-        body: { title: "Hijacked" },
+        body: { price: "999999" },
       };
       const res = mockRes();
 
@@ -116,25 +124,28 @@ describe("propertyController", () => {
       expect(res.status).toHaveBeenCalledWith(403);
     });
 
-    it("updates the property when the requester is its seller", async () => {
+    it("updates the property when the requester is its agent", async () => {
       const update = jest.fn().mockResolvedValue(undefined);
       Property.findByPk.mockResolvedValue({
         id: 1,
-        seller_id: 2,
+        agentId: 2,
         update,
       });
 
       const req = {
         params: { propertyId: "1" },
         user: { id: 2 },
-        body: { title: "Updated title", zipCode: "62701" },
+        body: { price: "260000", location: testLocation },
       };
       const res = mockRes();
 
       await editProperty(req, res);
 
       expect(update).toHaveBeenCalledWith(
-        expect.objectContaining({ title: "Updated title", zip_code: "62701" }),
+        expect.objectContaining({
+          price: "260000",
+          location: testLocation,
+        }),
       );
       expect(res.status).toHaveBeenCalledWith(200);
     });
@@ -152,10 +163,10 @@ describe("propertyController", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("returns 403 when the requester isn't the property's seller", async () => {
+    it("returns 403 when the requester isn't the property's agent", async () => {
       Property.findByPk.mockResolvedValue({
         id: 1,
-        seller_id: 2,
+        agentId: 2,
         destroy: jest.fn(),
       });
 
@@ -167,9 +178,9 @@ describe("propertyController", () => {
       expect(res.status).toHaveBeenCalledWith(403);
     });
 
-    it("deletes the property when the requester is its seller", async () => {
+    it("deletes the property when the requester is its agent", async () => {
       const destroy = jest.fn().mockResolvedValue(undefined);
-      Property.findByPk.mockResolvedValue({ id: 1, seller_id: 2, destroy });
+      Property.findByPk.mockResolvedValue({ id: 1, agentId: 2, destroy });
 
       const req = { params: { propertyId: "1" }, user: { id: 2 } };
       const res = mockRes();
