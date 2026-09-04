@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { RootState } from "../../state/store";
 import baseURL from "../../config/baseUrl";
-import { PropertyListingFormFields } from "../../types/schemas/FormSchemas";
+import { PropertyListingFormFields } from "../../schemas/FormSchemas";
 import { useFeedbackPrompt } from "../useFeedbackPrompt";
 
 interface StatusModalState {
@@ -53,10 +53,7 @@ export const useCreatePropertyForm = () => {
     };
 
     try {
-      const response = await axios.post(
-        `${baseURL}/properties/`,
-        propertyData,
-      );
+      const response = await axios.post(`${baseURL}/properties/`, propertyData);
       if (response.status === 201) {
         const newPropertyId = response.data.property.id;
 
