@@ -1,5 +1,7 @@
 import { Clock3, MapPin, ShieldCheck } from "lucide-react";
+
 import HomeFeatureSection from "../sections/HomeFeatureSection";
+import HomeSteps from "../sections/HomeSteps";
 import { useTranslation } from "../utils/i18n";
 
 const GetStartedPage: React.FC = () => {
@@ -24,14 +26,9 @@ const GetStartedPage: React.FC = () => {
   ];
 
   return (
-    <div className="relative overflow-hidden bg-background text-slate-50">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[url('/homepage.jpg')] bg-cover bg-[center_top_15%]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-surface/90 to-secondary-900/70" />
-      </div>
-      <div className="relative">
-        <HomeFeatureSection featureHighlights={featureHighlights} />
-      </div>
+    <div className="bg-canvas">
+      <HomeFeatureSection featureHighlights={featureHighlights} />
+      <HomeSteps />
     </div>
   );
 };

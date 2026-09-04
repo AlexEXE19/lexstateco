@@ -13,8 +13,8 @@ export default function MapModal({
   setAddress,
 }: MapModalProps) {
   return createPortal(
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-3xl h-[500px] rounded-lg overflow-hidden relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
+      <div className="relative h-[520px] w-full max-w-4xl overflow-hidden rounded-lg border border-line bg-background-surface">
         <Map
           coords={coords}
           label="Harta misto"

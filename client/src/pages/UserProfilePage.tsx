@@ -34,8 +34,8 @@ const UserProfilePage: React.FC = () => {
   }`.toUpperCase();
 
   return (
-    <div className="min-h-screen bg-background px-6 py-10 text-white">
-      <div className="mx-auto max-w-2xl">
+    <div className="bg-canvas px-6 py-12 lg:px-10">
+      <div className="mx-auto max-w-3xl">
         {/* Identity */}
         <div className="flex items-start gap-4">
           {PLACEHOLDER_AVATAR_URL ? (
@@ -45,33 +45,33 @@ const UserProfilePage: React.FC = () => {
               className="h-20 w-20 shrink-0 rounded-full object-cover"
             />
           ) : (
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-500/20 text-2xl font-semibold text-primary-200">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-50 font-display text-2xl text-primary-800">
               {initials}
             </div>
           )}
 
           <div className="flex-1 pt-1">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold text-white">
+              <h1 className="font-display text-2xl text-ink">
                 {currentUser.firstName} {currentUser.lastName}
               </h1>
               {PLACEHOLDER_IS_AGENT && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary-500/10 px-2 py-0.5 text-xs text-primary-300 ring-1 ring-primary-400/20">
+                <span className="inline-flex items-center gap-1 rounded border border-primary-200 bg-primary-50 px-2 py-0.5 text-xs text-primary-800">
                   <BadgeCheck size={12} />
                   Agent
                 </span>
               )}
             </div>
 
-            <div className="mt-1 flex items-center gap-3 text-sm text-slate-400">
+            <div className="mt-1.5 flex items-center gap-4 text-sm text-ink-subtle">
               <span className="inline-flex items-center gap-1">
                 <Calendar size={13} />
                 Member since {PLACEHOLDER_MEMBER_SINCE}
-                <span className="text-slate-600">(placeholder)</span>
+                <span className="text-ink-subtle">(placeholder)</span>
               </span>
               {currentUser.feedbackRating != null && (
                 <span className="inline-flex items-center gap-1">
-                  <Star size={13} className="text-amber-400" />
+                  <Star size={13} className="text-secondary-500" />
                   {currentUser.feedbackRating.toFixed(1)}
                 </span>
               )}
@@ -80,47 +80,47 @@ const UserProfilePage: React.FC = () => {
         </div>
 
         {/* Bio */}
-        <p className="mt-5 max-w-[60ch] text-sm leading-relaxed text-slate-300">
+        <p className="mt-6 max-w-[62ch] text-sm leading-relaxed text-ink-muted">
           {PLACEHOLDER_BIO}{" "}
-          <span className="text-xs text-slate-600">(placeholder)</span>
+          <span className="text-xs text-ink-subtle">(placeholder)</span>
         </p>
 
         {/* Stats — spec-sheet style, matches the property detail page */}
-        <div className="mt-6 flex divide-x divide-white/10 border-y border-white/10">
+        <div className="mt-8 flex divide-x divide-line border-y border-line">
           <div className="flex-1 py-3 pr-4">
-            <div className="flex items-center gap-1.5 text-xl font-semibold text-white">
-              <Home size={16} className="text-slate-500" />
+            <div className="flex items-center gap-2 font-display text-xl text-ink">
+              <Home size={15} className="text-ink-subtle" />
               {PLACEHOLDER_LISTED_COUNT}
             </div>
-            <div className="text-sm text-slate-400">
+            <div className="mt-1 text-sm text-ink-muted">
               Listed properties{" "}
-              <span className="text-xs text-slate-600">(placeholder)</span>
+              <span className="text-xs text-ink-subtle">(placeholder)</span>
             </div>
           </div>
           <div className="flex-1 px-4">
-            <div className="flex items-center gap-1.5 text-xl font-semibold text-white">
-              <Heart size={16} className="text-slate-500" />
+            <div className="flex items-center gap-2 font-display text-xl text-ink">
+              <Heart size={15} className="text-ink-subtle" />
               {PLACEHOLDER_INTERACTED_COUNT}
             </div>
-            <div className="text-sm text-slate-400">
+            <div className="mt-1 text-sm text-ink-muted">
               Properties interacted with{" "}
-              <span className="text-xs text-slate-600">(placeholder)</span>
+              <span className="text-xs text-ink-subtle">(placeholder)</span>
             </div>
           </div>
           <div className="flex-1 pl-4">
-            <div className="flex items-center gap-1.5 text-xl font-semibold text-white">
-              <Clock size={16} className="text-slate-500" />
+            <div className="flex items-center gap-2 font-display text-xl text-ink">
+              <Clock size={15} className="text-ink-subtle" />
               {PLACEHOLDER_RESPONSE_RATE}
             </div>
-            <div className="text-sm text-slate-400">
+            <div className="mt-1 text-sm text-ink-muted">
               Response rate{" "}
-              <span className="text-xs text-slate-600">(placeholder)</span>
+              <span className="text-xs text-ink-subtle">(placeholder)</span>
             </div>
           </div>
         </div>
 
         {/* Contact — real fields */}
-        <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-300">
+        <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-muted">
           <span>{currentUser.email}</span>
           <span>{currentUser.phone}</span>
         </div>

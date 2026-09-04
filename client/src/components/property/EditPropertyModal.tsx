@@ -65,27 +65,27 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background-surface/40 px-4 py-8 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4 py-8"
       onClick={(e) => {
         if (e.target === e.currentTarget) onCancel();
       }}
     >
-      <div className="w-full max-w-3xl max-h-[85vh] overflow-hidden rounded-3xl bg-gradient-to-br from-white via-secondary-50 to-primary-50 shadow-2xl ring-1 ring-slate-100">
-        <div className="flex items-center justify-between border-b border-slate-200/70 px-6 py-4 bg-white/70 backdrop-blur">
-          <div className="flex items-center gap-2 text-secondary-800">
+      <div className="max-h-[85vh] w-full max-w-3xl overflow-hidden rounded-lg border border-line bg-background-surface shadow-panel">
+        <div className="flex items-center justify-between border-b border-line px-6 py-5">
+          <div className="flex items-center gap-2">
             <Sparkles size={16} />
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-secondary-700">
+              <p className="eyebrow">
                 Edit property
               </p>
-              <h2 className="text-xl font-semibold text-slate-900">
+              <h2 className="mt-1 font-display text-xl text-ink">
                 {property.title}
               </h2>
             </div>
           </div>
           <button
             onClick={onCancel}
-            className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-background-elevated hover:text-ink"
             aria-label="Close modal"
           >
             <X size={20} />
@@ -93,7 +93,7 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
         </div>
 
         <div className="max-h-[75vh] overflow-y-auto p-6">
-          <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+          <form onSubmit={handleSubmit} className="grid gap-5 md:grid-cols-2">
             <ModalFormField
               label="Title"
               type="text"
@@ -142,25 +142,25 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               required
             />
 
-            <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-700">
+            <label className="md:col-span-2">
               Description
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="min-h-[120px] rounded-2xl border border-slate-200 px-3 py-3 text-slate-900 shadow-sm focus:border-secondary-400 focus:outline-none"
+                className="field min-h-[120px] resize-none"
                 required
               />
             </label>
 
-            <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-700">
+            <label className="md:col-span-2">
               Image references (comma-separated)
               <textarea
                 value={imageRefsInput}
                 onChange={(e) => setImageRefsInput(e.target.value)}
-                className="min-h-[80px] rounded-2xl border border-slate-200 px-3 py-3 text-slate-900 shadow-sm focus:border-secondary-400 focus:outline-none"
+                className="field min-h-[80px] resize-none"
                 placeholder="uploads/property/123/1699990000-front.jpg, uploads/property/123/1699990001-living.jpg"
               />
-              <p className="text-xs text-slate-500">
+              <p className="mt-1.5 text-xs text-ink-subtle">
                 Existing images stay unless you remove them here. Maximum 8
                 paths are saved.
               </p>
@@ -170,13 +170,13 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
               <button
                 type="button"
                 onClick={onCancel}
-                className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-[1px] hover:bg-white"
+                className="btn-secondary"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 rounded-2xl bg-secondary-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-secondary-400/40 transition hover:-translate-y-[1px] hover:bg-secondary-400 disabled:cursor-not-allowed disabled:opacity-70"
+                className="btn-primary"
                 disabled={saving}
               >
                 {saving && <Loader2 size={16} className="animate-spin" />}

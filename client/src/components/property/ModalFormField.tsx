@@ -17,13 +17,13 @@ const ModalFormField: React.FC<ModalFormFieldProps> = ({
   required,
   className = "",
 }) => (
-  <label className={`flex flex-col gap-2 text-sm text-slate-700 ${className}`}>
-    {label}
+  <label className={`block ${className}`}>
+    <span className="field-label">{label}</span>
     <input
       type={type}
       value={value}
       onChange={onChange}
-      className="rounded-2xl border border-slate-200 px-3 py-3 text-slate-900 shadow-sm focus:border-secondary-400 focus:outline-none"
+      className="field"
       required={required}
     />
   </label>

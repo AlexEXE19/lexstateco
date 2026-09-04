@@ -18,16 +18,16 @@ function SettingsOptionGroup<T extends string>({
   onChange,
 }: SettingsOptionProps<T>) {
   return (
-    <div className="flex gap-2">
+    <div className="inline-flex gap-1 rounded-md border border-line p-0.5">
       {options.map((opt) => (
         <button
           key={opt.value}
           type="button"
           onClick={() => onChange(opt.value)}
-          className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+          className={`rounded px-3 py-1.5 text-sm transition-colors ${
             value === opt.value
-              ? "bg-primary-500 text-white"
-              : "bg-white/5 text-slate-300 hover:bg-white/10"
+              ? "bg-primary-800 font-medium text-white"
+              : "text-ink-muted hover:bg-background-elevated hover:text-ink"
           }`}
         >
           {opt.label}
@@ -72,23 +72,23 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background px-6 py-10 text-white">
-      <div className="mx-auto max-w-2xl">
-        <h1 className="text-2xl font-semibold text-white">Settings</h1>
-        <p className="mt-1 text-sm text-slate-400">
+    <div className="bg-canvas px-6 py-12 lg:px-10">
+      <div className="mx-auto max-w-3xl">
+        <h1 className="font-display text-display-sm text-ink">Settings</h1>
+        <p className="mt-3 text-sm text-ink-muted">
           Manage how the app looks and how information is displayed to you.
         </p>
 
         {/* Regional */}
         <div className="mt-8">
-          <p className="mb-3 text-sm font-medium text-slate-300">Regional</p>
-          <div className="divide-y divide-white/10 border-y border-white/10">
+          <p className="eyebrow mb-3 block">Regional</p>
+          <div className="divide-y divide-line border-y border-line">
             <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-3">
-                <Globe size={16} className="text-slate-500" />
+                <Globe size={16} className="text-ink-subtle" />
                 <div>
-                  <p className="text-sm text-white">Language</p>
-                  <p className="text-xs text-slate-500">Interface language</p>
+                  <p className="text-sm text-ink">Language</p>
+                  <p className="mt-0.5 text-xs text-ink-subtle">Interface language</p>
                 </div>
               </div>
               <SettingsOptionGroup
@@ -103,10 +103,10 @@ const SettingsPage: React.FC = () => {
 
             <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-3">
-                <DollarSign size={16} className="text-slate-500" />
+                <DollarSign size={16} className="text-ink-subtle" />
                 <div>
-                  <p className="text-sm text-white">Currency</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm text-ink">Currency</p>
+                  <p className="mt-0.5 text-xs text-ink-subtle">
                     Used for property prices
                   </p>
                 </div>
@@ -124,10 +124,10 @@ const SettingsPage: React.FC = () => {
 
             <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-3">
-                <Ruler size={16} className="text-slate-500" />
+                <Ruler size={16} className="text-ink-subtle" />
                 <div>
-                  <p className="text-sm text-white">Area unit</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm text-ink">Area unit</p>
+                  <p className="mt-0.5 text-xs text-ink-subtle">
                     Used for property size
                   </p>
                 </div>
@@ -144,10 +144,10 @@ const SettingsPage: React.FC = () => {
 
             <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-3">
-                <Ruler size={16} className="text-slate-500" />
+                <Ruler size={16} className="text-ink-subtle" />
                 <div>
-                  <p className="text-sm text-white">Distance unit</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm text-ink">Distance unit</p>
+                  <p className="mt-0.5 text-xs text-ink-subtle">
                     Used for map and location distances
                   </p>
                 </div>
@@ -166,17 +166,17 @@ const SettingsPage: React.FC = () => {
 
         {/* Appearance — placeholder */}
         <div className="mt-8">
-          <p className="mb-3 text-sm font-medium text-slate-300">
+          <p className="eyebrow mb-3 block">
             Appearance{" "}
-            <span className="text-xs text-slate-600">(placeholder)</span>
+            <span className="text-xs text-ink-subtle">(placeholder)</span>
           </p>
-          <div className="border-y border-white/10">
+          <div className="border-y border-line">
             <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-3">
-                <Moon size={16} className="text-slate-500" />
+                <Moon size={16} className="text-ink-subtle" />
                 <div>
-                  <p className="text-sm text-white">Theme</p>
-                  <p className="text-xs text-slate-500">App color scheme</p>
+                  <p className="text-sm text-ink">Theme</p>
+                  <p className="mt-0.5 text-xs text-ink-subtle">App color scheme</p>
                 </div>
               </div>
               <SettingsOptionGroup
@@ -193,17 +193,17 @@ const SettingsPage: React.FC = () => {
 
         {/* Notifications — placeholder */}
         <div className="mt-8">
-          <p className="mb-3 text-sm font-medium text-slate-300">
+          <p className="eyebrow mb-3 block">
             Notifications{" "}
-            <span className="text-xs text-slate-600">(placeholder)</span>
+            <span className="text-xs text-ink-subtle">(placeholder)</span>
           </p>
-          <div className="divide-y divide-white/10 border-y border-white/10">
+          <div className="divide-y divide-line border-y border-line">
             <label className="flex cursor-pointer items-center justify-between py-4">
               <div className="flex items-center gap-3">
-                <Bell size={16} className="text-slate-500" />
+                <Bell size={16} className="text-ink-subtle" />
                 <div>
-                  <p className="text-sm text-white">Email notifications</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm text-ink">Email notifications</p>
+                  <p className="mt-0.5 text-xs text-ink-subtle">
                     Tour requests, messages, status updates
                   </p>
                 </div>
@@ -212,16 +212,16 @@ const SettingsPage: React.FC = () => {
                 type="checkbox"
                 checked={emailNotifications}
                 onChange={(e) => setEmailNotifications(e.target.checked)}
-                className="h-4 w-4 accent-primary-500"
+                className="h-4 w-4 accent-primary-700"
               />
             </label>
 
             <label className="flex cursor-pointer items-center justify-between py-4">
               <div className="flex items-center gap-3">
-                <Bell size={16} className="text-slate-500" />
+                <Bell size={16} className="text-ink-subtle" />
                 <div>
-                  <p className="text-sm text-white">Push notifications</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm text-ink">Push notifications</p>
+                  <p className="mt-0.5 text-xs text-ink-subtle">
                     Real-time alerts in the app
                   </p>
                 </div>
@@ -230,7 +230,7 @@ const SettingsPage: React.FC = () => {
                 type="checkbox"
                 checked={pushNotifications}
                 onChange={(e) => setPushNotifications(e.target.checked)}
-                className="h-4 w-4 accent-primary-500"
+                className="h-4 w-4 accent-primary-700"
               />
             </label>
           </div>
@@ -242,12 +242,12 @@ const SettingsPage: React.FC = () => {
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="btn-primary"
           >
             <Check size={14} />
             {isSaving ? "Saving..." : "Save settings"}
           </button>
-          {saved && <span className="text-sm text-emerald-400">Saved.</span>}
+          {saved && <span className="text-sm text-primary-700">Saved.</span>}
         </div>
       </div>
     </div>

@@ -26,11 +26,13 @@ const TourRequestListItem: React.FC<TourRequestListItemProps> = ({
   return (
     <button
       onClick={onSelect}
-      className={`flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-background-surface/80 to-background-surface/40 p-3 text-left transition hover:-translate-y-[1px] hover:border-secondary-300/30 hover:shadow-lg hover:shadow-secondary-500/10 ${
-        active ? "ring-2 ring-secondary-400" : ""
+      className={`flex w-full items-center gap-4 rounded-md border bg-background-surface p-3 text-left transition-colors ${
+        active
+          ? "border-primary-300 bg-primary-50"
+          : "border-line hover:bg-background-elevated"
       }`}
     >
-      <div className="h-20 w-28 overflow-hidden rounded-xl bg-background-elevated">
+      <div className="h-20 w-28 shrink-0 overflow-hidden rounded bg-background-muted">
         <img
           src={thumb}
           alt={property?.title || "Property"}
@@ -39,21 +41,21 @@ const TourRequestListItem: React.FC<TourRequestListItemProps> = ({
       </div>
       <div className="flex-1 space-y-1">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-white">
+          <p className="text-sm font-medium text-ink">
             {property?.title || "Property"}
           </p>
           <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ${
-              statusColors[request.status] || "bg-white/10 text-white"
+            className={`rounded border px-2 py-0.5 text-xs capitalize ${
+              statusColors[request.status] || "border-line text-ink-muted"
             }`}
           >
             {request.status}
           </span>
         </div>
-        <p className="text-xs text-slate-300">
+        <p className="text-xs text-ink-muted">
           {property?.location || "Location"}
         </p>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-ink-subtle">
           {formatDateTime(request.requestedAt)}
         </p>
         {actions}

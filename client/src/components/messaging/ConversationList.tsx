@@ -1,10 +1,10 @@
-import { Conversation } from "../../types/types";
+import { Conversation } from "../../schemas/Converstation";
 import { useTranslation } from "../../utils/i18n";
 
 interface ConversationListProps {
   conversations: Conversation[];
   loading: boolean;
-  selectedId: number | null;
+  selectedId: string | null;
   userId: string;
   onSelect: (id: number) => void;
   onRefresh: () => void;
@@ -21,13 +21,13 @@ const ConversationList: React.FC<ConversationListProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-3 rounded-3xl bg-white/5 p-4 ring-1 ring-white/10">
+    <div className="space-y-4 border border-line bg-background-surface p-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+        <p className="eyebrow">
           {t("account.group.chat")}
         </p>
         <button
-          className="text-xs text-slate-300 underline"
+          className="text-xs text-ink-muted underline decoration-line-strong underline-offset-4 transition-colors hover:text-ink"
           onClick={onRefresh}
         >
           {t("common.refresh")}
@@ -35,13 +35,13 @@ const ConversationList: React.FC<ConversationListProps> = ({
       </div>
 
       {loading && (
-        <div className="rounded-xl bg-white/5 p-3 text-sm text-slate-300">
+        <div className="px-1 py-3 text-sm text-ink-subtle">
           {t("audience.loading")}
         </div>
       )}
 
       {!loading && conversations.length === 0 && (
-        <div className="rounded-xl bg-white/5 p-3 text-sm text-slate-300">
+        <div className="px-1 py-3 text-sm text-ink-subtle">
           {t("account.messages.empty")}
         </div>
       )}
@@ -57,17 +57,17 @@ const ConversationList: React.FC<ConversationListProps> = ({
             <button
               key={conv.id}
               onClick={() => onSelect(conv.id)}
-              className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left transition hover:-translate-y-[1px] hover:ring-1 hover:ring-secondary-300/40 ${
+              className={`flex w-full items-center justify-between rounded-md border px-4 py-3 text-left transition-colors ${
                 isActive
-                  ? "bg-gradient-to-r from-secondary-600 to-cyan-500 text-white shadow-lg shadow-secondary-500/30"
-                  : "bg-white/5 text-slate-100 ring-1 ring-white/10"
+                  ? "border-primary-200 bg-primary-50"
+                  : "border-line hover:bg-background-elevated"
               }`}
             >
               <div className="flex flex-col">
-                <span className="text-sm font-semibold">
+                <span className="text-sm font-medium text-ink">
                   {conv.Property?.title || t("account.tabs.list")}
                 </span>
-                <span className="text-[11px] uppercase tracking-[0.2em] text-slate-300">
+                <span className="mt-0.5 text-[11px] uppercase tracking-label text-ink-subtle">
                   {role}
                 </span>
               </div>

@@ -1,8 +1,14 @@
+import { Users } from "lucide-react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../state/store";
-import baseURL from "../../config/baseUrl";
+
 import TourRequestListItem from "./TourRequestListItem";
 import AudienceRequestDetailPanel from "./AudienceRequestDetailPanel";
+import TabHeader from "../common/TabHeader";
+import EmptyState from "../common/EmptyState";
+import LoadingState from "../common/LoadingState";
+
+import { RootState } from "../../state/store";
+import baseURL from "../../config/baseUrl";
 import { useTourRequestList } from "../../hooks/tour-requests/useTourRequestList";
 import { useTranslation } from "../../utils/i18n";
 
@@ -27,27 +33,17 @@ const MyAudienceTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-            My audience
-          </p>
-          <h2 className="text-2xl font-semibold text-white">
-            {t("audience.title")}
-          </h2>
-        </div>
-      </div>
+      <TabHeader
+        icon={Users}
+        eyebrow={t("account.tabs.audience")}
+        title={t("audience.title")}
+        description={!loading && requests.length > 0 ? t("audience.subtitle") : undefined}
+      />
 
-      {loading && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-          {t("audience.loading")}
-        </div>
-      )}
+      {loading && <LoadingState label={t("audience.loading")} />}
 
       {!loading && requests.length === 0 && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
-          {t("audience.empty")}
-        </div>
+        <EmptyState icon={Users} title={t("audience.empty")} />
       )}
 
       {!loading && requests.length > 0 && (
@@ -63,7 +59,7 @@ const MyAudienceTab: React.FC = () => {
             ))}
           </div>
 
-          <div className="space-y-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+          <div className="space-y-4 border border-line bg-background-surface p-6">
             {selectedRequest && selectedProperty ? (
               <AudienceRequestDetailPanel
                 request={selectedRequest}
@@ -78,7 +74,7 @@ const MyAudienceTab: React.FC = () => {
                 }
               />
             ) : (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-300">
+              <div className="px-1 py-4 text-sm text-ink-subtle">
                 {t("audience.select")}
               </div>
             )}

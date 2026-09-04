@@ -12,6 +12,7 @@ const translations: Translations = {
   en: {
     "navbar.brandTag": "Homes without the noise",
     "navbar.getStarted": "Get Started",
+    "nav.properties": "Properties",
     "navbar.language": "Language",
     "navbar.myAccount": "My Account",
     "navbar.logout": "Logout",
@@ -27,6 +28,7 @@ const translations: Translations = {
     "common.na": "—",
 
     "audience.title": "Incoming tour requests",
+    "audience.subtitle": "Buyers asking to tour your listings.",
     "audience.loading": "Loading incoming requests...",
     "audience.empty": "No one has requested a tour yet.",
     "audience.select": "Select a request to see details.",
@@ -69,12 +71,17 @@ const translations: Translations = {
     "account.messages.role.buyer": "Buyer",
 
     "saved.title": "Your Saved Properties",
+    "saved.subtitle": "Homes you've bookmarked, all in one place.",
     "saved.cta": "Let's find some nice properties!",
+    "saved.browse": "Browse properties",
 
     "userProps.title": "Your Properties",
+    "userProps.subtitle": "Manage the homes you have listed.",
     "userProps.empty": "Let's list a property!",
+    "userProps.listCta": "List a property",
 
     "requests.title": "Tour requests you sent",
+    "requests.subtitle": "Track the tours you've requested and their status.",
     "requests.loading": "Loading your tour requests...",
     "requests.empty": "You haven't requested any tours yet.",
     "requests.cancel": "Cancel request",
@@ -124,6 +131,8 @@ const translations: Translations = {
     "properties.listedBy": "Listed by",
     "properties.listedBy.agent": "Agent",
     "properties.price.includesFees": "Includes taxes and fees",
+    "properties.bedrooms": "bd",
+    "properties.bathrooms": "ba",
     "properties.size.unit": "sq ft",
     "properties.size.hint": "Usable living area",
     "properties.neighborhood.hint": "Local vibe and nearby spots",
@@ -186,7 +195,10 @@ const translations: Translations = {
     "home.section.title": "Move faster with a calmer, cleaner experience.",
     "home.section.desc":
       "Choose your path, see the steps, and connect with vetted expertise without the clutter.",
-    "home.section.cta": "Start browsing →",
+    "home.section.cta": "Start browsing",
+    "home.listings.label": "Latest on the market",
+    "home.listings.title": "Recently listed homes",
+    "home.listings.cta": "View all listings",
     "home.feature1.title": "Verified listings only",
     "home.feature1.desc":
       "Every property is vetted and photo-checked by our team.",
@@ -277,6 +289,7 @@ const translations: Translations = {
   ro: {
     "navbar.brandTag": "Case fără zgomot",
     "navbar.getStarted": "Începe acum",
+    "nav.properties": "Proprietăți",
     "navbar.language": "Limbă",
     "navbar.myAccount": "Contul meu",
     "navbar.logout": "Deconectare",
@@ -292,6 +305,7 @@ const translations: Translations = {
     "common.na": "—",
 
     "audience.title": "Cereri de tur primite",
+    "audience.subtitle": "Cumpărători care vor să vadă proprietățile tale.",
     "audience.loading": "Se încarcă cererile...",
     "audience.empty": "Nu ai încă cereri de tur.",
     "audience.select": "Selectează o cerere pentru detalii.",
@@ -335,12 +349,17 @@ const translations: Translations = {
     "account.messages.role.buyer": "Cumpărător",
 
     "saved.title": "Proprietățile tale salvate",
+    "saved.subtitle": "Locuințele pe care le-ai salvat, toate într-un singur loc.",
     "saved.cta": "Hai să găsim proprietăți interesante!",
+    "saved.browse": "Vezi proprietăți",
 
     "userProps.title": "Proprietățile tale",
+    "userProps.subtitle": "Administrează locuințele pe care le-ai publicat.",
     "userProps.empty": "Hai să publicăm o proprietate!",
+    "userProps.listCta": "Publică o proprietate",
 
     "requests.title": "Cererile de tur trimise",
+    "requests.subtitle": "Urmărește cererile tale de tur și statusul lor.",
     "requests.loading": "Se încarcă cererile de tur...",
     "requests.empty": "Nu ai cereri de tur încă.",
     "requests.cancel": "Anulează cererea",
@@ -389,6 +408,8 @@ const translations: Translations = {
     "properties.listedBy": "Publicat de",
     "properties.listedBy.agent": "Agent",
     "properties.price.includesFees": "Include taxe și comisioane",
+    "properties.bedrooms": "dorm.",
+    "properties.bathrooms": "băi",
     "properties.size.unit": "mp",
     "properties.size.hint": "Suprafață utilă",
     "properties.neighborhood.hint": "Atmosferă locală și puncte apropiate",
@@ -452,7 +473,10 @@ const translations: Translations = {
     "home.section.title": "Mișcă-te mai repede cu o experiență calmă și clară.",
     "home.section.desc":
       "Alege traseul, vezi pașii și conectează-te cu experți verificați, fără aglomerație.",
-    "home.section.cta": "Începe căutarea →",
+    "home.section.cta": "Începe căutarea",
+    "home.listings.label": "Ultimele apariții",
+    "home.listings.title": "Proprietăți listate recent",
+    "home.listings.cta": "Vezi toate anunțurile",
     "home.feature1.title": "Doar anunțuri verificate",
     "home.feature1.desc":
       "Fiecare proprietate este verificată și inspectată foto de echipa noastră.",

@@ -33,36 +33,36 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose }) => {
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background-surface/40 px-4 py-8 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4 py-8"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-lg overflow-hidden rounded-3xl bg-gradient-to-br from-white via-rose-50 to-amber-50 shadow-2xl ring-1 ring-slate-100">
-        <div className="flex items-center gap-3 border-b border-slate-200/70 px-6 py-4 bg-white/70 backdrop-blur">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-600">
+      <div className="w-full max-w-lg rounded-lg border border-line bg-background-surface shadow-panel">
+        <div className="flex items-center gap-3 border-b border-line px-6 py-5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary-50 text-primary-700">
             <MessageSquareHeart size={20} />
           </div>
-          <div className="flex items-center gap-2 text-amber-800">
+          <div className="flex items-center gap-2">
             <Sparkles size={16} />
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-amber-700">
+              <p className="eyebrow">
                 We value your input
               </p>
-              <h2 className="text-lg font-semibold text-slate-900">
+              <h2 className="mt-1 font-display text-lg text-ink">
                 How is your experience?
               </h2>
             </div>
           </div>
         </div>
 
-        <div className="space-y-6 p-6 text-slate-700">
+        <div className="space-y-6 p-6 text-ink-muted">
           {submitted ? (
             <div className="py-6 text-center">
-              <p className="text-lg font-semibold text-slate-900">
+              <p className="font-display text-lg text-ink">
                 Thank you for your feedback!
               </p>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="mt-1.5 text-sm text-ink-subtle">
                 Your response has been recorded.
               </p>
             </div>
@@ -87,8 +87,8 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose }) => {
                       size={32}
                       className={`${
                         (hoveredRating || rating) >= star
-                          ? "fill-amber-400 text-amber-400"
-                          : "text-slate-300"
+                          ? "fill-secondary-400 text-secondary-400"
+                          : "text-line-strong"
                       } transition-colors`}
                     />
                   </button>
@@ -99,7 +99,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose }) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-[1px] hover:bg-white"
+                  className="btn-secondary"
                 >
                   Cancel
                 </button>
@@ -107,7 +107,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose }) => {
                   type="button"
                   onClick={handleSubmit}
                   disabled={rating === 0}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-amber-400/40 transition hover:-translate-y-[1px] hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="btn-primary"
                 >
                   Submit feedback
                 </button>

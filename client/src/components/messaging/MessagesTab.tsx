@@ -1,20 +1,22 @@
+import { MessageSquare } from "lucide-react";
 import { useSelector } from "react-redux";
+
+import ConversationList from "./ConversationList";
+import MessageThread from "./MessageThread";
+import TabHeader from "../common/TabHeader";
+
 import { RootState } from "../../state/store";
 import { useConversations } from "../../hooks/messaging/useConversations";
 import { useConversationMessages } from "../../hooks/messaging/useConversationMessages";
-import ConversationList from "./ConversationList";
-import ConversationPropertyPanel from "./ConversationPropertyPanel";
-import MessageThread from "./MessageThread";
 import { useTranslation } from "../../utils/i18n";
 
 interface MessagesTabProps {
   activeConversationId: number | null;
 }
 
-const MessagesTab: React.FC<MessagesTabProps> = ({
-  activeConversationId,
-}) => {
-  const userId = useSelector((state: RootState) => state.user.id);
+const MessagesTab: React.FC<MessagesTabProps> = ({ activeConversationId }) => {
+  const currentUser = useSelector((state: RootState) => state.user);
+
   const { t } = useTranslation();
 
   const {
@@ -24,7 +26,7 @@ const MessagesTab: React.FC<MessagesTabProps> = ({
     setSelectedId,
     selectedConversation,
     loadConversations,
-  } = useConversations(userId, activeConversationId);
+  } = useConversations(currentUser.id, activeConversationId);
 
   const {
     messages,
@@ -33,45 +35,46 @@ const MessagesTab: React.FC<MessagesTabProps> = ({
     setMessageText,
     sendMessage,
     messagesEndRef,
-  } = useConversationMessages(selectedId, userId, loadConversations);
+  } = useConversationMessages(selectedId, currentUser.id, loadConversations);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
-      <ConversationList
-        conversations={conversations}
-        loading={loadingConversations}
-        selectedId={selectedId}
-        userId={userId}
-        onSelect={setSelectedId}
-        onRefresh={loadConversations}
+    <div className="space-y-6">
+      <TabHeader
+        icon={MessageSquare}
+        eyebrow={t("account.tabs.messages")}
+        title={t("account.messages.title")}
+        description={t("account.messages.subtitle")}
       />
 
-      <div className="space-y-4 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-        {!selectedConversation && (
-          <div className="rounded-xl bg-white/5 p-4 text-slate-200">
-            {t("account.messages.select")}
-          </div>
-        )}
+      <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
+        <ConversationList
+          conversations={conversations}
+          loading={loadingConversations}
+          selectedId={selectedId}
+          userId={currentUser.id}
+          onSelect={setSelectedId}
+          onRefresh={loadConversations}
+        />
 
-        {selectedConversation && (
-          <>
-            {selectedConversation.Property && (
-              <ConversationPropertyPanel
-                property={selectedConversation.Property}
-              />
-            )}
+        <div className="border border-line bg-background-surface p-6">
+          {!selectedConversation && (
+            <div className="px-1 py-4 text-sm text-ink-subtle">
+              {t("account.messages.select")}
+            </div>
+          )}
 
+          {selectedConversation && (
             <MessageThread
               messages={messages}
               loading={loadingMessages}
-              userId={userId}
+              userId={currentUser.id}
               messageText={messageText}
               setMessageText={setMessageText}
               onSend={sendMessage}
               messagesEndRef={messagesEndRef}
             />
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

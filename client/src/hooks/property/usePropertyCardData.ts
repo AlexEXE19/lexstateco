@@ -78,6 +78,7 @@ export const usePropertyCardData = (property: Property, saved: boolean) => {
       new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
+        maximumFractionDigits: 0,
       }).format(property.price),
     [property.price],
   );
