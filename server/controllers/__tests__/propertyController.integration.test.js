@@ -1,4 +1,4 @@
-// Runs the real controller against a real, throwaway MySQL database
+// Runs the real controller against a real, throwaway Postgres database
 // (started by test/globalSetup.js) instead of a mocked Sequelize model.
 // This is what would have caught bugs like the savedPropertiesController
 // where-clause mismatch, which mocked unit tests can't - a mock accepts
@@ -34,29 +34,47 @@ const mockRes = () => {
 
 // res.json here is a plain mock, so unlike real Express it never runs the
 // value through JSON.stringify - which is what actually calls Sequelize's
-// toJSON() (and renames seller_id -> sellerId, etc.) on a real request.
-// Do that ourselves so assertions see what a real client would.
+// toJSON() on a real request. Do that ourselves so assertions see what a
+// real client would.
 const jsonOf = (value) =>
   typeof value?.toJSON === "function" ? value.toJSON() : value;
 
-describe("propertyController (integration, real MySQL)", () => {
-  let sellerId;
+const testLocation = {
+  country: "Testland",
+  city: "Testville",
+  neighborhood: "Central",
+  address: "1 Test Way",
+  zipCode: "00000",
+};
+
+const baseListing = {
+  price: "300000",
+  location: testLocation,
+  description: "Created by an integration test",
+  size: "900",
+  type: "apartment",
+  bedrooms: 2,
+  bathrooms: 1,
+};
+
+describe("propertyController (integration, real Postgres)", () => {
+  let agentId;
   let otherUserId;
 
   beforeAll(async () => {
     await sequelize.sync({ force: true });
-    const seller = await User.create({
-      first_name: "Alex",
-      last_name: "Seller",
-      email: "integration-seller@example.com",
+    const agent = await User.create({
+      firstName: "Alex",
+      lastName: "Agent",
+      email: "integration-agent@example.com",
       password: "hashed",
       phone: "555-0000",
     });
-    sellerId = seller.id;
+    agentId = agent.id;
 
     const other = await User.create({
-      first_name: "Not",
-      last_name: "TheSeller",
+      firstName: "Not",
+      lastName: "TheAgent",
       email: "integration-other@example.com",
       password: "hashed",
       phone: "555-0001",
@@ -68,18 +86,10 @@ describe("propertyController (integration, real MySQL)", () => {
     await sequelize.close();
   });
 
-  it("creates a property (seller id from the authenticated user), persists it, and can read it back", async () => {
+  it("creates a property (agent id from the authenticated user), persists it, and can read it back", async () => {
     const req = {
-      user: { id: sellerId },
-      body: {
-        title: "Integration Test Loft",
-        price: "300000",
-        location: "Testville",
-        neighborhood: "Central",
-        zipCode: "00000",
-        description: "Created by an integration test",
-        size: "900",
-      },
+      user: { id: agentId },
+      body: baseListing,
     };
     const res = mockRes();
 
@@ -94,22 +104,15 @@ describe("propertyController (integration, real MySQL)", () => {
     await getPropertyById(getReq, getRes);
 
     const fetched = jsonOf(getRes.json.mock.calls[0][0]);
-    expect(fetched.title).toBe("Integration Test Loft");
-    expect(fetched.sellerId).toBe(sellerId);
+    expect(fetched.price).toBe(baseListing.price);
+    expect(fetched.agentId).toBe(agentId);
+    expect(fetched.location.city).toBe("Testville");
   });
 
-  it("edits a property in place when the requester is its seller", async () => {
+  it("edits a property in place when the requester is its agent", async () => {
     const createReq = {
-      user: { id: sellerId },
-      body: {
-        title: "Before Edit",
-        price: "100000",
-        location: "Testville",
-        neighborhood: "Central",
-        zipCode: "00000",
-        description: "desc",
-        size: "500",
-      },
+      user: { id: agentId },
+      body: { ...baseListing, price: "100000" },
     };
     const createRes = mockRes();
     await createProperty(createReq, createRes);
@@ -117,16 +120,8 @@ describe("propertyController (integration, real MySQL)", () => {
 
     const editReq = {
       params: { propertyId },
-      user: { id: sellerId },
-      body: {
-        title: "After Edit",
-        price: "150000",
-        location: "Testville",
-        neighborhood: "Central",
-        zipCode: "00000",
-        description: "updated desc",
-        size: "550",
-      },
+      user: { id: agentId },
+      body: { ...baseListing, price: "150000" },
     };
     const editRes = mockRes();
     await editProperty(editReq, editRes);
@@ -138,22 +133,13 @@ describe("propertyController (integration, real MySQL)", () => {
     await getPropertyById(getReq, getRes);
 
     const fetched = jsonOf(getRes.json.mock.calls[0][0]);
-    expect(fetched.title).toBe("After Edit");
     expect(fetched.price).toBe("150000");
   });
 
   it("refuses to edit a property that belongs to someone else", async () => {
     const createReq = {
-      user: { id: sellerId },
-      body: {
-        title: "Protected Listing",
-        price: "100000",
-        location: "Testville",
-        neighborhood: "Central",
-        zipCode: "00000",
-        description: "desc",
-        size: "500",
-      },
+      user: { id: agentId },
+      body: baseListing,
     };
     const createRes = mockRes();
     await createProperty(createReq, createRes);
@@ -162,7 +148,7 @@ describe("propertyController (integration, real MySQL)", () => {
     const editReq = {
       params: { propertyId },
       user: { id: otherUserId },
-      body: { title: "Hijacked" },
+      body: { price: "999999" },
     };
     const editRes = mockRes();
     await editProperty(editReq, editRes);
@@ -174,27 +160,19 @@ describe("propertyController (integration, real MySQL)", () => {
     await getPropertyById(getReq, getRes);
 
     const fetched = jsonOf(getRes.json.mock.calls[0][0]);
-    expect(fetched.title).toBe("Protected Listing");
+    expect(fetched.price).toBe(baseListing.price);
   });
 
   it("deletes a property so it can no longer be found", async () => {
     const createReq = {
-      user: { id: sellerId },
-      body: {
-        title: "To Be Deleted",
-        price: "50000",
-        location: "Testville",
-        neighborhood: "Central",
-        zipCode: "00000",
-        description: "desc",
-        size: "300",
-      },
+      user: { id: agentId },
+      body: { ...baseListing, price: "50000" },
     };
     const createRes = mockRes();
     await createProperty(createReq, createRes);
     const propertyId = createRes.json.mock.calls[0][0].property.id;
 
-    const deleteReq = { params: { propertyId }, user: { id: sellerId } };
+    const deleteReq = { params: { propertyId }, user: { id: agentId } };
     const deleteRes = mockRes();
     await deleteProperty(deleteReq, deleteRes);
 

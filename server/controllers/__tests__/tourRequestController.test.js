@@ -27,7 +27,7 @@ const {
   createTourRequest,
   updateTourRequestStatus,
   getTourRequestsByRequester,
-  getTourRequestsBySeller,
+  getTourRequestsByAgent,
   getTourRequestByRequesterAndProperty,
 } = require("../tourRequestController");
 
@@ -68,19 +68,19 @@ describe("tourRequestController", () => {
       expect(TourRequest.create).not.toHaveBeenCalled();
     });
 
-    it("takes the requester from the token and the seller from the property, not the request body", async () => {
-      Property.findByPk.mockResolvedValue({ id: 10, seller_id: 2 });
+    it("takes the requester from the token and the agent from the property, not the request body", async () => {
+      Property.findByPk.mockResolvedValue({ id: 10, agentId: 2 });
       TourRequest.create.mockResolvedValue({ id: 1 });
       TourRequest.findByPk.mockResolvedValue({
         id: 1,
-        Property: { title: "Sunny Loft" },
+        Property: { id: 10 },
       });
 
       const req = {
         user: { id: 3 },
         body: {
           propertyId: 10,
-          sellerId: 999, // should be ignored in favor of the property lookup
+          agentId: 999, // should be ignored in favor of the property lookup
           requesterId: 999, // should be ignored in favor of the token
           requestedAt: "2026-09-01T10:00:00.000Z",
         },
@@ -90,28 +90,28 @@ describe("tourRequestController", () => {
       await createTourRequest(req, res);
 
       expect(TourRequest.create).toHaveBeenCalledWith({
-        property_id: 10,
-        seller_id: 2,
-        requester_id: 3,
-        requested_at: "2026-09-01T10:00:00.000Z",
+        propertyId: 10,
+        agentId: 2,
+        requesterId: 3,
+        requestedAt: "2026-09-01T10:00:00.000Z",
         status: "pending",
       });
       expect(Notification.create).toHaveBeenCalledWith(
-        expect.objectContaining({ owner_id: 2, type: "incoming_request" }),
+        expect.objectContaining({ ownerId: 2, type: "incomingRequest" }),
       );
       expect(Conversation.findOrCreate).toHaveBeenCalledWith({
-        where: { property_id: 10, buyer_id: 3 },
-        defaults: { seller_id: 2 },
+        where: { propertyId: 10, buyerId: 3 },
+        defaults: { agentId: 2 },
       });
       expect(res.status).toHaveBeenCalledWith(201);
     });
 
     it("still responds successfully when the notification insert fails", async () => {
-      Property.findByPk.mockResolvedValue({ id: 10, seller_id: 2 });
+      Property.findByPk.mockResolvedValue({ id: 10, agentId: 2 });
       TourRequest.create.mockResolvedValue({ id: 1 });
       TourRequest.findByPk.mockResolvedValue({
         id: 1,
-        Property: { title: "Sunny Loft" },
+        Property: { id: 10 },
       });
       Notification.create.mockRejectedValue(new Error("db down"));
 
@@ -158,14 +158,14 @@ describe("tourRequestController", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("lets the seller accept a request", async () => {
+    it("lets the agent accept a request", async () => {
       const save = jest.fn().mockResolvedValue(undefined);
       TourRequest.findByPk.mockResolvedValue({
         id: 1,
-        seller_id: 2,
-        requester_id: 3,
+        agentId: 2,
+        requesterId: 3,
         status: "pending",
-        Property: { title: "Sunny Loft" },
+        Property: { id: 10 },
         save,
       });
       const req = {
@@ -179,7 +179,7 @@ describe("tourRequestController", () => {
 
       expect(save).toHaveBeenCalled();
       expect(Notification.create).toHaveBeenCalledWith(
-        expect.objectContaining({ owner_id: 3, type: "request_update" }),
+        expect.objectContaining({ ownerId: 3, type: "requestUpdate" }),
       );
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({ message: "Status updated" }),
@@ -190,16 +190,16 @@ describe("tourRequestController", () => {
       const save = jest.fn();
       TourRequest.findByPk.mockResolvedValue({
         id: 1,
-        seller_id: 2,
-        requester_id: 3,
+        agentId: 2,
+        requesterId: 3,
         status: "pending",
-        Property: { title: "Sunny Loft" },
+        Property: { id: 10 },
         save,
       });
       const req = {
         params: { id: "1" },
         body: { status: "accepted" },
-        user: { id: 3 }, // the requester, not the seller
+        user: { id: 3 }, // the requester, not the agent
       };
       const res = mockRes();
 
@@ -213,10 +213,10 @@ describe("tourRequestController", () => {
       const save = jest.fn().mockResolvedValue(undefined);
       TourRequest.findByPk.mockResolvedValue({
         id: 1,
-        seller_id: 2,
-        requester_id: 3,
+        agentId: 2,
+        requesterId: 3,
         status: "pending",
-        Property: { title: "Sunny Loft" },
+        Property: { id: 10 },
         save,
       });
       const req = {
@@ -232,20 +232,20 @@ describe("tourRequestController", () => {
       expect(res.status).not.toHaveBeenCalledWith(403);
     });
 
-    it("blocks the seller from canceling on the requester's behalf", async () => {
+    it("blocks the agent from canceling on the requester's behalf", async () => {
       const save = jest.fn();
       TourRequest.findByPk.mockResolvedValue({
         id: 1,
-        seller_id: 2,
-        requester_id: 3,
+        agentId: 2,
+        requesterId: 3,
         status: "pending",
-        Property: { title: "Sunny Loft" },
+        Property: { id: 10 },
         save,
       });
       const req = {
         params: { id: "1" },
         body: { status: "canceled" },
-        user: { id: 2 }, // the seller, not the requester
+        user: { id: 2 }, // the agent, not the requester
       };
       const res = mockRes();
 
@@ -257,7 +257,7 @@ describe("tourRequestController", () => {
   });
 
   describe("getTourRequestsByRequester", () => {
-    it("filters by the requester_id column", async () => {
+    it("filters by the requesterId column", async () => {
       TourRequest.findAll.mockResolvedValue([]);
       const req = { params: { requesterId: "3" }, user: { id: "3" } };
       const res = mockRes();
@@ -265,7 +265,7 @@ describe("tourRequestController", () => {
       await getTourRequestsByRequester(req, res);
 
       expect(TourRequest.findAll).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { requester_id: "3" } }),
+        expect.objectContaining({ where: { requesterId: "3" } }),
       );
     });
 
@@ -280,16 +280,16 @@ describe("tourRequestController", () => {
     });
   });
 
-  describe("getTourRequestsBySeller", () => {
-    it("filters by the seller_id column", async () => {
+  describe("getTourRequestsByAgent", () => {
+    it("filters by the agentId column", async () => {
       TourRequest.findAll.mockResolvedValue([]);
-      const req = { params: { sellerId: "2" }, user: { id: "2" } };
+      const req = { params: { agentId: "2" }, user: { id: "2" } };
       const res = mockRes();
 
-      await getTourRequestsBySeller(req, res);
+      await getTourRequestsByAgent(req, res);
 
       expect(TourRequest.findAll).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { seller_id: "2" } }),
+        expect.objectContaining({ where: { agentId: "2" } }),
       );
     });
   });
@@ -309,7 +309,7 @@ describe("tourRequestController", () => {
     });
 
     it("returns the latest matching request", async () => {
-      const found = { id: 1, requester_id: "3", property_id: "10" };
+      const found = { id: 1, requesterId: "3", propertyId: "10" };
       TourRequest.findOne.mockResolvedValue(found);
       const req = {
         params: { requesterId: "3", propertyId: "10" },
