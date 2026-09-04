@@ -4,6 +4,8 @@ import tabReducer from "./tab/tabSlice";
 import langReducer from "./lang/langSlice";
 import feedbackReducer from "./feedback/feedbackSlice";
 import propertyModalReducer from "./propertyModal/propertyModalSlice";
+import clientReducer from "./client/clientSlice";
+import sidePanelReducer from "./sidePanel/sidePanelSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     lang: langReducer,
     feedback: feedbackReducer,
     propertyModal: propertyModalReducer,
+    client: clientReducer,
+    sidePanel: sidePanelReducer,
   },
 });
 

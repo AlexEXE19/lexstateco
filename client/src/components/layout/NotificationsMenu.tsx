@@ -1,5 +1,5 @@
-import { Notification } from "../../types/types";
-import { formatTimeAgo } from "../../hooks/useNotifications";
+import { Bell } from "lucide-react";
+import { Notification } from "../../schemas/Notification";
 
 interface NotificationsMenuProps {
   notifications: Notification[];
@@ -24,18 +24,9 @@ const NotificationsMenu: React.FC<NotificationsMenuProps> = ({
         type="button"
         aria-label="Notifications"
         onClick={onToggle}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/15 transition hover:bg-white/15"
+        className="relative flex h-10 w-10 items-center justify-center rounded-full text-white  transition hover:bg-white/15"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="h-5 w-5"
-          aria-hidden="true"
-        >
-          <path d="M12 2.75a5.25 5.25 0 00-5.25 5.25v2.494l-.894 2.682A1 1 0 006.806 14h10.388a1 1 0 00.95-1.324l-.894-2.682V8a5.25 5.25 0 00-5.25-5.25z" />
-          <path d="M14.25 16.5a2.25 2.25 0 11-4.5 0h4.5z" />
-        </svg>
+        <Bell />
         {notificationCount > 0 && (
           <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1.5 text-[11px] font-bold leading-none shadow-lg shadow-rose-500/30">
             {notificationCount}
@@ -80,7 +71,7 @@ const NotificationsMenu: React.FC<NotificationsMenuProps> = ({
                       {notification.description}
                     </p>
                     <span className="text-[11px] uppercase tracking-[0.08em] text-slate-400">
-                      {formatTimeAgo(notification.timestamp)}
+                      {/* TO DO UPDATE WITH NEW SCHEMA */}
                     </span>
                   </div>
                 </button>
