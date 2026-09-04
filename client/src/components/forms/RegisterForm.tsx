@@ -2,10 +2,7 @@ import { Lock, Mail, Phone, User } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../utils/i18n";
 import { useForm, SubmitHandler } from "react-hook-form";
-import {
-  RegisterFormFields,
-  registerSchema,
-} from "../../types/schemas/FormSchemas";
+import { RegisterFormFields, registerSchema } from "../../schemas/FormSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const RegisterForm: React.FC = () => {
