@@ -1,18 +1,15 @@
-import { ChatMessage } from "../../types/types";
+import { Message } from "../../schemas/Message";
 import { useTranslation } from "../../utils/i18n";
 
-const formatTime = (value: string) => {
-  const d = new Date(value);
-  return isNaN(d.getTime())
-    ? value
-    : `${d.toLocaleDateString()} ${d.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
+const formatTime = (date: Date | string) => {
+  const d = date instanceof Date ? date : new Date(date);
+  return `${d.toLocaleDateString()} ${d.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  })}`;
 };
-
 interface MessageThreadProps {
-  messages: ChatMessage[];
+  messages: Message[];
   loading: boolean;
   userId: string;
   messageText: string;
@@ -36,9 +33,7 @@ const MessageThread: React.FC<MessageThreadProps> = ({
     <div className="flex h-[50vh] flex-col gap-3 overflow-hidden rounded-2xl bg-background-surface/70 p-4 ring-1 ring-white/10">
       <div className="flex-1 space-y-2 overflow-y-auto pr-1">
         {loading && (
-          <div className="text-sm text-slate-300">
-            {t("audience.loading")}
-          </div>
+          <div className="text-sm text-slate-300">{t("audience.loading")}</div>
         )}
         {!loading &&
           messages.map((msg) => {

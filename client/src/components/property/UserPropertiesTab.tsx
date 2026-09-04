@@ -28,7 +28,7 @@ const UserPropertiesTab: React.FC = () => {
 
           <PropertyGrid
             properties={properties}
-            saved={false}
+            isSaved={() => false}
             onSelect={(property) => dispatch(openPropertyModal(property))}
           />
         </>

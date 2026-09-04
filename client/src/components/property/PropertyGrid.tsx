@@ -1,21 +1,23 @@
+import { Property } from "../../schemas/Property";
 import PropertyCard from "./PropertyCard";
-import { Property } from "../../types/types";
 
 const PropertyGrid: React.FC<{
   properties: Property[];
-  saved: boolean;
+  isSaved: (propertyId: string) => boolean;
   onSelect?: (property: Property) => void;
-}> = ({ properties, saved, onSelect }) => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-    {properties.map((property) => (
-      <PropertyCard
-        key={property.id}
-        property={property}
-        saved={saved}
-        onSelect={onSelect}
-      />
-    ))}
-  </div>
-);
+}> = ({ properties, isSaved, onSelect }) => {
+  return (
+    <div className="mx-auto w-1/2  flex flex-col">
+      {properties.map((property) => (
+        <PropertyCard
+          key={property.id}
+          property={property}
+          saved={isSaved(property.id)}
+          onSelect={onSelect}
+        />
+      ))}
+    </div>
+  );
+};
 
 export default PropertyGrid;

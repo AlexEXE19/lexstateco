@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 import baseURL from "../../config/baseUrl";
-import { Property, Filter } from "../../types/types";
+import { Filter } from "../../schemas/Filter";
+import { Property } from "../../schemas/Property";
+import { User } from "../../schemas/User";
 
 // Filtering happens server-side (GET /properties supports location,
 // neighborhood, minPrice, maxPrice as optional query params) so this hook
@@ -20,16 +22,17 @@ const buildFilterParams = (filters?: Partial<Filter>) => {
   return params;
 };
 
-export const useProperties = (currentUser: any) => {
+export const useProperties = (currentUser: User) => {
   const [searchParams] = useSearchParams();
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
-  const [savedIds, setSavedIds] = useState<number[]>([]);
+  const [savedIds, setSavedIds] = useState<Set<string>>();
   const [loading, setLoading] = useState(true);
 
   const fetchProperties = async (filters?: Partial<Filter>) => {
     const res = await axios.get<Property[]>(`${baseURL}/properties`, {
       params: buildFilterParams(filters),
     });
+
     setFilteredProperties(res.data);
   };
 
@@ -57,7 +60,7 @@ export const useProperties = (currentUser: any) => {
         ]);
 
         if (savedRes.data) {
-          setSavedIds(savedRes.data.map((obj: any) => Number(obj.propertyId)));
+          setSavedIds(new Set(savedRes.data.map((obj: any) => obj.propertyId)));
         }
       } catch (err) {
         console.error(err);

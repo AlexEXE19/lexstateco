@@ -1,6 +1,6 @@
 import { Phone } from "lucide-react";
-import { Property } from "../../types/types";
 import { useTranslation } from "../../utils/i18n";
+import { Property } from "../../schemas/Property";
 
 interface PropertyStatsGridProps {
   property: Property;
@@ -45,7 +45,7 @@ const PropertyStatsGrid: React.FC<PropertyStatsGridProps> = ({
           {t("properties.label.neighborhood")}
         </p>
         <p className="text-lg font-semibold text-white">
-          {property.neighborhood}
+          {property.location.neighborhood}
         </p>
         <p className="text-xs text-slate-400">
           {t("properties.neighborhood.hint")}
@@ -56,7 +56,7 @@ const PropertyStatsGrid: React.FC<PropertyStatsGridProps> = ({
           {t("properties.label.zip")}
         </p>
         <p className="text-lg font-semibold text-white">
-          {property.zipCode}
+          {property.location.zipCode}
         </p>
         <p className="text-xs text-slate-400">{t("properties.zip.hint")}</p>
       </div>
@@ -73,9 +73,7 @@ const PropertyStatsGrid: React.FC<PropertyStatsGridProps> = ({
             {sellerPhone}
           </p>
         )}
-        <p className="text-xs text-slate-400">
-          {t("properties.seller.hint")}
-        </p>
+        <p className="text-xs text-slate-400">{t("properties.seller.hint")}</p>
       </div>
     </div>
   );

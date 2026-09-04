@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Property } from "../../types/types";
 import { RootState } from "../../state/store";
 import baseURL from "../../config/baseUrl";
+import { Property } from "../../schemas/Property";
 
 export const usePropertyCardData = (property: Property, saved: boolean) => {
   const currentUser = useSelector((state: RootState) => state.user);
@@ -29,7 +29,7 @@ export const usePropertyCardData = (property: Property, saved: boolean) => {
     const fetchSellerInfo = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}/users/${property.sellerId}`,
+          `${baseURL}/users/${property.agentId}`,
         );
         if (response.data.firstName && response.data.phone) {
           setSellerName(response.data.firstName);
@@ -45,7 +45,7 @@ export const usePropertyCardData = (property: Property, saved: boolean) => {
     };
 
     fetchSellerInfo();
-  }, [property.sellerId]);
+  }, [property.agentId]);
 
   const handleSaveClick = async (e: React.MouseEvent) => {
     e.stopPropagation();

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import baseURL from "../../config/baseUrl";
-import { Property, User } from "../../types/types";
-import { setTab } from "../../state/tab/tabSlice";
 import { useFeedbackPrompt } from "../useFeedbackPrompt";
+import { Property } from "../../schemas/Property";
+import { User } from "../../schemas/User";
 
 export type MessageStatus = "idle" | "loading" | "error";
 
@@ -16,7 +15,6 @@ export const useConversationCompose = (
   selectedProperty: Property | null,
   currentUser: User,
 ) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { promptForFeedback } = useFeedbackPrompt();
   const [showMessageCompose, setShowMessageCompose] = useState(false);
@@ -29,9 +27,11 @@ export const useConversationCompose = (
     setMessageStatus("idle");
   }, [selectedProperty?.id]);
 
+  // TODO: route to the specific conversation once the Messages tab supports
+  // deep-linking by conversationId.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const goToConversation = (conversationId: number | null) => {
-    dispatch(setTab({ type: "messages", conversationId }));
-    navigate("/account");
+    navigate("/account?activeTab=messages");
   };
 
   const handleMessageClick = async () => {
