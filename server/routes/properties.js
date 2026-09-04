@@ -8,7 +8,7 @@ const {
   getAllProperties,
   getPropertyById,
   getPropertiesByLocation,
-  getPropertyBySellerId,
+  getPropertyByAgentId,
   createProperty,
   editProperty,
   deleteProperty,
@@ -43,11 +43,11 @@ const upload = multer({
 // Route to get all properties
 router.get("/", catchAsync(getAllProperties));
 
-// Route to get properties  ID
+// Route to get property by its ID
 router.get("/:id", catchAsync(getPropertyById));
 
-// Route to get properties by seller ID
-router.get("/seller-id/:sellerId/", catchAsync(getPropertyBySellerId));
+// Route to get properties by agent ID
+router.get("/agent-id/:agentId/", catchAsync(getPropertyByAgentId));
 
 // Route to get properties by location
 router.get("/location/:location/", catchAsync(getPropertiesByLocation));

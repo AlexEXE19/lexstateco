@@ -5,7 +5,7 @@ const {
   createTourRequest,
   updateTourRequestStatus,
   getTourRequestsByRequester,
-  getTourRequestsBySeller,
+  getTourRequestsByAgent,
   getTourRequestByRequesterAndProperty,
 } = require("../controllers/tourRequestController");
 const { requireAuth } = require("../middlewares/auth");
@@ -19,8 +19,8 @@ router.post("/", catchAsync(createTourRequest));
 // Get all tour requests for a requester
 router.get("/requester/:requesterId", catchAsync(getTourRequestsByRequester));
 
-// Get all tour requests for a seller (incoming)
-router.get("/seller/:sellerId", catchAsync(getTourRequestsBySeller));
+// Get all tour requests for an agent (incoming)
+router.get("/agent/:agentId", catchAsync(getTourRequestsByAgent));
 
 // Get latest tour request for requester + property
 router.get(

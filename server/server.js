@@ -38,6 +38,12 @@ app.use("/curated/", curatedRoutes);
 (async () => {
   try {
     await sequelize.sync();
+    // location is JSONB - a functional index on the city path isn't
+    // expressible through Sequelize's declarative model `indexes` option,
+    // so it's created directly.
+    await sequelize.query(
+      `CREATE INDEX IF NOT EXISTS properties_location_city_idx ON properties ((location->>'city'))`,
+    );
     console.log("Database synced successfully.");
   } catch (error) {
     console.error("Unable to sync database:", error);

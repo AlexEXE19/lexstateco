@@ -18,7 +18,7 @@ const createNotificationSafe = async ({
 }) => {
   try {
     await Notification.create({
-      owner_id: ownerId,
+      ownerId,
       title,
       description,
       type,
@@ -29,8 +29,8 @@ const createNotificationSafe = async ({
 };
 
 // Create a tour request - the requester is always the authenticated user;
-// the seller is looked up from the property rather than trusted from the
-// client, so you can't file a request that notifies the wrong seller.
+// the agent is looked up from the property rather than trusted from the
+// client, so you can't file a request that notifies the wrong agent.
 const createTourRequest = async (req, res) => {
   const { propertyId, requestedAt, status } = req.body;
   const requesterId = req.user.id;
@@ -47,31 +47,30 @@ const createTourRequest = async (req, res) => {
   }
 
   const tourRequest = await TourRequest.create({
-    property_id: propertyId,
-    seller_id: property.seller_id,
-    requester_id: requesterId,
-    requested_at: requestedAt,
+    propertyId,
+    agentId: property.agentId,
+    requesterId,
+    requestedAt,
     status: status || "pending",
   });
 
-  // A tour request implies you're going to want to talk to the seller, so
+  // A tour request implies you're going to want to talk to the agent, so
   // start (or reuse) the conversation for this property right away instead
   // of making the requester separately click "Message owner" too.
   await Conversation.findOrCreate({
-    where: { property_id: propertyId, buyer_id: requesterId },
-    defaults: { seller_id: property.seller_id },
+    where: { propertyId, buyerId: requesterId },
+    defaults: { agentId: property.agentId },
   });
 
   const withProperty = await TourRequest.findByPk(tourRequest.id, {
     include: [{ model: Property }],
   });
 
-  const propertyTitle = withProperty?.Property?.title || "your property";
   await createNotificationSafe({
-    ownerId: property.seller_id,
+    ownerId: property.agentId,
     title: "New tour request",
-    description: `You have a new tour request for ${propertyTitle}.`,
-    type: "incoming_request",
+    description: "You have a new tour request for your property.",
+    type: "incomingRequest",
   });
 
   return res
@@ -80,7 +79,7 @@ const createTourRequest = async (req, res) => {
 };
 
 // Update status for a tour request (cancel, accept, reject) - only the
-// requester may cancel, and only the seller may accept/reject.
+// requester may cancel, and only the agent may accept/reject.
 const updateTourRequestStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -102,7 +101,7 @@ const updateTourRequestStatus = async (req, res) => {
       {
         model: User,
         as: "requester",
-        attributes: ["id", "first_name", "last_name"],
+        attributes: ["id", "firstName", "lastName"],
       },
     ],
   });
@@ -111,15 +110,15 @@ const updateTourRequestStatus = async (req, res) => {
     return res.status(404).json({ message: "Tour request not found" });
   }
 
-  const isSeller = String(request.seller_id) === String(req.user.id);
-  const isRequester = String(request.requester_id) === String(req.user.id);
-  const sellerOnlyStatus = status === "accepted" || status === "rejected";
+  const isAgent = String(request.agentId) === String(req.user.id);
+  const isRequester = String(request.requesterId) === String(req.user.id);
+  const agentOnlyStatus = status === "accepted" || status === "rejected";
   const requesterOnlyStatus = status === "canceled";
 
   if (
-    (sellerOnlyStatus && !isSeller) ||
+    (agentOnlyStatus && !isAgent) ||
     (requesterOnlyStatus && !isRequester) ||
-    (!sellerOnlyStatus && !requesterOnlyStatus && !isSeller && !isRequester)
+    (!agentOnlyStatus && !requesterOnlyStatus && !isAgent && !isRequester)
   ) {
     return res.status(403).json({ message: "Not allowed" });
   }
@@ -127,12 +126,11 @@ const updateTourRequestStatus = async (req, res) => {
   request.status = status;
   await request.save();
 
-  const propertyTitle = request?.Property?.title || "your property";
   await createNotificationSafe({
-    ownerId: request.requester_id,
+    ownerId: request.requesterId,
     title: "Tour request updated",
-    description: `Status for ${propertyTitle} changed to ${status}.`,
-    type: "request_update",
+    description: `Status for your tour request changed to ${status}.`,
+    type: "requestUpdate",
   });
 
   return res.json({ message: "Status updated", tourRequest: request });
@@ -144,28 +142,28 @@ const getTourRequestsByRequester = async (req, res) => {
   if (!assertSelf(req, res, requesterId)) return;
 
   const requests = await TourRequest.findAll({
-    where: { requester_id: requesterId },
-    order: [["requested_at", "DESC"]],
+    where: { requesterId },
+    order: [["requestedAt", "DESC"]],
     include: [{ model: Property }],
   });
 
   return res.json(requests);
 };
 
-// Get tour requests for a seller (incoming)
-const getTourRequestsBySeller = async (req, res) => {
-  const { sellerId } = req.params;
-  if (!assertSelf(req, res, sellerId)) return;
+// Get tour requests for an agent (incoming)
+const getTourRequestsByAgent = async (req, res) => {
+  const { agentId } = req.params;
+  if (!assertSelf(req, res, agentId)) return;
 
   const requests = await TourRequest.findAll({
-    where: { seller_id: sellerId },
-    order: [["requested_at", "DESC"]],
+    where: { agentId },
+    order: [["requestedAt", "DESC"]],
     include: [
       { model: Property },
       {
         model: User,
         as: "requester",
-        attributes: ["id", "first_name", "last_name", "email", "phone"],
+        attributes: ["id", "firstName", "lastName", "email", "phone"],
       },
     ],
   });
@@ -179,8 +177,8 @@ const getTourRequestByRequesterAndProperty = async (req, res) => {
   if (!assertSelf(req, res, requesterId)) return;
 
   const request = await TourRequest.findOne({
-    where: { requester_id: requesterId, property_id: propertyId },
-    order: [["requested_at", "DESC"]],
+    where: { requesterId, propertyId },
+    order: [["requestedAt", "DESC"]],
     include: [{ model: Property }],
   });
 
@@ -195,6 +193,6 @@ module.exports = {
   createTourRequest,
   updateTourRequestStatus,
   getTourRequestsByRequester,
-  getTourRequestsBySeller,
+  getTourRequestsByAgent,
   getTourRequestByRequesterAndProperty,
 };

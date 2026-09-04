@@ -6,9 +6,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 const signUserToken = (userPayload) =>
   jwt.sign(userPayload, JWT_SECRET, { expiresIn: "7d" });
 
-// Sequelize instances expose toJSON() (which also renames first_name/
-// last_name/etc to camelCase); plain objects, like the mocks unit tests
-// pass in, don't - so only call it when it's actually there.
 const toSafeUser = (user) => {
   const safeUser = typeof user.toJSON === "function" ? user.toJSON() : user;
   delete safeUser.password;
@@ -93,8 +90,8 @@ const createUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await User.create({
-    first_name: firstName,
-    last_name: lastName,
+    firstName,
+    lastName,
     email,
     password: hashedPassword,
     phone,
@@ -155,7 +152,7 @@ const updateUserFeedbackRating = async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  user.feedback_rating = rating;
+  user.feedbackRating = rating;
 
   await user.save();
 

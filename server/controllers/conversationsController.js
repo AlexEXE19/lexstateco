@@ -10,8 +10,8 @@ const { assertSelf } = require("../middlewares/auth");
 const ensureParticipant = (conversation, userId) => {
   return (
     conversation &&
-    (Number(conversation.buyer_id) === Number(userId) ||
-      Number(conversation.seller_id) === Number(userId))
+    (Number(conversation.buyerId) === Number(userId) ||
+      Number(conversation.agentId) === Number(userId))
   );
 };
 
@@ -21,17 +21,14 @@ const ensureParticipant = (conversation, userId) => {
 const notifyMessage = async ({ conversation, senderId, content }) => {
   try {
     const recipientId =
-      Number(conversation.buyer_id) === Number(senderId)
-        ? conversation.seller_id
-        : conversation.buyer_id;
-
-    const property = await Property.findByPk(conversation.property_id);
-    const propertyTitle = property?.title || "the property";
+      Number(conversation.buyerId) === Number(senderId)
+        ? conversation.agentId
+        : conversation.buyerId;
 
     await Notification.create({
-      owner_id: recipientId,
+      ownerId: recipientId,
       title: "New message",
-      description: `You received a message about ${propertyTitle}.`,
+      description: "You received a message about the property.",
       type: "message",
     });
   } catch (err) {
@@ -52,12 +49,12 @@ const startConversation = async (req, res) => {
     return res.status(404).json({ message: "Property not found" });
   }
 
-  if (Number(property.seller_id) === Number(senderId)) {
+  if (Number(property.agentId) === Number(senderId)) {
     return res.status(400).json({ message: "Owner cannot start chat" });
   }
 
   let conversation = await Conversation.findOne({
-    where: { property_id: propertyId, buyer_id: senderId },
+    where: { propertyId, buyerId: senderId },
     include: [{ model: Property }],
   });
 
@@ -71,9 +68,9 @@ const startConversation = async (req, res) => {
 
   if (!conversation) {
     conversation = await Conversation.create({
-      property_id: propertyId,
-      buyer_id: senderId,
-      seller_id: property.seller_id,
+      propertyId,
+      buyerId: senderId,
+      agentId: property.agentId,
     });
     conversation = await Conversation.findByPk(conversation.id, {
       include: [{ model: Property }],
@@ -83,8 +80,8 @@ const startConversation = async (req, res) => {
   let message = null;
   if (content) {
     message = await Message.create({
-      conversation_id: conversation.id,
-      sender_id: senderId,
+      conversationId: conversation.id,
+      senderId,
       content,
     });
     await notifyMessage({ conversation, senderId, content });
@@ -100,12 +97,12 @@ const getConversationsByUser = async (req, res) => {
   const conversations = await Conversation.findAll({
     where: {
       [require("sequelize").Op.or]: [
-        { buyer_id: userId },
-        { seller_id: userId },
+        { buyerId: userId },
+        { agentId: userId },
       ],
     },
     include: [{ model: Property }],
-    order: [["updated_at", "DESC"]],
+    order: [["updatedAt", "DESC"]],
   });
 
   return res.json(conversations);
@@ -116,7 +113,7 @@ const getConversationForProperty = async (req, res) => {
   if (!assertSelf(req, res, userId)) return;
 
   const conversation = await Conversation.findOne({
-    where: { property_id: propertyId, buyer_id: userId },
+    where: { propertyId, buyerId: userId },
     include: [{ model: Property }],
   });
 
@@ -136,8 +133,8 @@ const getMessagesForConversation = async (req, res) => {
   }
 
   const messages = await Message.findAll({
-    where: { conversation_id: conversationId },
-    order: [["created_at", "ASC"]],
+    where: { conversationId },
+    order: [["createdAt", "ASC"]],
   });
 
   return res.json(messages);
@@ -158,13 +155,13 @@ const postMessage = async (req, res) => {
   }
 
   const message = await Message.create({
-    conversation_id: conversationId,
-    sender_id: senderId,
+    conversationId,
+    senderId,
     content,
   });
 
   await Conversation.update(
-    { updated_at: new Date() },
+    { updatedAt: new Date() },
     { where: { id: conversationId } },
   );
 

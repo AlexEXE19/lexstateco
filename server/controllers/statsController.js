@@ -5,9 +5,9 @@ const getStats = async (req, res) => {
   const [userCount, propertyCount, averageRating] = await Promise.all([
     User.count(),
     Property.count(),
-    User.aggregate("feedback_rating", "AVG", {
+    User.aggregate("feedbackRating", "AVG", {
       where: {
-        feedback_rating: { [Op.ne]: null },
+        feedbackRating: { [Op.ne]: null },
       },
     }),
   ]);

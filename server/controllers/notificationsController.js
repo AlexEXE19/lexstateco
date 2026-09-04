@@ -6,8 +6,8 @@ const getNotificationsByOwner = async (req, res) => {
   if (!assertSelf(req, res, ownerId)) return;
 
   const notifications = await Notification.findAll({
-    where: { owner_id: ownerId },
-    order: [["created_at", "DESC"]],
+    where: { ownerId },
+    order: [["createdAt", "DESC"]],
   });
 
   return res.json(notifications);
@@ -17,7 +17,7 @@ const clearNotificationsForOwner = async (req, res) => {
   const { ownerId } = req.params;
   if (!assertSelf(req, res, ownerId)) return;
 
-  await Notification.destroy({ where: { owner_id: ownerId } });
+  await Notification.destroy({ where: { ownerId } });
   return res.json({ message: "Notifications cleared" });
 };
 
@@ -26,7 +26,7 @@ const deleteNotification = async (req, res) => {
   if (!assertSelf(req, res, ownerId)) return;
 
   const deleted = await Notification.destroy({
-    where: { id: notificationId, owner_id: ownerId },
+    where: { id: notificationId, ownerId },
   });
 
   if (!deleted) {
