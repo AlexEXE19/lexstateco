@@ -12,6 +12,7 @@ export const useSellerInfo = (sellerId: number) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (sellerId === -1) return;
     let cancelled = false;
 
     const fetchSellerInfo = async () => {

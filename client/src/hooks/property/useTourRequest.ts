@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import baseURL from "../../config/baseUrl";
-import { Property, TourRequest, User } from "../../types/types";
 import { useFeedbackPrompt } from "../useFeedbackPrompt";
+import { TourRequest } from "../../schemas/TourRequest";
+import { Property } from "../../schemas/Property";
+import { User } from "../../schemas/User";
 
 export type RequestStatus = "idle" | "loading" | "success" | "error";
 
@@ -40,9 +42,13 @@ export const useTourRequest = (
       try {
         const res = await axios.get<TourRequest>(
           `${baseURL}/tour-requests/requester/${currentUser.id}/property/${selectedProperty.id}`,
+          {
+            validateStatus: (status) => status === 200 || status === 404,
+          },
         );
         setTourRequest(res.data);
       } catch (err: any) {
+        console.error(err);
         setTourRequest(null);
       }
     };
@@ -81,7 +87,7 @@ export const useTourRequest = (
       setRequestStatus("loading");
       const res = await axios.post(`${baseURL}/tour-requests`, {
         propertyId: selectedProperty.id,
-        sellerId: selectedProperty.sellerId,
+        sellerId: selectedProperty.agentId,
         requesterId: Number(currentUser.id),
         requestedAt: isoDateTime,
         status: "pending",

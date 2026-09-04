@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import userReducer, { logInUser, logOutUser } from "./userSlice";
 import { getStoredToken } from "../../utils/auth";
-import { User } from "../../types/types";
+import { User } from "../../schemas/User";
 
 const anonymousUser: User = {
   id: "-1",
@@ -18,9 +18,7 @@ describe("userSlice", () => {
   });
 
   it("starts as the anonymous user when no token is stored", () => {
-    expect(userReducer(undefined, { type: "@@INIT" })).toEqual(
-      anonymousUser,
-    );
+    expect(userReducer(undefined, { type: "@@INIT" })).toEqual(anonymousUser);
   });
 
   it("logInUser stores the logged-in user and clears the password field", () => {

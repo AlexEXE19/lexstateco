@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import baseURL from "../../config/baseUrl";
-import { Property } from "../../types/types";
+import { Property } from "../../schemas/Property";
 
 export const useSavedProperties = (userId: string) => {
-  const [properties, setProperties] = useState<Property[]>();
+  const [properties, setProperties] = useState<Property[]>([]);
 
   useEffect(() => {
     const fetchSavedProperties = async () => {
+      if (userId === "-1") return;
       try {
         const savedResponse = await axios.get(
           `${baseURL}/saved-properties/${userId}`,

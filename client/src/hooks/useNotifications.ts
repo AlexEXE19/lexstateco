@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import baseURL from "../config/baseUrl";
-import { Notification } from "../types/types";
+import { Notification } from "../schemas/Notification";
 
 export const formatTimeAgo = (timestamp: string) => {
   const now = Date.now();
