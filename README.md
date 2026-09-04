@@ -1,6 +1,6 @@
 ## LexEstateCo
 
-A full-stack real-estate marketplace — sellers list properties, buyers browse/filter/save them, and both sides can message each other and book tours. React + Vite on the frontend, Express + Sequelize (MySQL) on the backend. Started as a way to properly learn how a full app fits together end to end, so some corners are more polished than others.
+A full-stack real-estate marketplace — agents list properties, buyers browse/filter/save them, and both sides can message each other and book tours. React + Vite on the frontend, Express + Sequelize (Postgres) on the backend. Started as a way to properly learn how a full app fits together end to end, so some corners are more polished than others.
 
 ### What's actually in here
 
@@ -16,8 +16,8 @@ A full-stack real-estate marketplace — sellers list properties, buyers browse/
 ### Tech stack
 
 - **Client**: React 18, TypeScript, Vite, Redux Toolkit, React Router, TailwindCSS
-- **Server**: Node/Express, Sequelize, MySQL, JWT, bcrypt, multer for uploads
-- **Testing**: Jest (server, unit + an integration suite that spins up a real throwaway MySQL container), Vitest + React Testing Library (client)
+- **Server**: Node/Express, Sequelize, Postgres, JWT, bcrypt, multer for uploads
+- **Testing**: Jest (server, unit + an integration suite that spins up a real throwaway Postgres container), Vitest + React Testing Library (client)
 - **CI**: GitHub Actions runs both test suites + a production build on push/PR
 
 ### Layout
@@ -35,21 +35,21 @@ server/
   controllers/  business logic + ownership checks
   models/       Sequelize models
   middlewares/  requireAuth / assertSelf
-  test/         integration test harness (spins up its own MySQL container)
+  test/         integration test harness (spins up its own Postgres container)
 ```
 
 Nothing too clever — it's a pretty standard REST API with a normal-shaped React app on top.
 
 ### Getting set up
 
-You need Node 18+ (I run this through nvm) and either a local MySQL instance or the Docker setup below.
+You need Node 18+ (I run this through nvm) and either a local Postgres instance or the Docker setup below.
 
 **server/.env**
 
 ```
 PORT=5000
 DB_HOST=localhost
-DB_PORT=3306
+DB_PORT=5432
 DB_USER=<your-db-username>
 DB_PASSWORD=<your-db-password>
 DB_NAME=<your-db-name>
@@ -77,7 +77,7 @@ API lands on `PORT` (5000 by default), Vite dev server on `5173` with hot reload
 
 ```bash
 npm test --prefix server              # unit tests, mocked Sequelize
-npm run test:integration --prefix server   # real MySQL in a throwaway docker container, needs Docker running
+npm run test:integration --prefix server   # real Postgres in a throwaway docker container, needs Docker running
 npm test --prefix client              # Vitest + RTL
 ```
 
@@ -89,9 +89,9 @@ The integration suite exists because mocks will happily accept a query with the 
 |---|---|---|
 | Auth | `POST /auth/login`, `POST /auth/register` | public |
 | Users | `GET /users/`, `GET /users/:id`, `GET /users/email/search`, `PUT /users/change-password` | change-password only |
-| Properties | `GET /properties/`, `GET /properties/:id`, `GET /properties/seller-id/:sellerId`, `GET /properties/location/:location`, `POST /properties/`, `PUT /properties/:propertyId`, `DELETE /properties/:propertyId`, `POST /properties/:propertyId/images` | reads public, writes require auth + ownership |
+| Properties | `GET /properties/`, `GET /properties/:id`, `GET /properties/agent-id/:agentId`, `GET /properties/location/:location`, `POST /properties/`, `PUT /properties/:propertyId`, `DELETE /properties/:propertyId`, `POST /properties/:propertyId/images` | reads public, writes require auth + ownership |
 | Saved properties | `GET /saved-properties/:userId`, `POST /saved-properties/check`, `POST /saved-properties/`, `DELETE /saved-properties/` | auth required |
-| Tour requests | `POST /tour-requests/`, `GET /tour-requests/requester/:requesterId`, `GET /tour-requests/seller/:sellerId`, `GET /tour-requests/requester/:requesterId/property/:propertyId`, `PUT /tour-requests/:id/status` | auth required |
+| Tour requests | `POST /tour-requests/`, `GET /tour-requests/requester/:requesterId`, `GET /tour-requests/agent/:agentId`, `GET /tour-requests/requester/:requesterId/property/:propertyId`, `PUT /tour-requests/:id/status` | auth required |
 | Conversations | `POST /conversations/start`, `GET /conversations/user/:userId`, `GET /conversations/property/:propertyId/user/:userId`, `GET /conversations/:conversationId/messages/:userId`, `POST /conversations/:conversationId/messages` | auth required |
 | Notifications | `GET /notifications/:ownerId`, `DELETE /notifications/:ownerId`, `DELETE /notifications/:ownerId/:notificationId` | auth required |
 | Stats | `GET /stats/`, `POST /stats/feedback` | public |
@@ -100,16 +100,16 @@ The integration suite exists because mocks will happily accept a query with the 
 
 ### Data models
 
-- **User** — first/last name, email, hashed password, phone
-- **Property** — title, price, location, neighborhood, zip code, description, size, image refs, seller (FK to User)
+- **User** — first/last name, email, hashed password, phone, feedback rating
+- **Property** — title, price, `location` (JSON: country/city/neighborhood/address/zipCode, indexed on city), description, size, image refs, agent (FK to User), status/type (enums), bedrooms, bathrooms, amenities (array of enum)
 - **SavedProperty** — user + property, basically a favorites join table
-- **TourRequest** — property, seller, requester, requested time, status (pending/accepted/rejected/canceled)
+- **TourRequest** — property, agent, requester, requested time, status (enum: pending/accepted/rejected/canceled)
 - **Conversation** / **Message** — one conversation per buyer+property, messages belong to a conversation
-- **Notification** — owner, title, description, type
+- **Notification** — owner, title, description, type (enum)
 
 ### Docker Compose
 
-- `docker compose up --build` spins up MySQL + the API + the client (served as a static build via nginx)
+- `docker compose up --build` spins up Postgres + the API + the client (served as a static build via nginx)
 - Client on `http://localhost:8080`, API on `http://localhost:5000`
 - The client's API URL is baked in at build time (see `client/Dockerfile`), so if you change `VITE_API_HOST`/`VITE_API_PORT` you need to rebuild that image, not just restart it
 - This is the "does it actually work end to end" setup, not a dev loop — for actually iterating on the UI, run `npm run dev --prefix client` locally against the dockerized API instead, you'll get instant hot reload instead of a multi-second rebuild every time

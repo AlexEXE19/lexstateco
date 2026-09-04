@@ -27,7 +27,7 @@ jobs:
       - name: Unit tests
         run: npm test
 
-      - name: Integration tests (real MySQL)
+      - name: Integration tests (real Postgres)
         run: npm run test:integration
 
   client:
