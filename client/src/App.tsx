@@ -5,20 +5,28 @@ import {
   useLocation,
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
+import Navbar from "./components/layout/Navbar";
+import SidePanel from "./components/layout/SidePanel";
+import Footer from "./components/layout/Footer";
+import FeedbackModal from "./components/modals/FeedbackModal";
+
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import MyAccountPage from "./pages/MyAccountPage";
-import Navbar from "./components/layout/Navbar";
-import Footer from "./components/layout/Footer";
 import PropertiesPage from "./pages/PropertiesPage";
 import RedirectPage from "./pages/RedirectPage";
 import GetStartedPage from "./pages/GetStartedPage";
-import FeedbackModal from "./components/modals/FeedbackModal";
-import PropertyDetailsModal from "./components/modals/PropertyDetailsModal";
+import ViewPropertyPage from "./pages/ViewPropertyPage";
+import UserProfilePage from "./pages/UserProfilePage";
+import ManagePage from "./pages/ManagePage";
+import SettingsPage from "./pages/SettingsPage";
+
 import { RootState } from "./state/store";
 import { closeFeedbackModal } from "./state/feedback/feedbackSlice";
+
 import { dismissFeedbackPrompt } from "./hooks/useFeedbackPrompt";
+import { useClientMetadata } from "./hooks/useClientMetadata";
 
 // The properties page is a fixed-viewport, map-first layout with its own
 // internal scrolling - it doesn't get a footer, and the shell around it
@@ -38,12 +46,19 @@ const AppShell: React.FC = () => {
     dismissFeedbackPrompt(userId);
     dispatch(closeFeedbackModal());
   };
+  useClientMetadata();
 
   return (
-    <div className={isPropertiesPage ? "flex h-screen flex-col overflow-hidden" : undefined}>
+    <div
+      className={
+        isPropertiesPage ? "flex h-screen flex-col overflow-hidden" : undefined
+      }
+    >
       <Navbar />
+
+      <SidePanel />
+
       <FeedbackModal isOpen={isFeedbackOpen} onClose={handleCloseFeedback} />
-      <PropertyDetailsModal />
       <div className={isPropertiesPage ? "min-h-0 flex-1" : undefined}>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -51,7 +66,10 @@ const AppShell: React.FC = () => {
           <Route path="/properties" element={<PropertiesPage />}></Route>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/account" element={<MyAccountPage />} />
+          <Route path="/profile/me" element={<UserProfilePage />} />
+          <Route path="/profile/manage" element={<ManagePage />} />
+          <Route path="/properties/:id" element={<ViewPropertyPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
 
           <Route path="*" element={<RedirectPage />} />
         </Routes>

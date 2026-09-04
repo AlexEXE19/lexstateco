@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { PanelRightOpen, PanelRightClose } from "lucide-react";
 import { RootState } from "../../state/store";
 import { logOutUser } from "../../state/user/userSlice";
 import { setLanguage } from "../../state/lang/langSlice";
+import { toggle } from "../../state/sidePanel/sidePanelSlice";
 import { useTranslation } from "../../utils/i18n";
 import { useNotifications } from "../../hooks/useNotifications";
-import { Notification } from "../../types/types";
-import { setTab, setConversationId } from "../../state/tab/tabSlice";
 import NotificationsMenu from "./NotificationsMenu";
-import LanguageMenu from "./LanguageMenu";
 import NavAuthLinks from "./NavAuthLinks";
 
 type OpenMenu = "notifications" | "language" | null;
@@ -17,16 +16,14 @@ type OpenMenu = "notifications" | "language" | null;
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const userId = useSelector((state: RootState) => state.user.id);
-  const lang = useSelector((state: RootState) => state.lang);
+  const isPanelOpen = useSelector((state: RootState) => state.sidePanel.isOpen);
+
   const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
-  const {
-    notifications,
-    clearNotifications,
-    loadNotifications,
-    deleteNotification,
-  } = useNotifications(userId);
+  const { notifications, clearNotifications, loadNotifications } =
+    useNotifications(userId);
 
   const handleClick = () => {
     dispatch(logOutUser());
@@ -45,14 +42,6 @@ const Navbar: React.FC = () => {
     }
   }, [dispatch]);
 
-  const changeLanguage = (value: "en" | "ro") => {
-    dispatch(setLanguage(value));
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("lex_lang", value);
-    }
-    setOpenMenu(null);
-  };
-
   const toggleNotifications = () => {
     const nextOpen = openMenu === "notifications" ? null : "notifications";
     setOpenMenu(nextOpen);
@@ -61,28 +50,12 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const toggleLanguage = () => {
-    setOpenMenu((current) => (current === "language" ? null : "language"));
-  };
-
-  const handleNotificationClick = async (notification: Notification) => {
-    let targetTab = "requests";
-    if (notification.type === "incoming_request") targetTab = "audience";
-    if (notification.type === "message") targetTab = "messages";
-
-    navigate("/account");
-    dispatch(setTab(targetTab));
-    if (notification.type === "message") {
-      dispatch(setConversationId(null));
-    }
-    setOpenMenu(null);
-
-    await deleteNotification(notification.id);
-  };
+  // TO DO UPDATE TO NEW SCHEMA
+  const handleNotificationClick = async () => {};
 
   return (
-    <nav className="sticky top-0 z-20 w-full bg-gradient-to-r from-background via-background-surface to-primary-900/90 text-white shadow-2xl shadow-black/20 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
+    <nav className="sticky z-10 top-0  w-full bg-gradient-to-r from-background via-background-surface to-primary-900/90 text-white shadow-2xl shadow-black/20 backdrop-blur-md">
+      <div className="flex items-center justify-between gap-4 mx-5 px-5 py-4">
         <Link to="/" className="flex items-center gap-3 text-white">
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-lg font-black tracking-tight ring-1 ring-white/15">
             LE
@@ -95,14 +68,18 @@ const Navbar: React.FC = () => {
           </div>
         </Link>
 
-        <div className="flex items-center gap-3">
-          {/* <Link
-            to="/get-started"
-            className="rounded-xl px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:-translate-y-[1px] hover:bg-white/10"
-          >
-            {t("navbar.getStarted")}
-          </Link> */}
+        <NavLink
+          to="/properties"
+          className={({ isActive }) =>
+            `text-sm font-medium transition ${
+              isActive ? "text-white" : "text-slate-300 hover:text-white"
+            }`
+          }
+        >
+          {t("nav.properties") || "Properties"}
+        </NavLink>
 
+        <div className="flex items-center gap-3">
           {userId !== "-1" && (
             <NotificationsMenu
               notifications={notifications}
@@ -113,14 +90,17 @@ const Navbar: React.FC = () => {
             />
           )}
 
-          <LanguageMenu
-            lang={lang}
-            isOpen={openMenu === "language"}
-            onToggle={toggleLanguage}
-            onChange={changeLanguage}
-          />
-
           <NavAuthLinks isLoggedIn={userId !== "-1"} onLogout={handleClick} />
+
+          {/* Side panel toggle */}
+          <button
+            className="h-10 rounded-xl px-4 text-sm font-semibold text-white  transition hover:bg-white/10"
+            onClick={() => {
+              dispatch(toggle());
+            }}
+          >
+            {isPanelOpen ? <PanelRightOpen /> : <PanelRightClose />}
+          </button>
         </div>
       </div>
     </nav>
