@@ -11,7 +11,7 @@ const Message = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    conversation_id: {
+    conversationId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -19,7 +19,7 @@ const Message = sequelize.define(
         key: "id",
       },
     },
-    sender_id: {
+    senderId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -28,10 +28,10 @@ const Message = sequelize.define(
       },
     },
     content: {
-      type: DataTypes.TEXT("medium"),
+      type: DataTypes.TEXT,
       allowNull: false,
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
@@ -39,25 +39,8 @@ const Message = sequelize.define(
   },
   {
     timestamps: false,
-    underscored: true,
     tableName: "messages",
   },
 );
-
-Message.prototype.toJSON = function () {
-    const values = this.get();
-
-
-  values.conversationId = values.conversation_id;
-  delete values.conversation_id;
-
-  values.senderId = values.sender_id;
-  delete values.sender_id;
-
-  values.createdAt = values.created_at;
-  delete values.created_at;
-
-  return values;
-};
 
 module.exports = Message;

@@ -11,7 +11,7 @@ const Conversation = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    property_id: {
+    propertyId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -19,7 +19,7 @@ const Conversation = sequelize.define(
         key: "id",
       },
     },
-    buyer_id: {
+    buyerId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -27,7 +27,7 @@ const Conversation = sequelize.define(
         key: "id",
       },
     },
-    seller_id: {
+    agentId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -38,29 +38,8 @@ const Conversation = sequelize.define(
   },
   {
     timestamps: true,
-    underscored: true,
     tableName: "conversations",
   },
 );
-
-Conversation.prototype.toJSON = function () {
-  const values = this.get();
-
-  values.propertyId = values.property_id;
-  delete values.property_id;
-
-  values.buyerId = values.buyer_id;
-  delete values.buyer_id;
-
-  values.sellerId = values.seller_id;
-  delete values.seller_id;
-
-  if (values.updated_at) {
-    values.updatedAt = values.updated_at;
-    delete values.updated_at;
-  }
-
-  return values;
-};
 
 module.exports = Conversation;

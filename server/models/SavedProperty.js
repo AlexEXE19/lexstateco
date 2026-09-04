@@ -6,7 +6,7 @@ const Property = require("./Property");
 const SavedProperty = sequelize.define(
   "SavedProperty",
   {
-    user_id: {
+    userId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       references: {
@@ -15,7 +15,7 @@ const SavedProperty = sequelize.define(
       },
       allowNull: false,
     },
-    property_id: {
+    propertyId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       references: {
@@ -27,23 +27,8 @@ const SavedProperty = sequelize.define(
   },
   {
     timestamps: false,
-    underscored: true,
     tableName: "saved_properties",
-  }
+  },
 );
-
-// Overwriting function - used for parsing from "snake case" to "camel case"
-SavedProperty.prototype.toJSON = function () {
-    const values = this.get();
-
-
-  values.userId = values.user_id;
-  delete values.user_id;
-
-  values.propertyId = values.property_id;
-  delete values.property_id;
-
-  return values;
-};
 
 module.exports = SavedProperty;

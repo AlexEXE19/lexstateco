@@ -9,11 +9,11 @@ const User = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    first_name: {
+    firstName: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    last_name: {
+    lastName: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -30,7 +30,7 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    feedback_rating: {
+    feedbackRating: {
       type: DataTypes.INTEGER,
       allowNull: true,
       validate: {
@@ -41,25 +41,8 @@ const User = sequelize.define(
   },
   {
     timestamps: false,
-    underscored: true,
     tableName: "users",
   },
 );
-
-// Overwriting function - used for parsing from "snake case" to "camel case"
-User.prototype.toJSON = function () {
-  const values = this.get();
-
-  values.firstName = values.first_name;
-  delete values.first_name;
-
-  values.lastName = values.last_name;
-  delete values.last_name;
-
-  values.feedbackRating = values.feedback_rating;
-  delete values.feedback_rating;
-
-  return values;
-};
 
 module.exports = User;

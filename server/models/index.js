@@ -9,43 +9,44 @@ const Conversation = require("./Conversation");
 const Message = require("./Message");
 
 // Defining the relationships
-User.hasMany(Property, { foreignKey: "seller_id" });
-Property.belongsTo(User, { foreignKey: "seller_id" });
+// agentId on Property references User.id (the property's listing agent).
+User.hasMany(Property, { foreignKey: "agentId", sourceKey: "id" });
+Property.belongsTo(User, { foreignKey: "agentId", targetKey: "id" });
 
-Property.hasMany(SavedProperty, { foreignKey: "property_id" });
-SavedProperty.belongsTo(Property, { foreignKey: "property_id" });
+Property.hasMany(SavedProperty, { foreignKey: "propertyId" });
+SavedProperty.belongsTo(Property, { foreignKey: "propertyId" });
 
-User.hasMany(SavedProperty, { foreignKey: "user_id" });
-SavedProperty.belongsTo(User, { foreignKey: "user_id" });
+User.hasMany(SavedProperty, { foreignKey: "userId" });
+SavedProperty.belongsTo(User, { foreignKey: "userId" });
 
-User.hasMany(TourRequest, { as: "incomingTours", foreignKey: "seller_id" });
-User.hasMany(TourRequest, { as: "sentTours", foreignKey: "requester_id" });
-TourRequest.belongsTo(User, { as: "seller", foreignKey: "seller_id" });
-TourRequest.belongsTo(User, { as: "requester", foreignKey: "requester_id" });
+User.hasMany(TourRequest, { as: "incomingTours", foreignKey: "agentId" });
+User.hasMany(TourRequest, { as: "sentTours", foreignKey: "requesterId" });
+TourRequest.belongsTo(User, { as: "agent", foreignKey: "agentId" });
+TourRequest.belongsTo(User, { as: "requester", foreignKey: "requesterId" });
 
-User.hasMany(Notification, { as: "notifications", foreignKey: "owner_id" });
-Notification.belongsTo(User, { as: "owner", foreignKey: "owner_id" });
+User.hasMany(Notification, { as: "notifications", foreignKey: "ownerId" });
+Notification.belongsTo(User, { as: "owner", foreignKey: "ownerId" });
 
-Property.hasMany(Conversation, { foreignKey: "property_id" });
-Conversation.belongsTo(Property, { foreignKey: "property_id" });
+Property.hasMany(Conversation, { foreignKey: "propertyId" });
+Conversation.belongsTo(Property, { foreignKey: "propertyId" });
 
 User.hasMany(Conversation, {
   as: "buyerConversations",
-  foreignKey: "buyer_id",
+  foreignKey: "buyerId",
 });
 User.hasMany(Conversation, {
-  as: "sellerConversations",
-  foreignKey: "seller_id",
+  as: "agentConversations",
+  foreignKey: "agentId",
 });
-Conversation.belongsTo(User, { as: "buyer", foreignKey: "buyer_id" });
-Conversation.belongsTo(User, { as: "seller", foreignKey: "seller_id" });
+Conversation.belongsTo(User, { as: "buyer", foreignKey: "buyerId" });
+Conversation.belongsTo(User, { as: "agent", foreignKey: "agentId" });
 
-Conversation.hasMany(Message, { foreignKey: "conversation_id" });
-Message.belongsTo(Conversation, { foreignKey: "conversation_id" });
-Message.belongsTo(User, { as: "sender", foreignKey: "sender_id" });
+Conversation.hasMany(Message, { foreignKey: "conversationId" });
+Message.belongsTo(Conversation, { foreignKey: "conversationId" });
+Message.belongsTo(User, { as: "sender", foreignKey: "senderId" });
 
-Property.hasMany(TourRequest, { foreignKey: "property_id" });
-TourRequest.belongsTo(Property, { foreignKey: "property_id" });
+Property.hasMany(TourRequest, { foreignKey: "propertyId" });
+TourRequest.belongsTo(Property, { foreignKey: "propertyId" });
 
 module.exports = {
   sequelize,
