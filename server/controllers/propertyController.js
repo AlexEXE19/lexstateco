@@ -2,24 +2,35 @@ const fs = require("fs");
 const path = require("path");
 const { Op } = require("sequelize");
 const Property = require("../models/Property"); // Import the Sequelize model
+const sequelize = require("../config/db");
+
+// jsonKey is always one of our own hardcoded field names, never user
+// input, so this is safe to interpolate directly.
+const locationWhere = (jsonKey, value) =>
+  sequelize.where(sequelize.literal(`"location"->>'${jsonKey}'`), {
+    [Op.iLike]: `%${value}%`,
+  });
 
 // Get all properties, optionally filtered by any combination of the same
-// fields PropertyFilterForm exposes on the client: location, neighborhood
-// (substring match), and minPrice/maxPrice (range on price). Every param is
-// optional - with none given, `where` stays empty and this behaves exactly
-// like fetching everything.
+// fields PropertyFilterForm exposes on the client: location (matched
+// against location.city), neighborhood (matched against
+// location.neighborhood), and minPrice/maxPrice (range on price). Every
+// param is optional - with none given, `where` stays empty and this
+// behaves exactly like fetching everything.
 const getAllProperties = async (req, res) => {
   const { location, neighborhood, minPrice, maxPrice } = req.query;
 
-  const where = {};
+  const andConditions = [];
 
   if (location) {
-    where.location = { [Op.like]: `%${location}%` };
+    andConditions.push(locationWhere("city", location));
   }
 
   if (neighborhood) {
-    where.neighborhood = { [Op.like]: `%${neighborhood}%` };
+    andConditions.push(locationWhere("neighborhood", neighborhood));
   }
+
+  const where = andConditions.length ? { [Op.and]: andConditions } : {};
 
   if (minPrice || maxPrice) {
     where.price = {};
@@ -43,11 +54,13 @@ const getPropertyById = async (req, res) => {
   res.status(200).json(property);
 };
 
-// Get properties by location - not used but subject of using in future version to avoid overfetching
+// Get properties by city - not used but subject of using in future version to avoid overfetching
 const getPropertiesByLocation = async (req, res) => {
   const { location } = req.body;
 
-  const properties = await Property.findAll({ where: { location } });
+  const properties = await Property.findAll({
+    where: locationWhere("city", location),
+  });
 
   if (properties.length === 0) {
     return res
@@ -58,47 +71,51 @@ const getPropertiesByLocation = async (req, res) => {
   res.status(200).json(properties);
 };
 
-// Get properties by seller ID
-const getPropertyBySellerId = async (req, res) => {
-  const { sellerId } = req.params;
+// Get properties by agent ID
+const getPropertyByAgentId = async (req, res) => {
+  const { agentId } = req.params;
 
   const properties = await Property.findAll({
-    where: { seller_id: sellerId },
+    where: { agentId },
   });
 
   if (properties.length === 0) {
     return res
       .status(200)
-      .json({ message: `No properties found for seller ID: ${sellerId}` });
+      .json({ message: `No properties found for agent ID: ${agentId}` });
   }
 
   res.status(200).json(properties);
 };
 
-// Create a new property - sellerId comes from the authenticated user, not
+// Create a new property - agentId comes from the authenticated user, not
 // the request body, so you can't list a property under someone else's name.
 const createProperty = async (req, res) => {
   const {
-    title,
     price,
     location,
-    neighborhood,
-    zipCode,
     description,
     size,
     imageRefs = [],
+    status,
+    type,
+    bedrooms,
+    bathrooms,
+    amenities = [],
   } = req.body;
 
   const property = await Property.create({
-    title,
     price,
     location,
-    neighborhood,
-    zip_code: zipCode,
     description,
     size,
-    image_refs: imageRefs,
-    seller_id: req.user.id,
+    imageRefs,
+    status,
+    type,
+    bedrooms,
+    bathrooms,
+    amenities,
+    agentId: req.user.id,
   });
 
   res.status(201).json({
@@ -107,18 +124,20 @@ const createProperty = async (req, res) => {
   });
 };
 
-// Edit an existing property - only the listing's own seller may edit it.
+// Edit an existing property - only the listing's own agent may edit it.
 const editProperty = async (req, res) => {
   const { propertyId } = req.params;
   const {
-    title,
     price,
     location,
-    neighborhood,
-    zipCode,
     description,
     size,
     imageRefs,
+    status,
+    type,
+    bedrooms,
+    bathrooms,
+    amenities,
   } = req.body;
 
   const property = await Property.findByPk(propertyId);
@@ -127,32 +146,35 @@ const editProperty = async (req, res) => {
     return res.status(404).json({ message: "Property not found" });
   }
 
-  if (String(property.seller_id) !== String(req.user.id)) {
+  if (String(property.agentId) !== String(req.user.id)) {
     return res.status(403).json({ message: "Not allowed" });
   }
 
   const updatedFields = {
-    title,
     price,
     location,
-    neighborhood,
-    zip_code: zipCode,
     description,
     size,
+    status,
+    type,
+    bedrooms,
+    bathrooms,
+    amenities,
   };
 
   if (imageRefs !== undefined) {
-    updatedFields.image_refs = imageRefs;
+    updatedFields.imageRefs = imageRefs;
   }
 
   await property.update(updatedFields);
 
-  res
-    .status(200)
-    .json({ message: "Property updated successfully", updatedProperty: property });
+  res.status(200).json({
+    message: "Property updated successfully",
+    updatedProperty: property,
+  });
 };
 
-// Delete a property - only the listing's own seller may delete it.
+// Delete a property - only the listing's own agent may delete it.
 const deleteProperty = async (req, res) => {
   const { propertyId } = req.params;
 
@@ -162,7 +184,7 @@ const deleteProperty = async (req, res) => {
     return res.status(404).json({ message: "Property not found" });
   }
 
-  if (String(property.seller_id) !== String(req.user.id)) {
+  if (String(property.agentId) !== String(req.user.id)) {
     return res.status(403).json({ message: "Not allowed" });
   }
 
@@ -196,7 +218,7 @@ const uploadPropertyImages = async (req, res, next) => {
       return res.status(404).json({ message: "Property not found" });
     }
 
-    if (String(property.seller_id) !== String(req.user.id)) {
+    if (String(property.agentId) !== String(req.user.id)) {
       cleanupUploaded();
       return res.status(403).json({ message: "Not allowed" });
     }
@@ -209,13 +231,13 @@ const uploadPropertyImages = async (req, res, next) => {
       return relative;
     });
 
-    const updatedImages = [...(property.image_refs || []), ...uploadedPaths];
-    property.image_refs = updatedImages.slice(0, 8); // enforce max 8
+    const updatedImages = [...(property.imageRefs || []), ...uploadedPaths];
+    property.imageRefs = updatedImages.slice(0, 8); // enforce max 8
     await property.save();
 
     return res.status(200).json({
       message: "Images uploaded",
-      imageRefs: property.image_refs,
+      imageRefs: property.imageRefs,
     });
   } catch (err) {
     cleanupUploaded();
@@ -227,7 +249,7 @@ module.exports = {
   getAllProperties,
   getPropertyById,
   getPropertiesByLocation,
-  getPropertyBySellerId,
+  getPropertyByAgentId,
   createProperty,
   editProperty,
   deleteProperty,
