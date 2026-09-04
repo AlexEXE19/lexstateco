@@ -1,40 +1,49 @@
 import { useEffect } from "react";
+import { parseNominatimAddress } from "../../utils/norminatimParsings";
 
 export const useLocationSuggestions = (
   query: string | undefined,
   setSuggestions: (suggestions: any[]) => void,
+  toggle: boolean,
 ) => {
   useEffect(() => {
-    if (!query || query.length < 3) {
+    return;
+    if (!query || !toggle) {
       setSuggestions([]);
       return;
     }
 
-    const timer = setTimeout(() => {
-      const fetchLocations = async () => {
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=5&accept-language=en`,
-            {
-              headers: {
-                "User-Agent": "MyPropertyApp/1.0",
-              },
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?${query}&format=json&addressdetails=1&limit=3&accept-language=en`,
+          {
+            headers: {
+              "User-Agent": "MyPropertyApp/1.0",
             },
-          );
-          const data = await response.json();
-          const cityNames = [
-            ...new Set(data.map((obj: any) => obj.display_name)),
-          ];
-          setSuggestions(cityNames);
-        } catch (error) {
-          console.error("Autocomplete fetch error:", error);
-          setSuggestions([]);
-        }
-      };
+          },
+        );
+        const data = await response.json();
+        if (data.length) {
+          const uniqueMap = new Map();
+          data.forEach((obj: any) => {
+            const parsed = parseNominatimAddress(obj.address);
+            if (parsed.city) {
+              const key = `${parsed.city}-${parsed.county}-${parsed.country}`;
+              if (!uniqueMap.has(key)) {
+                uniqueMap.set(key, parsed);
+              }
+            }
+          });
 
-      fetchLocations();
+          setSuggestions(Array.from(uniqueMap.values()));
+        }
+      } catch (error) {
+        console.error("Autocomplete fetch error:", error);
+        setSuggestions([]);
+      }
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [query, setSuggestions]);
+  }, [query, setSuggestions, toggle]);
 };
