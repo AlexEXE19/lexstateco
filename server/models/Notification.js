@@ -2,6 +2,8 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const User = require("./User");
 
+const TYPE_VALUES = ["incomingRequest", "requestUpdate", "message"];
+
 const Notification = sequelize.define(
   "Notification",
   {
@@ -10,7 +12,7 @@ const Notification = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    owner_id: {
+    ownerId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -23,15 +25,14 @@ const Notification = sequelize.define(
       allowNull: false,
     },
     description: {
-      type: DataTypes.TEXT("medium"),
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     type: {
-      // incoming_request | request_update
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(...TYPE_VALUES),
       allowNull: false,
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
@@ -39,22 +40,10 @@ const Notification = sequelize.define(
   },
   {
     timestamps: false,
-    underscored: true,
     tableName: "notifications",
   },
 );
 
-Notification.prototype.toJSON = function () {
-    const values = this.get();
-
-
-  values.ownerId = values.owner_id;
-  delete values.owner_id;
-
-  values.timestamp = values.created_at;
-  delete values.created_at;
-
-  return values;
-};
+Notification.TYPE_VALUES = TYPE_VALUES;
 
 module.exports = Notification;

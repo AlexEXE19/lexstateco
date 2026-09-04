@@ -1,6 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
+const STATUS_VALUES = ["pending", "accepted", "rejected", "canceled"];
+
 const TourRequest = sequelize.define(
   "TourRequest",
   {
@@ -9,54 +11,34 @@ const TourRequest = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    property_id: {
+    propertyId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    seller_id: {
+    agentId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    requester_id: {
+    requesterId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    requested_at: {
+    requestedAt: {
       type: DataTypes.DATE,
       allowNull: false,
     },
     status: {
-      // string to avoid enum alteration issues; validation enforced in controller
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(...STATUS_VALUES),
       allowNull: false,
       defaultValue: "pending",
     },
   },
   {
     timestamps: false,
-    underscored: true,
     tableName: "tour_requests",
   },
 );
 
-// Ensure camelCase fields on responses
-TourRequest.prototype.toJSON = function () {
-    const values = this.get();
-
-
-  values.propertyId = values.property_id;
-  delete values.property_id;
-
-  values.sellerId = values.seller_id;
-  delete values.seller_id;
-
-  values.requesterId = values.requester_id;
-  delete values.requester_id;
-
-  values.requestedAt = values.requested_at;
-  delete values.requested_at;
-
-  return values;
-};
+TourRequest.STATUS_VALUES = STATUS_VALUES;
 
 module.exports = TourRequest;
