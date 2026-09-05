@@ -30,7 +30,7 @@ export const useCreatePropertyForm = () => {
   const closeStatusModal = () => {
     setStatusModal((prev) => ({ ...prev, open: false }));
     if (statusModal.goToAccount) {
-      navigate("/account");
+      navigate("/profile/manage?activeTab=myProperties");
       promptForFeedback();
     }
   };
