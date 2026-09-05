@@ -1,30 +1,36 @@
 import { useTranslation } from "../../utils/i18n";
-import { RequestStatus } from "../../hooks/property/useTourRequest";
+import {
+  RequestStatus,
+  useTourRequest,
+} from "../../hooks/property/useTourRequest";
+import { useNavigate } from "react-router-dom";
+import { Property } from "../../schemas/Property";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
 
 interface TourRequestPanelProps {
-  requestDate: string;
-  setRequestDate: (value: string) => void;
-  requestTime: string;
-  setRequestTime: (value: string) => void;
-  requestStatus: RequestStatus;
-  isPending: boolean;
-  isCanceled: boolean;
-  onRequestTour: () => void;
+  property: Property;
 }
 
 // Renders as a fragment (no wrapping element) so it can share a column
 // with MessageComposer in the detail page sidebar.
-const TourRequestPanel: React.FC<TourRequestPanelProps> = ({
-  requestDate,
-  setRequestDate,
-  requestTime,
-  setRequestTime,
-  requestStatus,
-  isPending,
-  isCanceled,
-  onRequestTour,
-}) => {
+const TourRequestPanel: React.FC<TourRequestPanelProps> = ({ property }) => {
   const { t } = useTranslation();
+
+  const currentUser = useSelector((state: RootState) => state.user);
+
+  const {
+    requestDate,
+    setRequestDate,
+    requestTime,
+    setRequestTime,
+    requestStatus,
+    handleRequestTour,
+    isPending,
+    isCanceled,
+  } = useTourRequest(property, currentUser);
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -56,7 +62,7 @@ const TourRequestPanel: React.FC<TourRequestPanelProps> = ({
       </div>
 
       <button
-        onClick={onRequestTour}
+        onClick={handleRequestTour}
         disabled={requestStatus === "loading"}
         className={`${
           isPending ? "btn-secondary" : "btn-primary"
@@ -74,9 +80,15 @@ const TourRequestPanel: React.FC<TourRequestPanelProps> = ({
         <p className="text-xs text-rose-600">{t("properties.errorAuth")}</p>
       )}
       {requestStatus === "success" && isPending && (
-        <p className="text-xs text-primary-700">
-          {t("properties.requestSaved")}
-        </p>
+        <button
+          onClick={() => {
+            navigate("/profile/manage?activeTab=requests");
+          }}
+        >
+          <p className="text-xs text-primary-700 hover:underline">
+            {t("properties.requestSaved")}
+          </p>
+        </button>
       )}
       {requestStatus === "success" && !isPending && (
         <p className="text-xs text-ink-subtle">

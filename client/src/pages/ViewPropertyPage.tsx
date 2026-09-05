@@ -14,8 +14,6 @@ import { useLocationApi } from "../hooks/property/useLocationApi";
 import { buildQuery } from "../utils/buildQuery";
 import { humanizeEnumValue } from "../utils/humanize";
 import { useSellerInfo } from "../hooks/property/useSellerInfo";
-import { useTourRequest } from "../hooks/property/useTourRequest";
-import { useConversationCompose } from "../hooks/property/useConversationCompose";
 import { useTranslation } from "../utils/i18n";
 
 const statusDotColor: Record<string, string> = {
@@ -59,7 +57,9 @@ const ViewPropertyPage: React.FC = () => {
     if (!addressQuery) return;
 
     (async () => {
-      const found = await getCoordinatesByQuery(buildQuery({ q: addressQuery }));
+      const found = await getCoordinatesByQuery(
+        buildQuery({ q: addressQuery }),
+      );
       if (active) setMapCoords(found);
     })();
 
@@ -68,25 +68,6 @@ const ViewPropertyPage: React.FC = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addressQuery]);
-  const {
-    requestDate,
-    setRequestDate,
-    requestTime,
-    setRequestTime,
-    requestStatus,
-    handleRequestTour,
-    isPending,
-    isCanceled,
-  } = useTourRequest(property, currentUser);
-  const {
-    showMessageCompose,
-    setShowMessageCompose,
-    messageText,
-    setMessageText,
-    messageStatus,
-    handleMessageClick,
-    handleSendFirstMessage,
-  } = useConversationCompose(property, currentUser);
 
   if (!property) return null;
 
@@ -107,10 +88,7 @@ const ViewPropertyPage: React.FC = () => {
   return (
     <div className="bg-canvas">
       <div className="mx-auto max-w-[1400px] px-6 py-8 lg:px-10">
-        <button
-          className="btn-quiet -ml-3 mb-6"
-          onClick={() => navigate(-1)}
-        >
+        <button className="btn-quiet -ml-3 mb-6" onClick={() => navigate(-1)}>
           <ArrowLeft size={15} />
           {t("properties.back")}
         </button>
@@ -196,26 +174,9 @@ const ViewPropertyPage: React.FC = () => {
 
               {!isOwner && (
                 <div className="mt-6 space-y-4 border-t border-line pt-6">
-                  <TourRequestPanel
-                    requestDate={requestDate}
-                    setRequestDate={setRequestDate}
-                    requestTime={requestTime}
-                    setRequestTime={setRequestTime}
-                    requestStatus={requestStatus}
-                    isPending={isPending}
-                    isCanceled={isCanceled}
-                    onRequestTour={handleRequestTour}
-                  />
+                  <TourRequestPanel property={property} />
 
-                  <MessageComposer
-                    showCompose={showMessageCompose}
-                    messageText={messageText}
-                    setMessageText={setMessageText}
-                    messageStatus={messageStatus}
-                    onMessageClick={handleMessageClick}
-                    onSend={handleSendFirstMessage}
-                    onCancel={() => setShowMessageCompose(false)}
-                  />
+                  <MessageComposer property={property} />
                 </div>
               )}
             </div>

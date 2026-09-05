@@ -1,42 +1,41 @@
 import { useTranslation } from "../../utils/i18n";
-import { MessageStatus } from "../../hooks/property/useConversationCompose";
+import {
+  MessageStatus,
+  useConversationCompose,
+} from "../../hooks/property/useConversationCompose";
+import { Property } from "../../schemas/Property";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
 
 interface MessageComposerProps {
-  showCompose: boolean;
-  messageText: string;
-  setMessageText: (value: string) => void;
-  messageStatus: MessageStatus;
-  onMessageClick: () => void;
-  onSend: () => void;
-  onCancel: () => void;
+  property: Property;
 }
 
 // Renders as a fragment (no wrapping element) so it can share a column
 // with TourRequestPanel in the detail page sidebar.
-const MessageComposer: React.FC<MessageComposerProps> = ({
-  showCompose,
-  messageText,
-  setMessageText,
-  messageStatus,
-  onMessageClick,
-  onSend,
-  onCancel,
-}) => {
+const MessageComposer: React.FC<MessageComposerProps> = ({ property }) => {
   const { t } = useTranslation();
+
+  const currentUser = useSelector((state: RootState) => state.user);
+
+  const {
+    showMessageCompose,
+    setShowMessageCompose,
+    messageText,
+    setMessageText,
+    messageStatus,
+    handleMessageClick,
+    handleSendFirstMessage,
+  } = useConversationCompose(property, currentUser);
 
   return (
     <>
-      <button
-        onClick={onMessageClick}
-        className="btn-secondary w-full"
-      >
+      <button onClick={handleMessageClick} className="btn-secondary w-full">
         {t("account.messages.messageOwner")}
       </button>
-      {showCompose && (
+      {showMessageCompose && (
         <div className="mt-3 space-y-3 border border-line p-4">
-          <p className="eyebrow">
-            {t("account.messages.firstMessage")}
-          </p>
+          <p className="eyebrow">{t("account.messages.firstMessage")}</p>
           <textarea
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
@@ -46,7 +45,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
           />
           <div className="flex items-center gap-2">
             <button
-              onClick={onSend}
+              onClick={handleSendFirstMessage}
               disabled={messageStatus === "loading"}
               className="btn-primary py-2"
             >
@@ -55,16 +54,16 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
                 : (t("account.messages.send") ?? "Send")}
             </button>
             <button
-              onClick={onCancel}
+              onClick={() => {
+                setShowMessageCompose(false);
+              }}
               className="btn-quiet"
             >
               {t("common.cancel") ?? "Cancel"}
             </button>
           </div>
           {messageStatus === "error" && (
-            <p className="text-xs text-rose-600">
-              {t("properties.errorAuth")}
-            </p>
+            <p className="text-xs text-rose-600">{t("properties.errorAuth")}</p>
           )}
         </div>
       )}
