@@ -69,7 +69,7 @@ const NavAuthLinks: React.FC<NavAuthLinksProps> = ({
               className={menuItem}
             >
               <User size={16} className="text-ink-subtle" />
-              {t("navbar.profile")}
+              Profile
             </button>
             <button
               type="button"
@@ -77,7 +77,7 @@ const NavAuthLinks: React.FC<NavAuthLinksProps> = ({
               className={menuItem}
             >
               <Settings size={16} className="text-ink-subtle" />
-              {t("navbar.settings")}
+              Settings
             </button>
             <button
               type="button"
@@ -85,7 +85,7 @@ const NavAuthLinks: React.FC<NavAuthLinksProps> = ({
               className={menuItem}
             >
               <Compass size={16} className="text-ink-subtle" />
-              {t("navbar.whyUs")}
+              Why us?
             </button>
             <button
               type="button"
@@ -93,7 +93,7 @@ const NavAuthLinks: React.FC<NavAuthLinksProps> = ({
               className={menuItem}
             >
               <HelpCircle size={16} className="text-ink-subtle" />
-              {t("navbar.help")}
+              Help
             </button>
 
             <div className="my-1.5 border-t border-line" />
