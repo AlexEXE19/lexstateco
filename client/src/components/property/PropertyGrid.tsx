@@ -14,17 +14,21 @@ const PropertyGrid: React.FC<{
   onSelect?: (property: Property) => void;
   // Only set by MyRequestsTab, so each card can carry its own request's
   // status/cancel action - every other tab lists plain properties.
-  getRequestProps?: (property: Property) => RequestItemProps;
-}> = ({ properties, isSaved, onSelect, getRequestProps }) => {
+  getRequestProps?: (property: Property, index: number) => RequestItemProps;
+  // Also only set by MyRequestsTab: the same property can appear more than
+  // once (one tour request each), so property.id alone isn't a safe React
+  // key there - the index ties each rendered card back to its own request.
+  getKey?: (property: Property, index: number) => string | number;
+}> = ({ properties, isSaved, onSelect, getRequestProps, getKey }) => {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-      {properties.map((property) => (
+      {properties.map((property, index) => (
         <PropertyCard
-          key={property.id}
+          key={getKey ? getKey(property, index) : property.id}
           property={property}
           saved={isSaved(property.id)}
           onSelect={onSelect}
-          {...getRequestProps?.(property)}
+          {...getRequestProps?.(property, index)}
         />
       ))}
     </div>
