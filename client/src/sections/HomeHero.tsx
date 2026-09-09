@@ -82,80 +82,88 @@ const HomeHero: React.FC = () => {
 
   const submitSearch = (location?: string) => {
     const query = (location ?? searchedLocation).trim();
-    navigate(query ? `/properties?location=${encodeURIComponent(query)}` : "/properties");
+    navigate(
+      query
+        ? `/properties?location=${encodeURIComponent(query)}`
+        : "/properties",
+    );
   };
 
   return (
     <section className="border-b border-line">
-      <div className="grid items-stretch lg:grid-cols-2">
-        <div className="flex flex-col justify-center px-6 py-16 lg:items-end lg:py-24 lg:pl-10 lg:pr-16">
+      <div className="grid items-stretch lg:grid-cols-2 bg-slate-200">
+        <div className="flex flex-col  justify-center px-6 py-16 lg:items-end lg:py-24 lg:pl-10 lg:pr-16">
           <div className="w-full lg:max-w-[620px]">
-          <p className="eyebrow">{t("home.hero.tag")}</p>
+            <p className="eyebrow">{t("home.hero.tag")}</p>
 
-          <h1 className="mt-5 max-w-xl font-display text-display-sm text-ink sm:text-display-md">
-            {t("home.hero.title")}
-          </h1>
+            <h1 className="mt-5 max-w-xl font-display text-display-sm text-ink sm:text-display-md">
+              {t("home.hero.title")}
+            </h1>
 
-          <p className="mt-5 max-w-md text-base leading-relaxed text-ink-muted">
-            {t("home.hero.subtitle")}
-          </p>
+            <p className="mt-5 max-w-md text-base leading-relaxed text-ink-muted">
+              {t("home.hero.subtitle")}
+            </p>
 
-          <div className="relative mt-9 max-w-lg">
-            <label className="field-label" htmlFor="hero-search">
-              {t("home.hero.inputLabel")}
-            </label>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search
-                  size={17}
-                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-subtle"
-                />
-                <input
-                  id="hero-search"
-                  type="text"
-                  value={searchedLocation}
-                  onChange={(e) => setSearchedLocation(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") submitSearch();
-                  }}
-                  autoComplete="off"
-                  placeholder={t("home.hero.inputPlaceholder")}
-                  className="field pl-10"
-                />
+            <div className="relative mt-9 max-w-lg">
+              <label className="field-label" htmlFor="hero-search">
+                {t("home.hero.inputLabel")}
+              </label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search
+                    size={17}
+                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-subtle"
+                  />
+                  <input
+                    id="hero-search"
+                    type="text"
+                    value={searchedLocation}
+                    onChange={(e) => setSearchedLocation(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") submitSearch();
+                    }}
+                    autoComplete="off"
+                    placeholder={t("home.hero.inputPlaceholder")}
+                    className="field pl-10"
+                  />
 
-                {suggestions && suggestions.length > 0 && (
-                  <ul className="absolute inset-x-0 top-full z-20 mt-1.5 max-h-64 overflow-y-auto rounded-md border border-line bg-background-surface shadow-panel">
-                    {suggestions.map((s, index) => (
-                      <li key={index}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSearchedLocation(s.city);
-                            setSuggestions([]);
-                            submitSearch(s.city);
-                          }}
-                          className="block w-full border-b border-line px-4 py-2.5 text-left transition-colors last:border-b-0 hover:bg-background-elevated"
-                        >
-                          <span className="block text-sm text-ink">{s.city}</span>
-                          <span className="mt-0.5 block truncate text-xs text-ink-subtle">
-                            {[s.city, s.county, s.country].filter(Boolean).join(", ")}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                  {suggestions && suggestions.length > 0 && (
+                    <ul className="absolute inset-x-0 top-full z-20 mt-1.5 max-h-64 overflow-y-auto rounded-md border border-line bg-background-surface shadow-panel">
+                      {suggestions.map((s, index) => (
+                        <li key={index}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSearchedLocation(s.city);
+                              setSuggestions([]);
+                              submitSearch(s.city);
+                            }}
+                            className="block w-full border-b border-line px-4 py-2.5 text-left transition-colors last:border-b-0 hover:bg-background-elevated"
+                          >
+                            <span className="block text-sm text-ink">
+                              {s.city}
+                            </span>
+                            <span className="mt-0.5 block truncate text-xs text-ink-subtle">
+                              {[s.city, s.county, s.country]
+                                .filter(Boolean)
+                                .join(", ")}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => submitSearch()}
+                  className="btn-primary shrink-0"
+                >
+                  {t("home.hero.browse")}
+                </button>
               </div>
-
-              <button
-                type="button"
-                onClick={() => submitSearch()}
-                className="btn-primary shrink-0"
-              >
-                {t("home.hero.browse")}
-              </button>
             </div>
-          </div>
 
             <dl className="mt-12 flex max-w-lg divide-x divide-line border-y border-line">
               {stats.map((stat) => (
