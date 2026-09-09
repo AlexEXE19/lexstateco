@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import baseURL from "../../config/baseUrl";
 import { useFeedbackPrompt } from "../useFeedbackPrompt";
-import { TourRequest } from "../../schemas/TourRequest";
+import { TourRequestWithProperty } from "../../schemas/TourRequest";
 import { Property } from "../../schemas/Property";
 import { User } from "../../schemas/User";
 
@@ -18,7 +18,8 @@ export const useTourRequest = (
 ) => {
   const navigate = useNavigate();
   const { promptForFeedback } = useFeedbackPrompt();
-  const [tourRequest, setTourRequest] = useState<TourRequest | null>(null);
+  const [tourRequest, setTourRequest] =
+    useState<TourRequestWithProperty | null>(null);
   const [requestDate, setRequestDate] = useState<string>(
     new Date().toISOString().slice(0, 10),
   );
@@ -40,14 +41,36 @@ export const useTourRequest = (
       }
 
       try {
-        const res = await axios.get<TourRequest>(
+        const res = await axios.get<TourRequestWithProperty>(
           `${baseURL}/tour-requests/requester/${currentUser.id}/property/${selectedProperty.id}`,
           {
             validateStatus: (status) => status === 200 || status === 404,
           },
         );
-        setTourRequest(res.data);
-      } catch (err: any) {
+
+        if (res.status === 404) {
+          setTourRequest(null);
+          return;
+        }
+
+        const fetched = res.data;
+        if (fetched.status === "canceled" || fetched.status === "rejected") {
+          // Stale request from a previous cycle (a cancel that didn't clean
+          // up, or the agent rejected it) - purge it so the property shows
+          // a fresh "Request a tour" state instead of a dead end, and so at
+          // most one pending/accepted request per property ever lingers
+          // (that's also what keeps MyRequestsTab's grid keys unique).
+          try {
+            await axios.delete(`${baseURL}/tour-requests/${fetched.id}`);
+          } catch (cleanupErr) {
+            console.error("Error cleaning up stale tour request:", cleanupErr);
+          }
+          setTourRequest(null);
+          return;
+        }
+
+        setTourRequest(fetched);
+      } catch (err) {
         console.error(err);
         setTourRequest(null);
       }
@@ -57,20 +80,22 @@ export const useTourRequest = (
   }, [selectedProperty, currentUser]);
 
   const handleRequestTour = async () => {
-    if (!selectedProperty) return;
     if (!currentUser || currentUser.id === "-1") {
       navigate("/login");
       return;
     }
 
-    if (tourRequest && tourRequest.status === "pending") {
+    if (!selectedProperty) return;
+
+    // An existing request (pending or accepted, the only statuses that
+    // persist locally - see the fetch effect above) means this click is a
+    // cancellation: delete it outright and clear local state so the button
+    // reverts to "Request a tour" immediately.
+    if (tourRequest) {
       try {
         setRequestStatus("loading");
-        const res = await axios.put(
-          `${baseURL}/tour-requests/${tourRequest.id}/status`,
-          { status: "canceled" },
-        );
-        setTourRequest(res.data.tourRequest);
+        await axios.delete(`${baseURL}/tour-requests/${tourRequest.id}`);
+        setTourRequest(null);
         setRequestStatus("success");
       } catch (error) {
         console.error("Error canceling tour request:", error);
@@ -103,7 +128,8 @@ export const useTourRequest = (
 
   const currentStatus = tourRequest?.status || "none";
   const isPending = currentStatus === "pending";
-  const isCanceled = currentStatus === "canceled";
+  const isAccepted = currentStatus === "accepted";
+  const hasActiveRequest = isPending || isAccepted;
 
   return {
     tourRequest,
@@ -114,6 +140,7 @@ export const useTourRequest = (
     requestStatus,
     handleRequestTour,
     isPending,
-    isCanceled,
+    isAccepted,
+    hasActiveRequest,
   };
 };

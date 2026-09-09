@@ -189,10 +189,19 @@ const getTourRequestByRequesterAndProperty = async (req, res) => {
   return res.json(request);
 };
 
+const deleteRequest = async (req, res) => {
+  const { id } = req.params;
+
+  await TourRequest.destroy({ where: { id } });
+
+  return res.status(204).json({ message: "Request deleted" });
+};
+
 module.exports = {
   createTourRequest,
   updateTourRequestStatus,
   getTourRequestsByRequester,
   getTourRequestsByAgent,
   getTourRequestByRequesterAndProperty,
+  deleteRequest,
 };

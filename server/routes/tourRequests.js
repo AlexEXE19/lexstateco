@@ -7,6 +7,7 @@ const {
   getTourRequestsByRequester,
   getTourRequestsByAgent,
   getTourRequestByRequesterAndProperty,
+  deleteRequest,
 } = require("../controllers/tourRequestController");
 const { requireAuth } = require("../middlewares/auth");
 const catchAsync = require("../middlewares/catchAsync");
@@ -30,5 +31,8 @@ router.get(
 
 // Update status for a tour request
 router.put("/:id/status", catchAsync(updateTourRequestStatus));
+
+// Delete request
+router.delete("/:id", catchAsync(deleteRequest));
 
 module.exports = router;

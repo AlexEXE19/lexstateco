@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import baseURL from "../../config/baseUrl";
-import { TourRequest } from "../../schemas/TourRequest";
+import { TourRequestWithProperty } from "../../schemas/TourRequest";
 import { Property } from "../../schemas/Property";
 
 // Shared by MyRequestsTab (requester's own tour requests) and MyAudienceTab
 // (incoming tour requests for a seller): both fetch a list keyed by user id,
 // let the user pick one to inspect, and PUT a new status on it.
 export const useTourRequestList = (fetchUrl: string, enabled: boolean) => {
-  const [requests, setRequests] = useState<TourRequest[]>([]);
-  const [selectedRequestId, setSelectedRequestId] = useState<number | null>(
+  const [requests, setRequests] = useState<TourRequestWithProperty[]>([]);
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(
     null,
   );
   const [loading, setLoading] = useState<boolean>(false);
-  const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
@@ -21,7 +21,7 @@ export const useTourRequestList = (fetchUrl: string, enabled: boolean) => {
     const fetchRequests = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<TourRequest[]>(fetchUrl);
+        const response = await axios.get<TourRequestWithProperty[]>(fetchUrl);
         setRequests(response.data);
         if (response.data.length > 0) {
           setSelectedRequestId(response.data[0].id);
@@ -32,6 +32,7 @@ export const useTourRequestList = (fetchUrl: string, enabled: boolean) => {
         setLoading(false);
       }
     };
+
     fetchRequests();
   }, [fetchUrl, enabled]);
 
@@ -40,15 +41,13 @@ export const useTourRequestList = (fetchUrl: string, enabled: boolean) => {
     [requests, selectedRequestId],
   );
 
-  // TO DO UPDATE TO NEW SCHEMA
-
   const selectedProperty: Property | undefined = selectedRequest?.Property;
   const heroImage = selectedProperty?.imageRefs?.[0]
     ? `${baseURL.replace(/\/$/, "")}/${selectedProperty.imageRefs[0]}`
     : "/default_house.jpg";
 
   const updateRequestStatus = async (
-    id: number,
+    id: string,
     status: "accepted" | "rejected" | "canceled",
   ) => {
     try {

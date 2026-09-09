@@ -1,8 +1,5 @@
 import { useTranslation } from "../../utils/i18n";
-import {
-  RequestStatus,
-  useTourRequest,
-} from "../../hooks/property/useTourRequest";
+import { useTourRequest } from "../../hooks/property/useTourRequest";
 import { useNavigate } from "react-router-dom";
 import { Property } from "../../schemas/Property";
 import { useSelector } from "react-redux";
@@ -27,7 +24,8 @@ const TourRequestPanel: React.FC<TourRequestPanelProps> = ({ property }) => {
     requestStatus,
     handleRequestTour,
     isPending,
-    isCanceled,
+    isAccepted,
+    hasActiveRequest,
   } = useTourRequest(property, currentUser);
 
   const navigate = useNavigate();
@@ -65,14 +63,14 @@ const TourRequestPanel: React.FC<TourRequestPanelProps> = ({ property }) => {
         onClick={handleRequestTour}
         disabled={requestStatus === "loading"}
         className={`${
-          isPending ? "btn-secondary" : "btn-primary"
+          hasActiveRequest ? "btn-secondary" : "btn-primary"
         } w-full ${requestStatus === "loading" ? "opacity-70" : ""}`}
       >
         {requestStatus === "loading"
-          ? isPending
+          ? hasActiveRequest
             ? t("properties.canceling")
             : t("properties.sending")
-          : isPending
+          : hasActiveRequest
             ? t("requests.cancel")
             : t("properties.request")}
       </button>
@@ -90,14 +88,14 @@ const TourRequestPanel: React.FC<TourRequestPanelProps> = ({ property }) => {
           </p>
         </button>
       )}
-      {requestStatus === "success" && !isPending && (
+      {requestStatus === "success" && !hasActiveRequest && (
         <p className="text-xs text-ink-subtle">
           {t("properties.requestCanceled")}
         </p>
       )}
-      {isCanceled && requestStatus === "idle" && (
+      {isAccepted && requestStatus === "idle" && (
         <p className="text-xs text-ink-subtle">
-          {t("properties.lastCanceled")}
+          {t("properties.tourAccepted")}
         </p>
       )}
     </>

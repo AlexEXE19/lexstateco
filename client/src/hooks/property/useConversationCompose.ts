@@ -31,7 +31,7 @@ export const useConversationCompose = (
   // deep-linking by conversationId.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const goToConversation = (conversationId: number | null) => {
-    navigate("/account?activeTab=messages");
+    navigate("/profile/manage?activeTab=messages");
   };
 
   const handleMessageClick = async () => {
