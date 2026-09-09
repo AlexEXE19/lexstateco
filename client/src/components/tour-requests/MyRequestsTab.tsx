@@ -1,5 +1,5 @@
 import { ClipboardList } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import PropertyGrid from "../property/PropertyGrid";
 import TabHeader from "../common/TabHeader";
@@ -7,14 +7,14 @@ import EmptyState from "../common/EmptyState";
 import LoadingState from "../common/LoadingState";
 
 import { RootState } from "../../state/store";
-import { openPropertyModal } from "../../state/propertyModal/propertyModalSlice";
 import baseURL from "../../config/baseUrl";
 import { useTourRequestList } from "../../hooks/tour-requests/useTourRequestList";
 import { useTranslation } from "../../utils/i18n";
+import { useNavigate } from "react-router-dom";
 
 const MyRequestsTab: React.FC = () => {
   const userId = useSelector((state: RootState) => state.user.id);
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { requests, loading, updatingId, updateRequestStatus } =
@@ -23,7 +23,7 @@ const MyRequestsTab: React.FC = () => {
       Boolean(userId && userId !== "-1"),
     );
 
-  const requestsWithProperty = requests.filter((request) => request.Property);
+  const properties = requests.map((request) => request.Property);
 
   return (
     <div className="space-y-6">
@@ -32,29 +32,30 @@ const MyRequestsTab: React.FC = () => {
         eyebrow={t("account.tabs.requests")}
         title={t("requests.title")}
         description={
-          !loading && requestsWithProperty.length > 0
-            ? t("requests.subtitle")
-            : undefined
+          !loading && requests.length > 0 ? t("requests.subtitle") : undefined
         }
       />
 
       {loading && <LoadingState label={t("requests.loading")} />}
 
-      {!loading && requestsWithProperty.length === 0 && (
+      {!loading && requests.length === 0 && (
         <EmptyState icon={ClipboardList} title={t("requests.empty")} />
       )}
 
-      {!loading && requestsWithProperty.length > 0 && (
+      {!loading && requests.length > 0 && (
         <PropertyGrid
-          properties={requestsWithProperty.map(
-            (request) => request.Property!,
-          )}
+          properties={properties}
           isSaved={() => false}
-          onSelect={(property) => dispatch(openPropertyModal(property))}
-          getRequestProps={(property) => {
-            const request = requestsWithProperty.find(
-              (r) => r.Property!.id === property.id,
-            )!;
+          onSelect={(property) => {
+            navigate(`/properties/${property.id}`);
+          }}
+          // properties[] is built from requests[] via a straight map, so the
+          // same index always identifies the same request - unlike matching
+          // back by property id, this stays correct even when the same
+          // property shows up more than once (one row per request).
+          getKey={(_property, index) => requests[index].id}
+          getRequestProps={(_property, index) => {
+            const request = requests[index];
             return {
               requestStatus: request.status,
               cancelingRequest: updatingId === request.id,

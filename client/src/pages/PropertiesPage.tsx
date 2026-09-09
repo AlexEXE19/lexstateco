@@ -8,7 +8,6 @@ import CuratedIdeas from "../components/property/CuratedIdeas";
 import PropertyGrid from "../components/property/PropertyGrid";
 
 import { RootState } from "../state/store";
-import { openPropertyModal } from "../state/propertyModal/propertyModalSlice";
 import { useProperties } from "../hooks/property/useProperties";
 import { Filter } from "../schemas/Filter";
 import { useTranslation } from "../utils/i18n";
@@ -84,7 +83,6 @@ const PropertiesPage: React.FC = () => {
               properties={filteredProperties}
               isSaved={(propertyId) => savedIds?.has(propertyId) ?? false}
               onSelect={(property) => {
-                dispatch(openPropertyModal(property));
                 navigate(`/properties/${property.id}`);
               }}
             />

@@ -6,15 +6,15 @@ import TabHeader from "../common/TabHeader";
 import EmptyState from "../common/EmptyState";
 
 import { RootState } from "../../state/store";
-import { openPropertyModal } from "../../state/propertyModal/propertyModalSlice";
 import { useUserProperties } from "../../hooks/property/useUserProperties";
 import { useTranslation } from "../../utils/i18n";
+import { useNavigate } from "react-router-dom";
 
 const UserPropertiesTab: React.FC = () => {
   const userId = useSelector((state: RootState) => state.user.id);
   const { properties } = useUserProperties(userId);
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const hasProperties = properties && properties.length > 0;
 
@@ -31,7 +31,9 @@ const UserPropertiesTab: React.FC = () => {
         <PropertyGrid
           properties={properties}
           isSaved={() => false}
-          onSelect={(property) => dispatch(openPropertyModal(property))}
+          onSelect={(property) => {
+            navigate(`/properties/${property.id}`);
+          }}
         />
       ) : (
         <EmptyState

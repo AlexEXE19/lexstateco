@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
 import PropertyImageGallery from "../components/property/PropertyImageGallery";
@@ -15,6 +15,9 @@ import { buildQuery } from "../utils/buildQuery";
 import { humanizeEnumValue } from "../utils/humanize";
 import { useSellerInfo } from "../hooks/property/useSellerInfo";
 import { useTranslation } from "../utils/i18n";
+import axios, { isAxiosError } from "axios";
+import baseURL from "../config/baseUrl";
+import { Property } from "../schemas/Property";
 
 const statusDotColor: Record<string, string> = {
   available: "bg-primary-600",
@@ -23,14 +26,11 @@ const statusDotColor: Record<string, string> = {
 };
 
 const ViewPropertyPage: React.FC = () => {
+  const propertyId = useParams().id;
+
   const navigate = useNavigate();
 
-  const propertyModalState = useSelector(
-    (state: RootState) => state.propertyModal,
-  );
-
-  const property = propertyModalState.property;
-
+  const [property, setProperty] = useState<Property | null>();
   const currentUser = useSelector((state: RootState) => state.user);
   const { t } = useTranslation();
 
@@ -42,6 +42,21 @@ const ViewPropertyPage: React.FC = () => {
   // pinning somewhere misleading.
   const { getCoordinatesByQuery } = useLocationApi();
   const [mapCoords, setMapCoords] = useState<Coords | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await axios.get(`${baseURL}/properties/${propertyId}`);
+        setProperty(res.data);
+      } catch (err: any) {
+        if (isAxiosError(err) && err.status === 404) {
+          navigate("/properties");
+        }
+        console.error(err.message);
+      }
+    })();
+  }, [propertyId]);
+
   const addressQuery = property
     ? [
         property.location.address,
@@ -69,7 +84,8 @@ const ViewPropertyPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addressQuery]);
 
-  if (!property) return null;
+  if (!propertyId) return;
+  if (!property) return;
 
   const isOwner = String(property.agentId) === String(currentUser.id);
 

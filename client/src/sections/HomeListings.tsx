@@ -8,7 +8,6 @@ import PropertyCard from "../components/property/PropertyCard";
 import PropertyCardSkeleton from "../components/property/PropertyCardSkeleton";
 
 import baseURL from "../config/baseUrl";
-import { openPropertyModal } from "../state/propertyModal/propertyModalSlice";
 import { Property } from "../schemas/Property";
 import { useTranslation } from "../utils/i18n";
 
@@ -17,7 +16,6 @@ import { useTranslation } from "../utils/i18n";
 // with placeholder marketing tiles.
 const HomeListings: React.FC = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [properties, setProperties] = useState<Property[]>([]);
@@ -74,7 +72,6 @@ const HomeListings: React.FC = () => {
                   property={property}
                   saved={false}
                   onSelect={(selected) => {
-                    dispatch(openPropertyModal(selected));
                     navigate(`/properties/${selected.id}`);
                   }}
                 />

@@ -7,7 +7,6 @@ import TabHeader from "../common/TabHeader";
 import EmptyState from "../common/EmptyState";
 
 import { RootState } from "../../state/store";
-import { openPropertyModal } from "../../state/propertyModal/propertyModalSlice";
 import { useSavedProperties } from "../../hooks/property/useSavedProperties";
 import { useTranslation } from "../../utils/i18n";
 
@@ -34,7 +33,6 @@ const SavedPropertiesTab: React.FC = () => {
           properties={properties}
           isSaved={() => true}
           onSelect={(property) => {
-            dispatch(openPropertyModal(property));
             navigate(`/properties/${property.id}`);
           }}
         />
