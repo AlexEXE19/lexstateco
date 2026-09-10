@@ -172,7 +172,7 @@ const translations: Translations = {
     "home.hero.tag": "Modern spaces, curated for you",
     "home.hero.title": "Find a home you love, or list yours with confidence.",
     "home.hero.subtitle":
-      "Compare neighborhoods, tour faster, and get personalized help from real people—not generic feeds.",
+      "Compare neighborhoods, tour faster, and get personalized help from real people-not generic feeds.",
     "home.hero.inputLabel": "Start with a location",
     "home.hero.inputPlaceholder": "City, neighborhood, or ZIP",
     "home.hero.browse": "Browse properties",
@@ -350,7 +350,8 @@ const translations: Translations = {
     "account.messages.role.buyer": "Cumpărător",
 
     "saved.title": "Proprietățile tale salvate",
-    "saved.subtitle": "Locuințele pe care le-ai salvat, toate într-un singur loc.",
+    "saved.subtitle":
+      "Locuințele pe care le-ai salvat, toate într-un singur loc.",
     "saved.cta": "Hai să găsim proprietăți interesante!",
     "saved.browse": "Vezi proprietăți",
 
