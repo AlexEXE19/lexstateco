@@ -226,7 +226,7 @@ const uploadPropertyImages = async (req, res, next) => {
     const uploadedPaths = files.map((file) => {
       // store relative path for frontend consumption
       const relative = path
-        .relative(path.join(__dirname, ".."), file.path)
+        .relative(path.join(__dirname, "../../.."), file.path)
         .replace(/\\/g, "/");
       return relative;
     });

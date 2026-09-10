@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
     const propertyId = req.params.propertyId;
     const dest = path.join(
       __dirname,
-      "../uploads/property",
+      "../../../uploads/property",
       String(propertyId),
     );
     fs.mkdirSync(dest, { recursive: true });
