@@ -30,7 +30,10 @@ import {
 import { useCreatePropertyForm } from "../hooks/useCreatePropertyForm";
 import { useLocationSuggestions } from "../hooks/useLocationSuggestions";
 import { buildQuery } from "../../../utils/buildQuery";
-import { FALLBACK_COORDS, getUserLocation } from "../../../utils/getUserLocation";
+import {
+  FALLBACK_COORDS,
+  getUserLocation,
+} from "../../../utils/getUserLocation";
 import { humanizeEnumValue } from "../../../utils/humanize";
 import { useTranslation } from "../../../utils/i18n";
 
@@ -203,7 +206,7 @@ const PropertyListingForm: React.FC = () => {
             </div>
           ))}
         </div>
-
+        {/* STEP 0 */}
         {step === 0 && (
           <div className="grid gap-4 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
@@ -237,9 +240,7 @@ const PropertyListingForm: React.FC = () => {
                             }}
                             className="cursor-pointer px-4 py-2.5 text-left transition-colors hover:bg-background-elevated"
                           >
-                            <div className="text-sm text-ink">
-                              {s.country}
-                            </div>
+                            <div className="text-sm text-ink">{s.country}</div>
                           </li>
                         ))}
                       </ul>
@@ -285,9 +286,7 @@ const PropertyListingForm: React.FC = () => {
                             }}
                             className="cursor-pointer px-4 py-2.5 text-left transition-colors hover:bg-background-elevated"
                           >
-                            <div className="text-sm text-ink">
-                              {s.city}
-                            </div>
+                            <div className="text-sm text-ink">{s.city}</div>
                             <div className="mt-0.5 truncate text-xs text-ink-subtle">
                               {[s.city, s.county, s.country]
                                 .filter(Boolean)
@@ -409,7 +408,7 @@ const PropertyListingForm: React.FC = () => {
             )}
           </div>
         )}
-
+        {/* STEP 1 */}
         {step === 1 && (
           <div className="grid gap-4 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
@@ -541,7 +540,7 @@ const PropertyListingForm: React.FC = () => {
             </label>
           </div>
         )}
-
+        {/* STEP 2 */}
         {step === 2 && (
           <div className="grid gap-4">
             <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
