@@ -1,12 +1,12 @@
 const sequelize = require("../config/db");
 
-const User = require("./User");
-const Property = require("./Property");
-const SavedProperty = require("./SavedProperty");
-const TourRequest = require("./TourRequest");
-const Notification = require("./Notification");
-const Conversation = require("./Conversation");
-const Message = require("./Message");
+const User = require("../modules/users/models/User");
+const Property = require("../modules/properties/models/Property");
+const SavedProperty = require("../modules/properties/models/SavedProperty");
+const TourRequest = require("../modules/tourRequests/models/TourRequest");
+const Notification = require("../modules/notifications/models/Notification");
+const Conversation = require("../modules/messaging/models/Conversation");
+const Message = require("../modules/messaging/models/Message");
 
 // Defining the relationships
 // agentId on Property references User.id (the property's listing agent).

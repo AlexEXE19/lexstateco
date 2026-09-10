@@ -5,15 +5,15 @@ const cors = require("cors");
 const path = require("path");
 const { sequelize } = require("./models/index");
 
-const authRoutes = require("./routes/auth");
-const userRoutes = require("./routes/users");
-const propertyRoutes = require("./routes/properties");
-const savedPropertiesRoutes = require("./routes/savedProperties");
-const tourRequestRoutes = require("./routes/tourRequests");
-const notificationRoutes = require("./routes/notifications");
-const conversationRoutes = require("./routes/conversations");
-const statsRoutes = require("./routes/stats");
-const curatedRoutes = require("./routes/curated");
+const authRoutes = require("./modules/users/routes/auth");
+const userRoutes = require("./modules/users/routes/users");
+const propertyRoutes = require("./modules/properties/routes/properties");
+const savedPropertiesRoutes = require("./modules/properties/routes/savedProperties");
+const tourRequestRoutes = require("./modules/tourRequests/routes/tourRequests");
+const notificationRoutes = require("./modules/notifications/routes/notifications");
+const conversationRoutes = require("./modules/messaging/routes/conversations");
+const statsRoutes = require("./modules/stats/routes/stats");
+const curatedRoutes = require("./modules/properties/routes/curated");
 const errorHandler = require("./middlewares/errorHandler");
 
 app.use(cors());
