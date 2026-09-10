@@ -66,7 +66,7 @@ export const useAuth = () => {
             password: "",
           }),
         );
-        navigate("/account");
+        navigate("/profile/me");
         return null;
       }
 
