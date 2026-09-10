@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 import { RootState } from "../../state/store";
-import { toggle } from "../../state/sidePanel/sidePanelSlice";
+import { toggle } from "../../state/ui/sidePanel/sidePanelSlice";
 import { logOutUser } from "../../state/user/userSlice";
 import { useTranslation } from "../../utils/i18n";
 

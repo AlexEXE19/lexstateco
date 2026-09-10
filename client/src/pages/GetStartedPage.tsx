@@ -1,7 +1,7 @@
 import { Clock3, MapPin, ShieldCheck } from "lucide-react";
 
 import HomeFeatureSection from "../sections/HomeFeatureSection";
-import HomeSteps from "../sections/HomeSteps";
+import HomeSteps from "../features/hero/components/HomeSteps";
 import { useTranslation } from "../utils/i18n";
 
 const GetStartedPage: React.FC = () => {

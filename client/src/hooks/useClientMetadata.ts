@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../state/store";
-import { setClientState } from "../state/client/clientSlice";
+import { setClientState } from "../state/ui/client/clientSlice";
 
 export const useClientMetadata = () => {
   const clientMeta = useSelector((state: RootState) => state.client);

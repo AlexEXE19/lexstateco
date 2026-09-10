@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./user/userSlice";
 import tabReducer from "./tab/tabSlice";
-import langReducer from "./lang/langSlice";
-import feedbackReducer from "./feedback/feedbackSlice";
-import propertyModalReducer from "./propertyModal/propertyModalSlice";
-import clientReducer from "./client/clientSlice";
-import sidePanelReducer from "./sidePanel/sidePanelSlice";
+import langReducer from "./ui/lang/langSlice";
+import feedbackReducer from "./ui/feedback/feedbackSlice";
+import propertyModalReducer from "./ui/propertyModal/propertyModalSlice";
+import clientReducer from "./ui/client/clientSlice";
+import sidePanelReducer from "./ui/sidePanel/sidePanelSlice";
 
 export const store = configureStore({
   reducer: {

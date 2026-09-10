@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface TabState {
   type: string;
-  conversationId: number | null;
+  conversationId: string | null;
 }
 
 const initialState: TabState = {
@@ -17,7 +17,7 @@ const tabSlice = createSlice({
     setTab: (
       state,
       action: PayloadAction<
-        string | { type: string; conversationId?: number | null }
+        string | { type: string; conversationId?: string | null }
       >,
     ) => {
       const payload =
@@ -27,7 +27,7 @@ const tabSlice = createSlice({
       state.type = payload.type;
       state.conversationId = payload.conversationId ?? null;
     },
-    setConversationId: (state, action: PayloadAction<number | null>) => {
+    setConversationId: (state, action: PayloadAction<string | null>) => {
       state.conversationId = action.payload;
     },
   },

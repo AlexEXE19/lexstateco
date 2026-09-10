@@ -117,6 +117,7 @@ const translations: Translations = {
     "properties.requestCanceled": "Request canceled.",
     "properties.lastCanceled":
       "Last request was canceled. Choose a new time to book again.",
+    "properties.tourAccepted": "Your tour request was accepted.",
     "properties.label.price": "Price",
     "properties.label.size": "Size",
     "properties.label.neighborhood": "Neighborhood",
@@ -394,6 +395,7 @@ const translations: Translations = {
     "properties.requestCanceled": "Cerere anulată.",
     "properties.lastCanceled":
       "Ultima cerere a fost anulată. Alege o nouă oră pentru o nouă programare.",
+    "properties.tourAccepted": "Cererea ta de tur a fost acceptată.",
     "properties.label.price": "Preț",
     "properties.label.size": "Suprafață",
     "properties.label.neighborhood": "Cartier",

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { useTranslation } from "../utils/i18n";
-import { FeatureHighlight } from "./HomeHero";
+import { FeatureHighlight } from "../features/hero/components/HomeHero";
 
 interface HomeFeatureSectionProps {
   featureHighlights: FeatureHighlight[];

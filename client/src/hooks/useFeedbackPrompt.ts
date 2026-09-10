@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import baseURL from "../config/baseUrl";
 import { RootState } from "../state/store";
-import { openFeedbackModal } from "../state/feedback/feedbackSlice";
+import { openFeedbackModal } from "../state/ui/feedback/feedbackSlice";
 
 const dismissedKey = (userId: string) => `lex_feedback_dismissed_${userId}`;
 

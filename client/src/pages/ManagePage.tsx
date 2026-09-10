@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import SavedPropertiesTab from "../components/property/SavedPropertiesTab";
-import UserPropertiesTab from "../components/property/UserPropertiesTab";
-import PropertyListingTab from "../components/property/PropertyListingTab";
-import MyAudienceTab from "../components/tour-requests/MyAudienceTab";
-import MyRequestsTab from "../components/tour-requests/MyRequestsTab";
-import MessagesTab from "../components/messaging/MessagesTab";
+import SavedPropertiesTab from "../features/properties/components/tabs/SavedPropertiesTab";
+import UserPropertiesTab from "../features/properties/components/tabs/UserPropertiesTab";
+import PropertyListingTab from "../features/properties/components/tabs/PropertyListingTab";
+import MyAudienceTab from "../features/tour-requests/components/MyAudienceTab";
+import MyRequestsTab from "../features/tour-requests/components/MyRequestsTab";
+import MessagesTab from "../features/messaging/components/MessagesTab";
 
 import { getCurrentUser } from "../utils/auth";
-import { User } from "../schemas/User";
+import { User } from "../schemas/user/User";
 
 const ManagePage: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const ManagePage: React.FC = () => {
         {searchParams.get("activeTab") === "requests" && <MyRequestsTab />}
         {searchParams.get("activeTab") === "audience" && <MyAudienceTab />}
         {searchParams.get("activeTab") === "messages" && (
-          <MessagesTab activeConversationId={1} />
+          <MessagesTab activeConversationId={"1"} />
         )}
       </section>
     </div>

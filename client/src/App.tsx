@@ -6,19 +6,19 @@ import SidePanel from "./components/layout/SidePanel";
 import Footer from "./components/layout/Footer";
 import FeedbackModal from "./components/modals/FeedbackModal";
 
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import PropertiesPage from "./pages/PropertiesPage";
+import HomePage from "./features/hero/components/HomePage";
+import LoginPage from "./features/auth/components/LoginPage";
+import RegisterPage from "./features/auth/components/RegisterPage";
+import PropertiesPage from "./features/properties/components/pages/PropertiesPage";
 import RedirectPage from "./pages/RedirectPage";
 import GetStartedPage from "./pages/GetStartedPage";
-import ViewPropertyPage from "./pages/ViewPropertyPage";
+import ViewPropertyPage from "./features/properties/components/pages/ViewPropertyPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import ManagePage from "./pages/ManagePage";
 import SettingsPage from "./pages/SettingsPage";
 
 import { RootState } from "./state/store";
-import { closeFeedbackModal } from "./state/feedback/feedbackSlice";
+import { closeFeedbackModal } from "./state/ui/feedback/feedbackSlice";
 
 import { dismissFeedbackPrompt } from "./hooks/useFeedbackPrompt";
 import { useClientMetadata } from "./hooks/useClientMetadata";

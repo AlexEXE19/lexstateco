@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Star, BadgeCheck, Home, Heart, Clock, Calendar } from "lucide-react";
 import { getCurrentUser } from "../utils/auth";
-import { User } from "../schemas/User";
+import { User } from "../schemas/user/User";
 
 // Not in userSchema yet — placeholders so the layout can be reviewed.
 // Swap these for real data once the fields/endpoints exist.

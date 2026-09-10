@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react";
-import { Notification } from "../../schemas/Notification";
+import { Notification } from "../../schemas/user/Notification";
 
 interface NotificationsMenuProps {
   notifications: Notification[];

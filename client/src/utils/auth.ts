@@ -1,6 +1,6 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { User } from "../schemas/User";
+import { User } from "../schemas/user/User";
 
 const TOKEN_KEY = "lexestate_token";
 

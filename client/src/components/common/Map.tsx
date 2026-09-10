@@ -9,7 +9,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { useLocationApi } from "../../hooks/property/useLocationApi";
+import { useLocationApi } from "../../features/properties/hooks/useLocationApi";
 import { buildQuery } from "../../utils/buildQuery";
 
 export interface MapProps {

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User } from "../../schemas/User";
+import { User } from "../../schemas/user/User";
 import {
   clearAuthToken,
   decodeUserFromToken,
