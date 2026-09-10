@@ -146,6 +146,8 @@ const updateUserFeedbackRating = async (req, res) => {
   const { id } = req.params;
   const { rating } = req.body;
 
+  if (!assertSelf(req, res, id)) return;
+
   const user = await User.findByPk(id);
 
   if (!user) {
