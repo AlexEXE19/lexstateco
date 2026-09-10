@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import userReducer, { logInUser, logOutUser } from "./userSlice";
 import { getStoredToken } from "../../utils/auth";
-import { User } from "../../schemas/User";
+import { User } from "../../schemas/user/User";
 
 const anonymousUser: User = {
   id: "-1",
