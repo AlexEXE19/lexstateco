@@ -10,3 +10,5 @@ dist-ssr/
 .env
 
 hashPasswords.js
+
+uploads/*
